@@ -62,22 +62,23 @@ namespace Hypnosis.Web.Controllers
             return new Models.DataTables.DataTablesActionResult<PersonEventsListRowViewModel>(source, input, prefilter);
         }
 
-        //public ActionResult Edit(int Id)
-        //{
-        //    //var employee = dbContext.TblEmployees.SingleOrDefault(f => f.E_Id == Id);
-        //    //if (employee == null)
-        //    //{
-        //    //    return RedirectToAction("Index", new { statusId = statusId, managerId = managerId, jobId = jobId });
-        //    //}
-        //    //var model = GetDetailsModel(employee);
-        //    //model.Filter = new EmployeesViewModel
-        //    //{
-        //    //    StatusId = statusId,
-        //    //    ManagerId = managerId,
-        //    //    FilterJobId = jobId
-        //    //};
-        //   // return View(model);
-        //}
+        public ActionResult Edit(int Id, int? type_ID, int? subType_ID, bool inMailingListOnly)
+        {
+            var person = PersonOperations.GetPersonById(Id);
+            if (person == null)
+            {
+                return RedirectToAction("Index", new { Type_ID = type_ID, SubType_ID = subType_ID, InMailingListOnly = inMailingListOnly });
+            }
+            PersonEditModel model = PersonOperations.GetDetailsModel(person);
+            model.Filter = new PersonEventsViewModel
+            {
+                Type_ID = type_ID,
+                SubType_ID = subType_ID,
+                InMailingListOnly = inMailingListOnly
+            };
+            return View(model);
+        }
+
         public ActionResult Export(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
             var source = PersonOperations.GetExportRows(Type_ID,  SubType_ID,InMailingListOnly);

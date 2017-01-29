@@ -23,6 +23,16 @@ namespace Hypnosis.Web.Data.DbOperations
             return source;
         }
 
+        public IQueryable<Person> GetPersons(int ID)
+        {
+            var persons = GetPersons();
+            var source = from p in persons
+                         where p.ID == ID
+                         select p;
+
+            return source;
+        }
+
         public IQueryable<PersonEventsListRowViewModel> GetRows()
         {
             IQueryable<Person> data = GetPersons();
