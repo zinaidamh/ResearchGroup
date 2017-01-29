@@ -1,0 +1,31 @@
+﻿@if (Request.IsAuthenticated) {
+    <text>
+             @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+                         @Html.AntiForgeryToken()
+
+  
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <div class="headerWelcome">שלום @User.Identity.Name</div>
+            @*@Html.ActionLink("Profile", "Manage", "Account", new { area = "" }, htmlAttributes: new { @class = "username", title = "Manage" })*@
+
+
+          </li>
+        <li><a href="javascript:document.getElementById('logoutForm').submit()">התנתק</a></li>
+    </ul>
+
+        }
+    </text>
+}
+else
+{
+
+    @*<ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("התחבר", "LogOn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        <li>@Html.ActionLink("משתמש חדש", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*
+
+
+    </ul>*@
+   
+         
+}

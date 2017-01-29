@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[Persons] (
+    [ID]            INT            IDENTITY (1, 1) NOT NULL,
+	[TZ]                         NCHAR (9)      CONSTRAINT [DF_tblPersons_TZ] DEFAULT ('') NOT NULL,
+    [FamilyName]                 NVARCHAR (50)  CONSTRAINT [DF_Persons_FamilyName] DEFAULT ('') NOT NULL,
+    [FirstName]                  NVARCHAR (50)  CONSTRAINT [DF_Persons_Person_FirstName] DEFAULT ('') NOT NULL,
+    [Person_Senior]              BIT            CONSTRAINT [DF_tblPersons_Person_Senior] DEFAULT ((0)) NULL,
+    [DisplayName]                NVARCHAR (50)  NULL,
+    [Mobile]                     NVARCHAR (20)  CONSTRAINT [DF_Persons_Person_Mobile] DEFAULT ('') NULL,
+    [Phones]                     NVARCHAR (255) NULL,
+    [City]                       NVARCHAR (50)  NULL,
+    [ZipCode]                    NVARCHAR (10)  NULL,
+    [Address]                    NVARCHAR (255) NULL,
+    [Email]                      NVARCHAR (50)  NULL,
+    [InMailingList]              BIT            CONSTRAINT [DF_tblPersons_Person_InMailingList] DEFAULT ((0)) NOT NULL,
+    [Ministry_CaseNumber]        NVARCHAR (50)  NULL,
+    [Psyhology_LicenseNumber]    NVARCHAR (50)  NULL,
+    [Psyhology_Specialization]   NVARCHAR (50)  NULL,
+    [Medicine_LicenseNumber]     NVARCHAR (50)  NULL,
+    [Medicine_Specialization]    NVARCHAR (50)  NULL,
+    [Stomatology_LicenseNumber]  NVARCHAR (50)  NULL,
+    [Stomatology_Specialization] NVARCHAR (50)  NULL,
+    [Comments]                   NVARCHAR (MAX) NULL,
+    [Address_Comments] NVARCHAR(MAX) NULL, 
+    [BirthDate] DATE NULL, 
+    CONSTRAINT [PK_Persons] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+

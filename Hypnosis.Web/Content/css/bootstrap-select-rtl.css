@@ -1,0 +1,17 @@
+/*!
+ * bootstrap-select v1.4.1
+ * http://silviomoreto.github.io/bootstrap-select/
+ *
+ * Copyright 2013 bootstrap-select
+ * Licensed under the MIT license
+ */
+
+.bootstrap-select.btn-group .btn .caret {
+	left: 12px;
+	right:initial;
+}
+.bootstrap-select.btn-group .btn .filter-option {
+	left: 25px;
+	right: 12px;
+	text-align: right;
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="81378979db44430d862de81e513794e7" Name="Diagram1" ZoomLevel="82">
+        <EntityTypeShape EntityType="HypnosisData.EventSubType" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="HypnosisData.EventType" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="HypnosisData.UserProfile" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="HypnosisData.webpages_Membership" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="HypnosisData.webpages_OAuthMembership" Width="1.5" PointX="6.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="HypnosisData.webpages_Roles" Width="1.5" PointX="0.75" PointY="0.875" IsExpanded="true" />
+        <AssociationConnector Association="HypnosisData.webpages_UsersInRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="HypnosisData.EventTypeCategory" Width="1.5" PointX="10.5" PointY="1.375" />
+        <AssociationConnector Association="HypnosisData.FK_EventType_Categories" />
+        <AssociationConnector Association="HypnosisData.FK_EventSubTypes_ToTypes" />
+        <EntityTypeShape EntityType="HypnosisData.Person" Width="1.5" PointX="5.375" PointY="9.75" />
+        <EntityTypeShape EntityType="HypnosisData.Event" Width="1.5" PointX="9.375" PointY="6.75" />
+        <AssociationConnector Association="HypnosisData.FK_Events_ToPerson" />
+        <AssociationConnector Association="HypnosisData.FK_Events_SubTypes" />
+        <EntityTypeShape EntityType="HypnosisData.Institute" Width="1.5" PointX="5.375" PointY="1" />
+        <AssociationConnector Association="HypnosisData.FK_Events_ToInstitute" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

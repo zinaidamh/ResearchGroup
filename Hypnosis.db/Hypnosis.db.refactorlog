@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="3cbeb667-a3b0-4078-84df-005627449a20" ChangeDateTime="01/22/2017 14:56:17">
+    <Property Name="ElementName" Value="[dbo].[FK_EventTypes_ToTable]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[EventTypes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_EventType_CategoriesF]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2ee7f3bd-3435-4742-8d58-f27318059513" ChangeDateTime="01/22/2017 14:56:20">
+    <Property Name="ElementName" Value="[dbo].[FK_EventType_CategoriesF]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[EventTypes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_EventType_Categories]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="11fb514f-02b6-468b-8206-f1741f7ddbbc" ChangeDateTime="01/25/2017 10:42:21">
+    <Property Name="ElementName" Value="[dbo].[FK_Events_ToTable]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[Events]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_Events_ToPerson]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="515ff66f-1fad-4834-9cd8-01f1f353ab58" ChangeDateTime="01/25/2017 10:50:52">
+    <Property Name="ElementName" Value="[dbo].[FK_Events_ToTable]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[Events]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_Events_SubTypes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2dd0b1f4-c2c0-4d69-91dd-a732eeddb0fb" ChangeDateTime="01/26/2017 16:01:17">
+    <Property Name="ElementName" Value="[dbo].[Events].[Agent]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Events]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Agent_ID" />
+  </Operation>
+</Operations>

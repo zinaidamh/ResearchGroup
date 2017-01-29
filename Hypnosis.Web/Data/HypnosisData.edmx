@@ -1,0 +1,675 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="HypnosisData.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Events">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubType_ID" Type="int" Nullable="false" />
+          <Property Name="FirstDate" Type="date" />
+          <Property Name="Person_ID" Type="int" />
+          <Property Name="Institute_ID" Type="int" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Agent" Type="nvarchar" MaxLength="255" />
+          <Property Name="AlertDate" Type="date" />
+          <Property Name="AlertDone" Type="bit" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventSubTypes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type_ID" Type="int" Nullable="false" />
+          <Property Name="SubType_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventTypeCategories">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Category_Name" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="EventTypes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Type_Category" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Institutes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="MainPhone" Type="nvarchar" MaxLength="20" />
+          <Property Name="Phones" Type="nvarchar" MaxLength="255" />
+          <Property Name="City" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="10" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="InMailingList" Type="bit" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="50" />
+          <Property Name="Comments" Type="nvarchar(max)" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="Address_Comments" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Persons">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TZ" Type="nchar" MaxLength="9" Nullable="false" />
+          <Property Name="FamilyName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Person_Senior" Type="bit" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Mobile" Type="nvarchar" MaxLength="20" />
+          <Property Name="Phones" Type="nvarchar" MaxLength="255" />
+          <Property Name="City" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="10" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="Email" Type="nvarchar" MaxLength="50" />
+          <Property Name="InMailingList" Type="bit" Nullable="false" />
+          <Property Name="Ministry_CaseNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Psyhology_LicenseNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Psyhology_Specialization" Type="nvarchar" MaxLength="50" />
+          <Property Name="Medicine_LicenseNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Medicine_Specialization" Type="nvarchar" MaxLength="50" />
+          <Property Name="Stomatology_LicenseNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Stomatology_Specialization" Type="nvarchar" MaxLength="50" />
+          <Property Name="Comments" Type="nvarchar(max)" />
+          <Property Name="Address_Comments" Type="nvarchar(max)" />
+          <Property Name="BirthDate" Type="date" />
+        </EntityType>
+        <EntityType Name="UserProfile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="UserEmailAddress" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="webpages_Membership">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="ConfirmationToken" Type="nvarchar" MaxLength="128" />
+          <Property Name="IsConfirmed" Type="bit" />
+          <Property Name="LastPasswordFailureDate" Type="datetime" />
+          <Property Name="PasswordFailuresSinceLastSuccess" Type="int" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="PasswordChangedDate" Type="datetime" />
+          <Property Name="PasswordSalt" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="PasswordVerificationToken" Type="nvarchar" MaxLength="128" />
+          <Property Name="PasswordVerificationTokenExpirationDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="webpages_OAuthMembership">
+          <Key>
+            <PropertyRef Name="Provider" />
+            <PropertyRef Name="ProviderUserId" />
+          </Key>
+          <Property Name="Provider" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="ProviderUserId" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="webpages_Roles">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleName" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="webpages_UsersInRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="RoleId" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Events_SubTypes">
+          <End Role="EventSubTypes" Type="Self.EventSubTypes" Multiplicity="1" />
+          <End Role="Events" Type="Self.Events" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventSubTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="SubType_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_ToInstitute">
+          <End Role="Institutes" Type="Self.Institutes" Multiplicity="0..1" />
+          <End Role="Events" Type="Self.Events" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Institutes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="Institute_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_ToPerson">
+          <End Role="Persons" Type="Self.Persons" Multiplicity="0..1" />
+          <End Role="Events" Type="Self.Events" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persons">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="Person_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventSubTypes_ToTypes">
+          <End Role="EventTypes" Type="Self.EventTypes" Multiplicity="1" />
+          <End Role="EventSubTypes" Type="Self.EventSubTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="EventSubTypes">
+              <PropertyRef Name="Type_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventType_Categories">
+          <End Role="EventTypeCategories" Type="Self.EventTypeCategories" Multiplicity="1" />
+          <End Role="EventTypes" Type="Self.EventTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventTypeCategories">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="EventTypes">
+              <PropertyRef Name="Type_Category" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_RoleId">
+          <End Role="webpages_Roles" Type="Self.webpages_Roles" Multiplicity="1" />
+          <End Role="webpages_UsersInRoles" Type="Self.webpages_UsersInRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="webpages_Roles">
+              <PropertyRef Name="RoleId" />
+            </Principal>
+            <Dependent Role="webpages_UsersInRoles">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_UserId">
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="1" />
+          <End Role="webpages_UsersInRoles" Type="Self.webpages_UsersInRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserProfile">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="webpages_UsersInRoles">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="HypnosisDataStoreContainer">
+          <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventSubTypes" EntityType="Self.EventSubTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventTypeCategories" EntityType="Self.EventTypeCategories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventTypes" EntityType="Self.EventTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Institutes" EntityType="Self.Institutes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Persons" EntityType="Self.Persons" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_Membership" EntityType="Self.webpages_Membership" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_OAuthMembership" EntityType="Self.webpages_OAuthMembership" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_Roles" EntityType="Self.webpages_Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_UsersInRoles" EntityType="Self.webpages_UsersInRoles" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Events_SubTypes" Association="Self.FK_Events_SubTypes">
+            <End Role="EventSubTypes" EntitySet="EventSubTypes" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_ToInstitute" Association="Self.FK_Events_ToInstitute">
+            <End Role="Institutes" EntitySet="Institutes" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_ToPerson" Association="Self.FK_Events_ToPerson">
+            <End Role="Persons" EntitySet="Persons" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventSubTypes_ToTypes" Association="Self.FK_EventSubTypes_ToTypes">
+            <End Role="EventTypes" EntitySet="EventTypes" />
+            <End Role="EventSubTypes" EntitySet="EventSubTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventType_Categories" Association="Self.FK_EventType_Categories">
+            <End Role="EventTypeCategories" EntitySet="EventTypeCategories" />
+            <End Role="EventTypes" EntitySet="EventTypes" />
+          </AssociationSet>
+          <AssociationSet Name="fk_RoleId" Association="Self.fk_RoleId">
+            <End Role="webpages_Roles" EntitySet="webpages_Roles" />
+            <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
+          </AssociationSet>
+          <AssociationSet Name="fk_UserId" Association="Self.fk_UserId">
+            <End Role="UserProfile" EntitySet="UserProfile" />
+            <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="HypnosisData" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="EventSubType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type_ID" Type="Int32" Nullable="false" />
+          <Property Name="SubType_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="EventType" Relationship="HypnosisData.FK_EventSubTypes_ToTypes" FromRole="EventSubType" ToRole="EventType" />
+          <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_SubTypes" FromRole="EventSubType" ToRole="Event" />
+        </EntityType>
+        <EntityType Name="EventType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Type_Category" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="EventTypeCategory" Relationship="HypnosisData.FK_EventType_Categories" FromRole="EventType" ToRole="EventTypeCategory" />
+          <NavigationProperty Name="EventSubTypes" Relationship="HypnosisData.FK_EventSubTypes_ToTypes" FromRole="EventType" ToRole="EventSubType" />
+          </EntityType>
+        <EntityType Name="UserProfile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="webpages_Roles" Relationship="Self.webpages_UsersInRoles" FromRole="UserProfile" ToRole="webpages_Roles" />
+          <Property Name="UserEmailAddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="webpages_Membership">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="ConfirmationToken" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="IsConfirmed" Type="Boolean" />
+          <Property Name="LastPasswordFailureDate" Type="DateTime" Precision="3" />
+          <Property Name="PasswordFailuresSinceLastSuccess" Type="Int32" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PasswordChangedDate" Type="DateTime" Precision="3" />
+          <Property Name="PasswordSalt" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PasswordVerificationToken" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordVerificationTokenExpirationDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="webpages_OAuthMembership">
+          <Key>
+            <PropertyRef Name="Provider" />
+            <PropertyRef Name="ProviderUserId" />
+          </Key>
+          <Property Name="Provider" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProviderUserId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="webpages_Roles">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="UserProfiles" Relationship="Self.webpages_UsersInRoles" FromRole="webpages_Roles" ToRole="UserProfile" />
+        </EntityType>
+        <Association Name="webpages_UsersInRoles">
+          <End Role="webpages_Roles" Type="Self.webpages_Roles" Multiplicity="*" />
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="HypnosisEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EventSubTypes" EntityType="Self.EventSubType" />
+          <EntitySet Name="EventTypes" EntityType="Self.EventType" />
+          <EntitySet Name="UserProfiles" EntityType="Self.UserProfile" />
+          <EntitySet Name="webpages_Membership" EntityType="Self.webpages_Membership" />
+          <EntitySet Name="webpages_OAuthMembership" EntityType="Self.webpages_OAuthMembership" />
+          <EntitySet Name="webpages_Roles" EntityType="Self.webpages_Roles" />
+          <AssociationSet Name="webpages_UsersInRoles" Association="Self.webpages_UsersInRoles">
+            <End Role="webpages_Roles" EntitySet="webpages_Roles" />
+            <End Role="UserProfile" EntitySet="UserProfiles" />
+          </AssociationSet>
+          <EntitySet Name="EventTypeCategories" EntityType="HypnosisData.EventTypeCategory" />
+          <AssociationSet Name="FK_EventType_Categories" Association="HypnosisData.FK_EventType_Categories">
+            <End Role="EventTypeCategory" EntitySet="EventTypeCategories" />
+            <End Role="EventType" EntitySet="EventTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventSubTypes_ToTypes" Association="HypnosisData.FK_EventSubTypes_ToTypes">
+            <End Role="EventType" EntitySet="EventTypes" />
+            <End Role="EventSubType" EntitySet="EventSubTypes" />
+          </AssociationSet>
+          <EntitySet Name="Persons" EntityType="HypnosisData.Person" />
+          <EntitySet Name="Events" EntityType="HypnosisData.Event" />
+          <AssociationSet Name="FK_Events_ToPerson" Association="HypnosisData.FK_Events_ToPerson">
+            <End Role="Person" EntitySet="Persons" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_SubTypes" Association="HypnosisData.FK_Events_SubTypes">
+            <End Role="EventSubType" EntitySet="EventSubTypes" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <EntitySet Name="Institutes" EntityType="HypnosisData.Institute" />
+          <AssociationSet Name="FK_Events_ToInstitute" Association="HypnosisData.FK_Events_ToInstitute">
+            <End Role="Institute" EntitySet="Institutes" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="EventTypeCategory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Category_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EventTypes" Relationship="HypnosisData.FK_EventType_Categories" FromRole="EventTypeCategory" ToRole="EventType" />
+        </EntityType>
+        <Association Name="FK_EventType_Categories">
+          <End Type="HypnosisData.EventTypeCategory" Role="EventTypeCategory" Multiplicity="1" />
+          <End Type="HypnosisData.EventType" Role="EventType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventTypeCategory">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="EventType">
+              <PropertyRef Name="Type_Category" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventSubTypes_ToTypes">
+          <End Type="HypnosisData.EventType" Role="EventType" Multiplicity="1" />
+          <End Type="HypnosisData.EventSubType" Role="EventSubType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="EventSubType">
+              <PropertyRef Name="Type_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TZ" Type="String" Nullable="false" MaxLength="9" FixedLength="true" Unicode="true" />
+          <Property Name="FamilyName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Person_Senior" Type="Boolean" />
+          <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Mobile" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Phones" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InMailingList" Type="Boolean" Nullable="false" />
+          <Property Name="Ministry_CaseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Psyhology_LicenseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Psyhology_Specialization" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Medicine_LicenseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Medicine_Specialization" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Stomatology_LicenseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Stomatology_Specialization" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BirthDate" Type="DateTime" Precision="0" />
+          <Property Name="Address_Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Person" ToRole="Event" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubType_ID" Type="Int32" Nullable="false" />
+          <Property Name="FirstDate" Type="DateTime" Precision="0" />
+          <Property Name="Person_ID" Type="Int32" />
+          <Property Name="Institute_ID" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Agent" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AlertDate" Type="DateTime" Precision="0" />
+          <Property Name="AlertDone" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Person" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Event" ToRole="Person" />
+          <NavigationProperty Name="EventSubType" Relationship="HypnosisData.FK_Events_SubTypes" FromRole="Event" ToRole="EventSubType" />
+          <NavigationProperty Name="Institute" Relationship="HypnosisData.FK_Events_ToInstitute" FromRole="Event" ToRole="Institute" />
+        </EntityType>
+        <Association Name="FK_Events_ToPerson">
+          <End Type="HypnosisData.Person" Role="Person" Multiplicity="0..1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="Person_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_SubTypes">
+          <End Type="HypnosisData.EventSubType" Role="EventSubType" Multiplicity="1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventSubType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="SubType_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Institute">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MainPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Phones" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="InMailingList" Type="Boolean" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="Address_Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToInstitute" FromRole="Institute" ToRole="Event" />
+        </EntityType>
+        <Association Name="FK_Events_ToInstitute">
+          <End Type="HypnosisData.Institute" Role="Institute" Multiplicity="0..1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Institute">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="Institute_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="HypnosisDataStoreContainer" CdmEntityContainer="HypnosisEntities">
+          <EntitySetMapping Name="EventSubTypes">
+            <EntityTypeMapping TypeName="HypnosisData.EventSubType">
+              <MappingFragment StoreEntitySet="EventSubTypes">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Type_ID" ColumnName="Type_ID" />
+                <ScalarProperty Name="SubType_Name" ColumnName="SubType_Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventTypes">
+            <EntityTypeMapping TypeName="HypnosisData.EventType">
+              <MappingFragment StoreEntitySet="EventTypes">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Type_Name" ColumnName="Type_Name" />
+                <ScalarProperty Name="Type_Category" ColumnName="Type_Category" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserProfiles">
+            <EntityTypeMapping TypeName="HypnosisData.UserProfile">
+              <MappingFragment StoreEntitySet="UserProfile">
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserEmailAddress" ColumnName="UserEmailAddress" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="webpages_Membership">
+            <EntityTypeMapping TypeName="HypnosisData.webpages_Membership">
+              <MappingFragment StoreEntitySet="webpages_Membership">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="ConfirmationToken" ColumnName="ConfirmationToken" />
+                <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
+                <ScalarProperty Name="LastPasswordFailureDate" ColumnName="LastPasswordFailureDate" />
+                <ScalarProperty Name="PasswordFailuresSinceLastSuccess" ColumnName="PasswordFailuresSinceLastSuccess" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="PasswordChangedDate" ColumnName="PasswordChangedDate" />
+                <ScalarProperty Name="PasswordSalt" ColumnName="PasswordSalt" />
+                <ScalarProperty Name="PasswordVerificationToken" ColumnName="PasswordVerificationToken" />
+                <ScalarProperty Name="PasswordVerificationTokenExpirationDate" ColumnName="PasswordVerificationTokenExpirationDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="webpages_OAuthMembership">
+            <EntityTypeMapping TypeName="HypnosisData.webpages_OAuthMembership">
+              <MappingFragment StoreEntitySet="webpages_OAuthMembership">
+                <ScalarProperty Name="Provider" ColumnName="Provider" />
+                <ScalarProperty Name="ProviderUserId" ColumnName="ProviderUserId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="webpages_Roles">
+            <EntityTypeMapping TypeName="HypnosisData.webpages_Roles">
+              <MappingFragment StoreEntitySet="webpages_Roles">
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="webpages_UsersInRoles" TypeName="HypnosisData.webpages_UsersInRoles" StoreEntitySet="webpages_UsersInRoles">
+            <EndProperty Name="webpages_Roles">
+              <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+            </EndProperty>
+            <EndProperty Name="UserProfile">
+              <ScalarProperty Name="UserId" ColumnName="UserId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="EventTypeCategories">
+            <EntityTypeMapping TypeName="HypnosisData.EventTypeCategory">
+              <MappingFragment StoreEntitySet="EventTypeCategories">
+                <ScalarProperty Name="Category_Name" ColumnName="Category_Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Persons">
+            <EntityTypeMapping TypeName="HypnosisData.Person">
+              <MappingFragment StoreEntitySet="Persons">
+                <ScalarProperty Name="Address_Comments" ColumnName="Address_Comments" />
+                <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Stomatology_Specialization" ColumnName="Stomatology_Specialization" />
+                <ScalarProperty Name="Stomatology_LicenseNumber" ColumnName="Stomatology_LicenseNumber" />
+                <ScalarProperty Name="Medicine_Specialization" ColumnName="Medicine_Specialization" />
+                <ScalarProperty Name="Medicine_LicenseNumber" ColumnName="Medicine_LicenseNumber" />
+                <ScalarProperty Name="Psyhology_Specialization" ColumnName="Psyhology_Specialization" />
+                <ScalarProperty Name="Psyhology_LicenseNumber" ColumnName="Psyhology_LicenseNumber" />
+                <ScalarProperty Name="Ministry_CaseNumber" ColumnName="Ministry_CaseNumber" />
+                <ScalarProperty Name="InMailingList" ColumnName="InMailingList" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Phones" ColumnName="Phones" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="Person_Senior" ColumnName="Person_Senior" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="FamilyName" ColumnName="FamilyName" />
+                <ScalarProperty Name="TZ" ColumnName="TZ" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="HypnosisData.Event">
+              <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="AlertDone" ColumnName="AlertDone" />
+                <ScalarProperty Name="AlertDate" ColumnName="AlertDate" />
+                <ScalarProperty Name="Agent" ColumnName="Agent" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Institute_ID" ColumnName="Institute_ID" />
+                <ScalarProperty Name="Person_ID" ColumnName="Person_ID" />
+                <ScalarProperty Name="FirstDate" ColumnName="FirstDate" />
+                <ScalarProperty Name="SubType_ID" ColumnName="SubType_ID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Institutes">
+            <EntityTypeMapping TypeName="HypnosisData.Institute">
+              <MappingFragment StoreEntitySet="Institutes">
+                <ScalarProperty Name="Address_Comments" ColumnName="Address_Comments" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="InMailingList" ColumnName="InMailingList" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Phones" ColumnName="Phones" />
+                <ScalarProperty Name="MainPhone" ColumnName="MainPhone" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

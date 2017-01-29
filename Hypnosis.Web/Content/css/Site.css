@@ -1,0 +1,102 @@
+﻿body {
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.pull-right{
+float: right !important;
+}
+
+/* styles for validation helpers */
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.ui-dialog-titlebar-close {
+  visibility: hidden;
+}
+
+.dataTables_processing {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    left: 25%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.dataTables_wrapper {
+    position: relative;
+}
+
+.wcTitle {
+    font-size: 18px;
+    color: black;
+    float: right;
+}
+
+.eventTitle {
+    font-size: 14px;
+    color: black;
+    float: right;
+}
+
+.bannerPlaceHolder {
+    background-color: #006bb1;
+}
+
+.div_scheduleStatus {
+    width: 100%;
+    height: 40px;
+}
+
+.div_color {
+    width: 40px;
+    height: 20px;
+    margin-bottom: 5px !important;
+}
+
+.green {
+    background: green;
+}
+.orange {
+    background: orange;
+}
+.yellow {
+    background: yellow;
+}
+.red {
+    background: red;
+}

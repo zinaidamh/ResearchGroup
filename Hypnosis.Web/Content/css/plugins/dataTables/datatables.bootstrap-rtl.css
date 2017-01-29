@@ -1,0 +1,9 @@
+﻿div.dataTables_length label {
+	float: right;
+}
+div.dataTables_filter label {
+	float: left;
+}
+div.dataTables_paginate {
+	float: left;
+}

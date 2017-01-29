@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css/bundle")
+    <link href="@Url.Content("~/fonts/font-awesome/css/font-awesome.css")" rel="stylesheet" />
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryValidate")
+    @Scripts.Render("~/bundles/jqueryGlobalize")
+    @Scripts.Render("~/bundles/jqueryValidateGlobalize")
+    @Scripts.Render("~/bundles/all")
+    <script src="@Url.Content(string.Format("~/Scripts/i18n/bootstrap-datepicker/bootstrap-datepicker.{0}.js", System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName))"></script>
+    <script src="@Url.Content(string.Format("~/Scripts/tinymce/tinymce.js", System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName))"></script>
+    @RenderSection("css", required: false)
+    <script>
+        if (!window.console) {
+            window.console = {};
+        }
+        if (!window.console.log) {
+            window.console.log = function () {
+            };
+        }
+    </script>
+    <script>
+        $(function () {
+            $.validator.methods.date = function (value, element) {
+                Globalize.culture('@System.Globalization.CultureInfo.CurrentUICulture.Name');
+                // you can alternatively pass the culture to parseDate instead of
+                // setting the culture above, like so:
+                // parseDate(value, null, "en-AU")
+                return this.optional(element) || Globalize.parseDate(value) !== null;
+            }
+        });
+        $(function () {
+            //init datepickers
+            $('.datepicker').datepicker({
+                language: 'he',
+                format: 'dd/mm/yyyy',
+                autoclose: true
+            });
+            //and selects
+            $('select').not('.selectpicker-custom').selectpicker({
+                noneSelectedText: 'לא בוצעה בחירה'
+            });
+
+            //timepicker options
+            var defaultTimeOptions = {
+                showPeriod: false,
+                showPeriodLabels: false,
+                showLeadingZero: true,
+                minutes: { interval: 1 },
+                hourText: 'שעות',
+                minuteText: 'דקות'
+            };
+        });
+    </script>
+    <script>
+        $.extend($.fn.datepicker.defaults, {
+            style: 'btn-default',
+            size: 'auto',
+            title: null,
+            selectedTextFormat: 'values',
+            noneSelectedText: 'לא בוצעה בחירה',
+            countSelectedText: '{0} מ  {1} בחר',
+        });
+        $.extend(true, $.fn.dataTable.defaults, {
+            "bAutoWidth": false,
+            "bProcessing": true,
+            "bServerSide": true,
+            "oLanguage": {
+                "sEmptyTable": 'אין נתונים בטבלה',
+                "sInfo": 'הצג  _START_ ל  _END_ מ  _TOTAL_ שורות',
+                "sInfoEmpty": 'מציג  0 ל  0 מ  0 שורות',
+                "sInfoFiltered": '(סונן מ-  _MAX_סה"כ )',
+                "sInfoPostFix": "",
+                "sLengthMenu": 'הצג  _MENU_ שורות',
+                "sLoadingRecords": 'טוען ...',
+                "sProcessing": 'מעבד ...',
+                "sSearch": 'חפש :',
+                "sZeroRecords": 'לא נמצאו רשומות תואמות',
+                "oPaginate": {
+                    "sFirst": 'ראשון',
+                    "sLast": 'אחרון',
+                    "sNext": 'הבא',
+                    "sPrevious": 'קודם'
+                },
+                "oAria": {
+                    "sSortAscending": 'הפעל כדי למיין בסדר עולה',
+                    "sSortDescending": 'הפעל כדי למיין בסדר יורד'
+                }
+            }
+        });
+
+        //render functions for datetime datatable columns
+        var parsJsonDate = function (a) {
+            if (a == null) {
+                return a;
+            }
+            var regex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2,3})/;
+            var pars = regex.exec(a);
+            var date = new Date(pars[1], pars[2] - 1, pars[3], pars[4], pars[5], pars[6]);
+            return date;
+        };
+        var mRenderDate = function (a) {
+            if (a == null) {
+                return null;
+            }
+            var date = parsJsonDate(a);
+            var result = date.toString('@System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern');
+            console.log(a + ' renderd as ' + result);
+            return result;
+        };
+        var mRenderTime = function (a) {
+            if (a == null) {
+                return null;
+            }
+            var date = parsJsonDate(a);
+            return date.toString('@System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.FullDateTimePattern');
+        };
+        // Time in pattern h[h]:m[m] - h[h]:m[m]
+        var mRenderTimeFromString = function (a) {
+            if (a == null) {
+                return null;
+            }
+            var splited = a.trim().split(/[\s:-]+/);
+            var startHour = splited[0];
+            var startMinute = splited[1];
+            var endHour = splited[2];
+            var endMinute = splited[3];
+            if (startMinute.length == 1) {
+                startMinute = "0" + startMinute;
+            }
+            if (endMinute.length == 1) {
+                endMinute = "0" + endMinute;
+            }
+            return startHour + ":" + startMinute + " - " + endHour + ":" + endMinute;
+        }
+        // Time in pattern h[h]:m[m]
+        var mRenderTimeStr = function (a) {
+            if (a == null) {
+                return null;
+            }
+            var splited = a.split(':');
+            var hour = splited[0].trim();
+            var minute = splited[1].trim();
+            if (hour.length == 1) {
+                hour = "0" + hour;
+            }
+            if (minute.length == 1) {
+                minute = "0" + minute;
+            }
+            return hour + ":" + minute;
+        };
+        var pad = function (num) {
+            var s = num + "";
+            if (s.length < 2) {
+                s = "0" + s;
+            }
+            return s;
+        }
+    </script>
+    <script>
+        //set default validation behaviour to match the bs
+        var page = function () {
+            //Update that validator
+            $.validator.setDefaults({
+                highlight: function (element) {
+                    $(element).closest(".form-group").addClass("has-error");
+                },
+                unhighlight: function (element) {
+                    $(element).closest(".form-group").removeClass("has-error");
+                }
+            });
+        }();
+    </script>
+    <script>
+        $.fn.serializeObject = function () {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function () {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+        $.fn.databind = function (model) {
+            $(this).data('model', model);
+            for (var key in model) {
+                console.log($('#a2').val());
+                var selector = ':input[name="' + key + '"]';
+                var editor = $(this).find(selector);
+                if (editor.length !== 0) {
+
+                    var value = model[key];
+                    editor.val(value);
+                    editor.change(function () {
+                        model[key] = $(this).val();
+                    });
+                }
+                else {
+                    console.log('editor not found for key ' + key);
+                }
+            }
+        };
+        $(document).ready(function () {
+            $(".dropdown").mouseover(function () {
+                event.preventDefault();
+                event.stopPropagation();
+                $(this).siblings().removeClass('open');
+                $(this).toggleClass('open');
+            });
+            $(".dropdown").mouseout(function () {
+                event.preventDefault();
+                event.stopPropagation();
+                $(this).siblings().removeClass('open');
+                $(this).toggleClass('open');
+            });
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+</head>
+<body data-spy="scroll" data-target=".bs-docs-sidebar">
+
+    <!-- Navbar
+    ================================================== -->
+    <div class="bannerPlaceHolder">
+        <img src="~/images/TmpHypnosisBanner.png" alt="Top Banner" height="149" width="931" />
+    </div>
+    <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner" style="background-color: #F9F9F9">
+        <div class="container-fluid">
+            @if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("Login"))
+            {
+                <ul class="nav navbar-top-links @(System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft? " navbar-left":"navbar-right")">
+                    @Html.Partial("_LogOnPartial")
+                </ul>
+            }
+            <div class="navbar-header">
+                @*<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>*@
+                @if (User != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("רשימת אנשים", "Index", "Persons", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                            <li>@Html.ActionLink("רשימת מכונים", "Index", "Institutes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                            <li>@Html.ActionLink("רשימת אירועים ", "Index", "Events", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                            <li>@Html.ActionLink("ניהול סוגי אירועים", "Index", "EventTypes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                            <li>@Html.ActionLink("ניהול תת סוגי אירועים", "Index", "EventSubTypes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+
+                        </ul>  
+                    </div>
+                }
+
+            </div>
+            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                <ul class="nav navbar-nav">
+                    @RenderSection("featured", false)
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container-fluid" id="page-wrapper">
+        <div class="main" style="padding:0 20px">
+            @RenderBody()
+        </div>
+    </div>
+
+    <footer class="container-fluid" style="padding:0 20px">
+        <hr />
+        <p>
+            <a href="http://www.prog4biz.com" target="_blank">&copy; @DateTime.Now.Year - Prog4biz Software Development</a>
+        </p>
+    </footer>
+</body>
+</html>
