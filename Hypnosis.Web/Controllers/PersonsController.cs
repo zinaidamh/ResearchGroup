@@ -64,13 +64,13 @@ namespace Hypnosis.Web.Controllers
 
         public ActionResult Edit(int Id, int? type_ID, int? subType_ID, bool inMailingListOnly)
         {
-            var person = PersonOperations.GetPersonById(Id);
+            Person person = PersonOperations.GetPersonById(Id);
             if (person == null)
             {
                 return RedirectToAction("Index", new { Type_ID = type_ID, SubType_ID = subType_ID, InMailingListOnly = inMailingListOnly });
             }
-            PersonEditModel model = PersonOperations.GetDetailsModel(person);
-            model.Filter = new PersonEventsViewModel
+            PersonEditModel model = PersonOperations.GetPersonEditModel(person);
+            model.filter = new PersonEventsViewModel
             {
                 Type_ID = type_ID,
                 SubType_ID = subType_ID,

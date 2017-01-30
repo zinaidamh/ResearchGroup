@@ -5,9 +5,21 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="HypnosisData.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Agents">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Agent_Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Events">
           <Key>
             <PropertyRef Name="ID" />
+            <PropertyRef Name="SubType_ID" />
+            <PropertyRef Name="AlertDone" />
+            <PropertyRef Name="CreatedAt" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SubType_ID" Type="int" Nullable="false" />
@@ -15,10 +27,14 @@
           <Property Name="Person_ID" Type="int" />
           <Property Name="Institute_ID" Type="int" />
           <Property Name="Description" Type="nvarchar(max)" />
-          <Property Name="Agent" Type="nvarchar" MaxLength="255" />
           <Property Name="AlertDate" Type="date" />
           <Property Name="AlertDone" Type="bit" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="Agent_ID" Type="int" />
+          <Property Name="ExpirationDate" Type="date" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="50" />
+          <Property Name="FileHref" Type="nvarchar(max)" />
+          <Property Name="SiteName" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="EventSubTypes">
           <Key>
@@ -66,9 +82,9 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TZ" Type="nchar" MaxLength="9" Nullable="false" />
-          <Property Name="FamilyName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="FirstName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Person_Senior" Type="bit" />
+          <Property Name="Person_Senior" Type="bit" Nullable="false" />
           <Property Name="DisplayName" Type="nvarchar" MaxLength="50" />
           <Property Name="Mobile" Type="nvarchar" MaxLength="20" />
           <Property Name="Phones" Type="nvarchar" MaxLength="255" />
@@ -87,6 +103,7 @@
           <Property Name="Comments" Type="nvarchar(max)" />
           <Property Name="Address_Comments" Type="nvarchar(max)" />
           <Property Name="BirthDate" Type="date" />
+          <Property Name="Degree" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="UserProfile">
           <Key>
@@ -137,15 +154,15 @@
           <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="RoleId" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Events_SubTypes">
-          <End Role="EventSubTypes" Type="Self.EventSubTypes" Multiplicity="1" />
+        <Association Name="FK_Events_ToAgents">
+          <End Role="Agents" Type="Self.Agents" Multiplicity="0..1" />
           <End Role="Events" Type="Self.Events" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="EventSubTypes">
+            <Principal Role="Agents">
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Events">
-              <PropertyRef Name="SubType_ID" />
+              <PropertyRef Name="Agent_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -170,6 +187,18 @@
             </Principal>
             <Dependent Role="Events">
               <PropertyRef Name="Person_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_ToSubTypes">
+          <End Role="EventSubTypes" Type="Self.EventSubTypes" Multiplicity="1" />
+          <End Role="Events" Type="Self.Events" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventSubTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="SubType_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -222,7 +251,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="HypnosisDataStoreContainer">
-          <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Agents" EntityType="Self.Agents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventSubTypes" EntityType="Self.EventSubTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventTypeCategories" EntityType="Self.EventTypeCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventTypes" EntityType="Self.EventTypes" Schema="dbo" store:Type="Tables" />
@@ -233,8 +262,26 @@
           <EntitySet Name="webpages_OAuthMembership" EntityType="Self.webpages_OAuthMembership" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_Roles" EntityType="Self.webpages_Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_UsersInRoles" EntityType="Self.webpages_UsersInRoles" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Events_SubTypes" Association="Self.FK_Events_SubTypes">
-            <End Role="EventSubTypes" EntitySet="EventSubTypes" />
+          <EntitySet Name="Events" EntityType="Self.Events" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Events].[ID] AS [ID], 
+    [Events].[SubType_ID] AS [SubType_ID], 
+    [Events].[FirstDate] AS [FirstDate], 
+    [Events].[Person_ID] AS [Person_ID], 
+    [Events].[Institute_ID] AS [Institute_ID], 
+    [Events].[Description] AS [Description], 
+    [Events].[AlertDate] AS [AlertDate], 
+    [Events].[AlertDone] AS [AlertDone], 
+    [Events].[CreatedAt] AS [CreatedAt], 
+    [Events].[Agent_ID] AS [Agent_ID], 
+    [Events].[ExpirationDate] AS [ExpirationDate], 
+    [Events].[FileName] AS [FileName], 
+    [Events].[FileHref] AS [FileHref], 
+    [Events].[SiteName] AS [SiteName]
+    FROM [dbo].[Events] AS [Events]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Events_ToAgents" Association="Self.FK_Events_ToAgents">
+            <End Role="Agents" EntitySet="Agents" />
             <End Role="Events" EntitySet="Events" />
           </AssociationSet>
           <AssociationSet Name="FK_Events_ToInstitute" Association="Self.FK_Events_ToInstitute">
@@ -243,6 +290,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_Events_ToPerson" Association="Self.FK_Events_ToPerson">
             <End Role="Persons" EntitySet="Persons" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_ToSubTypes" Association="Self.FK_Events_ToSubTypes">
+            <End Role="EventSubTypes" EntitySet="EventSubTypes" />
             <End Role="Events" EntitySet="Events" />
           </AssociationSet>
           <AssociationSet Name="FK_EventSubTypes_ToTypes" Association="Self.FK_EventSubTypes_ToTypes">
@@ -274,7 +325,7 @@
           <Property Name="Type_ID" Type="Int32" Nullable="false" />
           <Property Name="SubType_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="EventType" Relationship="HypnosisData.FK_EventSubTypes_ToTypes" FromRole="EventSubType" ToRole="EventType" />
-          <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_SubTypes" FromRole="EventSubType" ToRole="Event" />
+          <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToSubTypes" FromRole="EventSubType" ToRole="Event" />
         </EntityType>
         <EntityType Name="EventType">
           <Key>
@@ -354,18 +405,23 @@
             <End Role="EventSubType" EntitySet="EventSubTypes" />
           </AssociationSet>
           <EntitySet Name="Persons" EntityType="HypnosisData.Person" />
+          <EntitySet Name="Institutes" EntityType="HypnosisData.Institute" />
+          <EntitySet Name="Agents" EntityType="HypnosisData.Agent" />
           <EntitySet Name="Events" EntityType="HypnosisData.Event" />
-          <AssociationSet Name="FK_Events_ToPerson" Association="HypnosisData.FK_Events_ToPerson">
-            <End Role="Person" EntitySet="Persons" />
+          <AssociationSet Name="FK_Events_ToAgents" Association="HypnosisData.FK_Events_ToAgents">
+            <End Role="Agent" EntitySet="Agents" />
             <End Role="Event" EntitySet="Events" />
           </AssociationSet>
-          <AssociationSet Name="FK_Events_SubTypes" Association="HypnosisData.FK_Events_SubTypes">
+          <AssociationSet Name="FK_Events_ToSubTypes" Association="HypnosisData.FK_Events_ToSubTypes">
             <End Role="EventSubType" EntitySet="EventSubTypes" />
             <End Role="Event" EntitySet="Events" />
           </AssociationSet>
-          <EntitySet Name="Institutes" EntityType="HypnosisData.Institute" />
           <AssociationSet Name="FK_Events_ToInstitute" Association="HypnosisData.FK_Events_ToInstitute">
             <End Role="Institute" EntitySet="Institutes" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_ToPerson" Association="HypnosisData.FK_Events_ToPerson">
+            <End Role="Person" EntitySet="Persons" />
             <End Role="Event" EntitySet="Events" />
           </AssociationSet>
         </EntityContainer>
@@ -407,9 +463,9 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TZ" Type="String" Nullable="false" MaxLength="9" FixedLength="true" Unicode="true" />
-          <Property Name="FamilyName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Person_Senior" Type="Boolean" />
+          <Property Name="Person_Senior" Type="Boolean" Nullable="false" />
           <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Mobile" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Phones" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
@@ -428,50 +484,9 @@
           <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BirthDate" Type="DateTime" Precision="0" />
           <Property Name="Address_Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Degree" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Person" ToRole="Event" />
         </EntityType>
-        <EntityType Name="Event">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SubType_ID" Type="Int32" Nullable="false" />
-          <Property Name="FirstDate" Type="DateTime" Precision="0" />
-          <Property Name="Person_ID" Type="Int32" />
-          <Property Name="Institute_ID" Type="Int32" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Agent" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="AlertDate" Type="DateTime" Precision="0" />
-          <Property Name="AlertDone" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="Person" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Event" ToRole="Person" />
-          <NavigationProperty Name="EventSubType" Relationship="HypnosisData.FK_Events_SubTypes" FromRole="Event" ToRole="EventSubType" />
-          <NavigationProperty Name="Institute" Relationship="HypnosisData.FK_Events_ToInstitute" FromRole="Event" ToRole="Institute" />
-        </EntityType>
-        <Association Name="FK_Events_ToPerson">
-          <End Type="HypnosisData.Person" Role="Person" Multiplicity="0..1" />
-          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="Person_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Events_SubTypes">
-          <End Type="HypnosisData.EventSubType" Role="EventSubType" Multiplicity="1" />
-          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EventSubType">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="SubType_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Institute">
           <Key>
             <PropertyRef Name="ID" />
@@ -490,6 +505,64 @@
           <Property Name="Address_Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToInstitute" FromRole="Institute" ToRole="Event" />
         </EntityType>
+        <EntityType Name="Agent">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Agent_Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToAgents" FromRole="Agent" ToRole="Event" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="SubType_ID" />
+            <PropertyRef Name="AlertDone" />
+            <PropertyRef Name="CreatedAt" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubType_ID" Type="Int32" Nullable="false" />
+          <Property Name="FirstDate" Type="DateTime" Precision="0" />
+          <Property Name="Person_ID" Type="Int32" />
+          <Property Name="Institute_ID" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AlertDate" Type="DateTime" Precision="0" />
+          <Property Name="AlertDone" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Agent_ID" Type="Int32" />
+          <Property Name="ExpirationDate" Type="DateTime" Precision="0" />
+          <Property Name="FileName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FileHref" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SiteName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Agent" Relationship="HypnosisData.FK_Events_ToAgents" FromRole="Event" ToRole="Agent" />
+          <NavigationProperty Name="EventSubType" Relationship="HypnosisData.FK_Events_ToSubTypes" FromRole="Event" ToRole="EventSubType" />
+          <NavigationProperty Name="Institute" Relationship="HypnosisData.FK_Events_ToInstitute" FromRole="Event" ToRole="Institute" />
+          <NavigationProperty Name="Person" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Event" ToRole="Person" />
+        </EntityType>
+        <Association Name="FK_Events_ToAgents">
+          <End Type="HypnosisData.Agent" Role="Agent" Multiplicity="0..1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Agent">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="Agent_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_ToSubTypes">
+          <End Type="HypnosisData.EventSubType" Role="EventSubType" Multiplicity="1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventSubType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="SubType_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Events_ToInstitute">
           <End Type="HypnosisData.Institute" Role="Institute" Multiplicity="0..1" />
           <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
@@ -499,6 +572,18 @@
             </Principal>
             <Dependent Role="Event">
               <PropertyRef Name="Institute_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_ToPerson">
+          <End Type="HypnosisData.Person" Role="Person" Multiplicity="0..1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="Person_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -589,6 +674,7 @@
           <EntitySetMapping Name="Persons">
             <EntityTypeMapping TypeName="HypnosisData.Person">
               <MappingFragment StoreEntitySet="Persons">
+                <ScalarProperty Name="Degree" ColumnName="Degree" />
                 <ScalarProperty Name="Address_Comments" ColumnName="Address_Comments" />
                 <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
                 <ScalarProperty Name="Comments" ColumnName="Comments" />
@@ -609,24 +695,8 @@
                 <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
                 <ScalarProperty Name="Person_Senior" ColumnName="Person_Senior" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="FamilyName" ColumnName="FamilyName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="TZ" ColumnName="TZ" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Events">
-            <EntityTypeMapping TypeName="HypnosisData.Event">
-              <MappingFragment StoreEntitySet="Events">
-                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
-                <ScalarProperty Name="AlertDone" ColumnName="AlertDone" />
-                <ScalarProperty Name="AlertDate" ColumnName="AlertDate" />
-                <ScalarProperty Name="Agent" ColumnName="Agent" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Institute_ID" ColumnName="Institute_ID" />
-                <ScalarProperty Name="Person_ID" ColumnName="Person_ID" />
-                <ScalarProperty Name="FirstDate" ColumnName="FirstDate" />
-                <ScalarProperty Name="SubType_ID" ColumnName="SubType_ID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -645,6 +715,34 @@
                 <ScalarProperty Name="Phones" ColumnName="Phones" />
                 <ScalarProperty Name="MainPhone" ColumnName="MainPhone" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Agents">
+            <EntityTypeMapping TypeName="HypnosisData.Agent">
+              <MappingFragment StoreEntitySet="Agents">
+                <ScalarProperty Name="Agent_Name" ColumnName="Agent_Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="HypnosisData.Event">
+              <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="SiteName" ColumnName="SiteName" />
+                <ScalarProperty Name="FileHref" ColumnName="FileHref" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ExpirationDate" ColumnName="ExpirationDate" />
+                <ScalarProperty Name="Agent_ID" ColumnName="Agent_ID" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="AlertDone" ColumnName="AlertDone" />
+                <ScalarProperty Name="AlertDate" ColumnName="AlertDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Institute_ID" ColumnName="Institute_ID" />
+                <ScalarProperty Name="Person_ID" ColumnName="Person_ID" />
+                <ScalarProperty Name="FirstDate" ColumnName="FirstDate" />
+                <ScalarProperty Name="SubType_ID" ColumnName="SubType_ID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

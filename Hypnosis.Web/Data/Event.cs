@@ -20,13 +20,18 @@ namespace Hypnosis.Web.Data
         public Nullable<int> Person_ID { get; set; }
         public Nullable<int> Institute_ID { get; set; }
         public string Description { get; set; }
-        public string Agent { get; set; }
         public Nullable<System.DateTime> AlertDate { get; set; }
         public bool AlertDone { get; set; }
         public System.DateTime CreatedAt { get; set; }
+        public Nullable<int> Agent_ID { get; set; }
+        public Nullable<System.DateTime> ExpirationDate { get; set; }
+        public string FileName { get; set; }
+        public string FileHref { get; set; }
+        public string SiteName { get; set; }
     
-        public virtual Person Person { get; set; }
+        public virtual Agent Agent { get; set; }
         public virtual EventSubType EventSubType { get; set; }
         public virtual Institute Institute { get; set; }
+        public virtual Person Person { get; set; }
     }
 }

@@ -1,0 +1,4 @@
+﻿@model Nullable<DateTime>
+
+@Html.TextBox("", Model.HasValue ? Model.Value.Date.ToShortDateString() : string.Empty, new { @class = "datepicker" })
+

@@ -33,7 +33,8 @@ namespace Hypnosis.Web.Data
         public DbSet<webpages_Roles> webpages_Roles { get; set; }
         public DbSet<EventTypeCategory> EventTypeCategories { get; set; }
         public DbSet<Person> Persons { get; set; }
-        public DbSet<Event> Events { get; set; }
         public DbSet<Institute> Institutes { get; set; }
+        public DbSet<Agent> Agents { get; set; }
+        public DbSet<Event> Events { get; set; }
     }
 }

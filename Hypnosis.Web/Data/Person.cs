@@ -21,9 +21,9 @@ namespace Hypnosis.Web.Data
     
         public int ID { get; set; }
         public string TZ { get; set; }
-        public string FamilyName { get; set; }
+        public string LastName { get; set; }
         public string FirstName { get; set; }
-        public Nullable<bool> Person_Senior { get; set; }
+        public bool Person_Senior { get; set; }
         public string DisplayName { get; set; }
         public string Mobile { get; set; }
         public string Phones { get; set; }
@@ -42,6 +42,7 @@ namespace Hypnosis.Web.Data
         public string Comments { get; set; }
         public Nullable<System.DateTime> BirthDate { get; set; }
         public string Address_Comments { get; set; }
+        public string Degree { get; set; }
     
         public virtual ICollection<Event> Events { get; set; }
     }

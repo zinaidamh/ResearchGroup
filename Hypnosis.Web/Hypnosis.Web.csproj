@@ -249,6 +249,9 @@
     <Compile Include="Controllers\InstituteController.cs" />
     <Compile Include="Controllers\JsonResultsController.cs" />
     <Compile Include="Controllers\PersonsController.cs" />
+    <Compile Include="Data\Agent.cs">
+      <DependentUpon>HypnosisData.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\DbOperations\DbEventSubTypes.cs" />
     <Compile Include="Data\DbOperations\DbEventTypes.cs" />
     <Compile Include="Data\DbOperations\DbInstitute.cs" />
@@ -1321,6 +1324,9 @@
     <Content Include="Views\EventSubTypes\Index.cshtml" />
     <Content Include="Views\Persons\Index.cshtml" />
     <Content Include="Views\Institutes\Index.cshtml" />
+    <Content Include="Views\Persons\Edit.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\HttpPostedFileBase.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

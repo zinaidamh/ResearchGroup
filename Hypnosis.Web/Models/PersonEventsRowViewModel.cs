@@ -16,7 +16,7 @@ namespace Hypnosis.Web.Models
 
 
         [Display(Name = "שם משפחה")]
-        public string FamilyName { get; set; }
+        public string LastName { get; set; }
 
         [Display(Name = "שם פרטי")]
         public string FirstName { get; set; }
@@ -111,7 +111,7 @@ namespace Hypnosis.Web.Models
 
 
         [Display(Name = "שם משפחה")]
-        public string FamilyName { get; set; }
+        public string LastName { get; set; }
 
         [Display(Name = "שם פרטי")]
         public string FirstName { get; set; }
@@ -180,17 +180,7 @@ namespace Hypnosis.Web.Models
         [Display(Name = "הערות כתובת")]
         public string Address_Comments { get; set; }
         [Display(Name = "סוג ארוע")]
-        //public int? Type_ID { get; set; }
-        //[Display(Name = "תת סוג ארוע")]
-
-
-
-        //public int? SubType_ID { get; set; }
-        //[Display(Name = "רק ברשימת תפוצה")]
-
-        //public bool? InMailingList { get; set; }
-
-        //[Display(Name = "סוג ארוע")]
+      
         public string Type_Name { get; set; }
     }
 
@@ -209,8 +199,16 @@ namespace Hypnosis.Web.Models
     public class PersonEditModel
     {
 
-        PersonEventsViewModel filter;
+       public  PersonEventsViewModel filter;
 
+       public  PersonDetailsModel details;
+        
+       public  EventsListRowViewModel eventsList;
+
+    }
+
+    public class PersonDetailsModel
+    {
         [ScaffoldColumn(false)]
         public int ID { get; set; }
 
@@ -220,10 +218,13 @@ namespace Hypnosis.Web.Models
 
 
         [Display(Name = "שם משפחה")]
-        public string FamilyName { get; set; }
+        public string LastName { get; set; }
 
         [Display(Name = "שם פרטי")]
         public string FirstName { get; set; }
+
+        [Display(Name = "שם לתצוגה")]
+        public string DisplayName { get; set; }
 
         [Display(Name = "טלפון נייד ")]
         public string Mobile { get; set; }
@@ -238,18 +239,27 @@ namespace Hypnosis.Web.Models
         [Display(Name = "ברשימת תפוצה ? ")]
         public string InMailingListString { get; set; }
 
-        [Display(Name = "מס רשיון פסיכולוגיה")]
+        [Display(Name = "מס רשיון")]
         public string Psyhology_LicenseNumber { get; set; }
 
 
-        [Display(Name = "מס רשיון רפואה")]
+        [Display(Name = "מס רשיון")]
         public string Medicine_LicenseNumber { get; set; }
 
-        [Display(Name = "מספר רשיון רפואת שיניים")]
+        [Display(Name = "מס רשיון")]
         public string Stomatology_LicenseNumber { get; set; }
 
 
-        [Display(Name = "הערות אדם")]
+        [Display(Name = "מומחיות")]
+        public string Psyhology_Specialization { get; set; }
+        
+        [Display(Name = "מומחיות")]
+        public string Medicine_Specialization { get; set; }
+
+        [Display(Name = "מומחיות")]
+        public string Stomatology_Specialization { get; set; }
+
+        [Display(Name = "הערות כלליות")]
         public string Person_Comments { get; set; }
 
         [Display(Name = "תאריך לידה")]
@@ -270,8 +280,6 @@ namespace Hypnosis.Web.Models
         public int? Type_ID { get; set; }
         [Display(Name = "תת סוג ארוע")]
 
-
-
         public int? SubType_ID { get; set; }
         [Display(Name = "רק ברשימת תפוצה")]
 
@@ -281,10 +289,18 @@ namespace Hypnosis.Web.Models
         public string Type_Name { get; set; }
 
 
-        EventsListRowViewModel eventsList;
+        [Display(Name = "בכיר")]
+        public bool Person_Senior { get; set; }
+
+
+        [Display(Name = "תואר")]
+        public string Degree { get; set; }
+
+         [Display(Name = "מספר תיק במשרד הבריאות ")]
+        public string Ministry_CaseNumber { get; set; }
+
 
     }
-
    
 
     public class EventsListRowViewModel

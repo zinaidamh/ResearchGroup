@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[Persons] (
     [ID]            INT            IDENTITY (1, 1) NOT NULL,
 	[TZ]                         NCHAR (9)      CONSTRAINT [DF_tblPersons_TZ] DEFAULT ('') NOT NULL,
-    [FamilyName]                 NVARCHAR (50)  CONSTRAINT [DF_Persons_FamilyName] DEFAULT ('') NOT NULL,
+    [LastName]                 NVARCHAR (50)  CONSTRAINT [DF_Persons_LastName] DEFAULT ('') NOT NULL,
     [FirstName]                  NVARCHAR (50)  CONSTRAINT [DF_Persons_Person_FirstName] DEFAULT ('') NOT NULL,
-    [Person_Senior]              BIT            CONSTRAINT [DF_tblPersons_Person_Senior] DEFAULT ((0)) NULL,
+    [Person_Senior]              BIT            CONSTRAINT [DF_tblPersons_Person_Senior] DEFAULT 0 NOT NULL,
     [DisplayName]                NVARCHAR (50)  NULL,
     [Mobile]                     NVARCHAR (20)  CONSTRAINT [DF_Persons_Person_Mobile] DEFAULT ('') NULL,
     [Phones]                     NVARCHAR (255) NULL,
@@ -22,6 +22,7 @@
     [Comments]                   NVARCHAR (MAX) NULL,
     [Address_Comments] NVARCHAR(MAX) NULL, 
     [BirthDate] DATE NULL, 
+    [Degree] NVARCHAR(50) NULL, 
     CONSTRAINT [PK_Persons] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

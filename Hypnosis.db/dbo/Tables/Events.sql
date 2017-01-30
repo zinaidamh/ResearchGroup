@@ -16,6 +16,7 @@
     CONSTRAINT [FK_Events_ToPerson] FOREIGN KEY ([Person_ID]) REFERENCES [Persons]([ID]), 
     CONSTRAINT [FK_Events_ToSubTypes] FOREIGN KEY ([SubType_ID]) REFERENCES [EventSubTypes]([ID]), 
     CONSTRAINT [FK_Events_ToInstitute] FOREIGN KEY ([Institute_ID]) REFERENCES [Institutes]([ID]), 
-    CONSTRAINT [FK_Events_ToAgents] FOREIGN KEY ([Agent_ID]) REFERENCES [Agents]([ID])
+    CONSTRAINT [FK_Events_ToAgents] FOREIGN KEY ([Agent_ID]) REFERENCES [Agents]([ID]), 
+    CONSTRAINT [PK_Events] PRIMARY KEY ([ID])
 );
 

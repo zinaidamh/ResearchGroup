@@ -23,15 +23,53 @@ namespace Hypnosis.Web.Data.DbOperations
             return source;
         }
 
-        public IQueryable<Person> GetPersons(int ID)
+        public Person GetPersonById(int ID)
         {
-            var persons = GetPersons();
-            var source = from p in persons
-                         where p.ID == ID
-                         select p;
 
-            return source;
+
+            var person = dbContext.Persons.SingleOrDefault(p => p.ID == ID);
+            return person;
         }
+
+
+        public PersonEditModel GetPersonEditModel(Person person)
+        {
+            PersonDetailsModel details = new PersonDetailsModel
+            {
+                Person_Senior=person.Person_Senior,
+                ID=person.ID,
+                TZ=person.TZ,
+                BirthDate=person.BirthDate,
+                FirstName=person.FirstName,
+                LastName=person.LastName,
+                DisplayName=person.DisplayName,
+                InMailingList=person.InMailingList,
+                Degree=person.Degree,
+
+                Mobile=person.Mobile,
+                Phones=person.Phones,
+                City=person.City,
+                ZipCode=person.ZipCode,
+                Address=person.Address,
+                Address_Comments=person.Address_Comments,
+                Person_Comments=person.Comments,
+
+                Psyhology_LicenseNumber=person.Psyhology_LicenseNumber,
+                Psyhology_Specialization=person.Psyhology_Specialization,
+                Medicine_LicenseNumber=person.Medicine_LicenseNumber,
+                Medicine_Specialization=person.Medicine_Specialization,
+                Stomatology_LicenseNumber=person.Stomatology_LicenseNumber,
+                Stomatology_Specialization=person.Stomatology_Specialization
+                
+
+            };
+           
+            PersonEditModel editModel = new PersonEditModel();
+            editModel.details = details;
+
+            return editModel;
+        }
+
 
         public IQueryable<PersonEventsListRowViewModel> GetRows()
         {
@@ -45,7 +83,7 @@ namespace Hypnosis.Web.Data.DbOperations
                               
                        ID=p.ID,
                        TZ=p.TZ,
-                       FamilyName=p.FamilyName,
+                       LastName=p.LastName,
                        FirstName=p.FirstName,
 
                        SubType_ID=events.SubType_ID,
@@ -99,7 +137,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
                        ID = p.ID,
                        TZ = p.TZ,
-                       FamilyName = p.FamilyName,
+                       LastName = p.LastName,
                        FirstName = p.FirstName,
 
                        SubType_ID = events.SubType_ID,
@@ -160,7 +198,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
                        ID = p.ID,
                        TZ = p.TZ,
-                       FamilyName = p.FamilyName,
+                       LastName = p.LastName,
                        FirstName = p.FirstName,
 
                      
@@ -213,14 +251,14 @@ namespace Hypnosis.Web.Data.DbOperations
             if (person == null)
             {
              
-                msg = "האיש לא קיים";
+                msg = "האדם לא קיים";
                 return msg;
               
             }
             if (dbContext.Events.Any(f => f.Person.ID == Id))
             {
             
-                msg = " יש  ארועים-  לא ניתן למחוק את האיש";
+                msg = " יש  ארועים-  לא ניתן למחוק את האדם";
                 return msg;
              
             }
@@ -232,7 +270,7 @@ namespace Hypnosis.Web.Data.DbOperations
             catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
             {
               
-                msg = "הייתה בעיה במחיקת האיש: " + ex.Message;
+                msg = "הייתה בעיה במחיקת האדם: " + ex.Message;
                 return msg;
                
             }
