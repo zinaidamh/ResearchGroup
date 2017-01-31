@@ -1327,6 +1327,11 @@
     <Content Include="Views\Persons\Edit.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\HttpPostedFileBase.cshtml" />
+    <Content Include="Views\Persons\EditorTemplates\PersonDetails.cshtml" />
+    <Content Include="Views\Persons\Create.cshtml" />
+    <Content Include="Views\Institutes\EditorTemplates\InstituteDetails.cshtml" />
+    <Content Include="Views\Institutes\Edit.cshtml" />
+    <Content Include="Views\Institutes\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

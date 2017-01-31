@@ -151,6 +151,64 @@ namespace Hypnosis.Web.Models
     }
 
 
+    public class InstituteDetailsModel
+    {
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+        [Display(Name = "שם המכון")]
+        public string Name { get; set; }
+
+        [Display(Name = "טלפון ראשי ")]
+        public string MainPhone { get; set; }
+
+        [Display(Name = "טלפונים נוספים")]
+        public string Phones { get; set; }
+
+
+        [Display(Name = "דוא\"ל")]
+        public string Email { get; set; }
+
+        [Display(Name = "ברשימת תפוצה ? ")]
+        public bool InMailingList { get; set; }
+
+
+
+        [Display(Name = "הערות מכון")]
+        public string Institute_Comments { get; set; }
+
+
+
+        [Display(Name = "רחוב ומספר")]
+        public string Address { get; set; }
+
+        [Display(Name = "ישוב")]
+        public string City { get; set; }
+
+        [Display(Name = "מיקןד")]
+        public string ZipCode { get; set; }
+
+        [Display(Name = "הערות כתובת")]
+        public string Address_Comments { get; set; }
+   
+
+    }
+
+    public class InstituteCreateModel
+    {
+        public InstituteDetailsModel details { get; set; }
+        public InstituteEventsViewModel filter { get; set; }
+    }
+
+
+    public class InstituteEditModel
+    {
+        public InstituteDetailsModel details  { get; set; }
+        public InstituteEventsViewModel filter  { get; set; }
+        public EventsListRowViewModel eventsList { get; set; }
+    }
+
+
     public class InstituteEventsViewModel
     {
         [Display(Name = "סוג ארוע")]

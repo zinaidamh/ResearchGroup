@@ -6,11 +6,13 @@ using System.Web.Mvc;
 using Hypnosis.Web.Models;
 using Hypnosis.Web.Data;
 using Hypnosis.Web.Controllers;
+using System.Data.Entity.Validation;
 
 namespace Hypnosis.Web.Data.DbOperations
 {
     public class DbInstitute : OperationBase
     {
+        public static string tbl = "Institutes";
 
         public IQueryable<Institute> GetInstitutes()
         {
@@ -22,6 +24,49 @@ namespace Hypnosis.Web.Data.DbOperations
 
             return source;
         }
+
+
+
+        public Institute GetInstituteById(int ID)
+        {
+
+
+            var institute = dbContext.Institutes.SingleOrDefault(p => p.ID == ID);
+            return institute;
+        }
+
+
+        public InstituteEditModel GetInstituteEditModel(Institute institute)
+        {
+            InstituteDetailsModel details = new InstituteDetailsModel
+            {
+              
+                ID = institute.ID,
+               
+             
+                Name = institute.Name,
+                InMailingList = institute.InMailingList,
+             
+
+                MainPhone = institute.MainPhone,
+                Phones = institute.Phones,
+                Email = institute.Email,
+                City = institute.City,
+                ZipCode = institute.ZipCode,
+                Address = institute.Address,
+                Address_Comments = institute.Address_Comments,
+                Institute_Comments = institute.Comments,
+
+              
+
+            };
+
+            InstituteEditModel editModel = new InstituteEditModel();
+            editModel.details = details;
+
+            return editModel;
+        }
+
 
         public IQueryable<InstituteEventsListRowViewModel> GetRows()
         {
@@ -77,7 +122,7 @@ namespace Hypnosis.Web.Data.DbOperations
         public List<InstituteEventsListRowExportModel> GetExportRows(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
             IQueryable<Institute> data = GetInstitutes();
-            var personEvents = from p in data
+            var instituteEvents = from p in data
                                let events = dbContext.Events.OrderByDescending(f => f.ID).FirstOrDefault(f => f.Institute_ID == p.ID) //temporal
 
 
@@ -125,17 +170,17 @@ namespace Hypnosis.Web.Data.DbOperations
 
             if (Type_ID.HasValue)
             {
-                personEvents = personEvents.Where(f => f.Type_ID == Type_ID);
+                instituteEvents = instituteEvents.Where(f => f.Type_ID == Type_ID);
             }
             if (SubType_ID.HasValue)
             {
-                personEvents = personEvents.Where(f => f.SubType_ID == SubType_ID);
+                instituteEvents = instituteEvents.Where(f => f.SubType_ID == SubType_ID);
             }
             if (InMailingListOnly == true)
             {
-                personEvents = personEvents.Where(f => f.InMailingList == InMailingListOnly);
+                instituteEvents = instituteEvents.Where(f => f.InMailingList == InMailingListOnly);
             }
-            var source = personEvents.ToList();
+            var source = instituteEvents.ToList();
 
             var export = from p in source
                          select new InstituteEventsListRowExportModel
@@ -185,13 +230,110 @@ namespace Hypnosis.Web.Data.DbOperations
 
         }
 
+        public void CreateUpdate(InstituteDetailsModel model, bool isUpdate)
+        {
+            string operation = tbl + " Create Update ";
+            Logger.Log.Debug(operation + " Begin ");
+            var institute = new Institute();
+
+            if (isUpdate)
+            {
+                institute = dbContext.Institutes.SingleOrDefault(f => f.ID == model.ID);
+                if (institute == null)
+                {
+                    throw new Exception("האדם לא קיים");
+                }
+
+            }
+
+            //mandatory
+          
+
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                throw new Exception("שם חובה");
+            }
+
+
+            
+
+
+          
+            institute.Name = model.Name;
+            institute.Address = model.Address;
+            institute.Address_Comments = model.Address_Comments;
+         
+            institute.City = model.City;
+        
+            institute.Email = model.Email;
+            institute.InMailingList = model.InMailingList;
+            institute.MainPhone = model.MainPhone;
+            institute.Comments = model.Institute_Comments;
+            institute.Phones = model.Phones;
+            institute.ZipCode = model.ZipCode;
+
+
+
+
+            try
+            {
+                if (!isUpdate)
+                {
+                    dbContext.Institutes.Add(institute);
+                }
+                dbContext.SaveChanges();
+
+            }
+            catch (DbEntityValidationException e)
+            {
+                string msgs = "";
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Logger.Log.ErrorFormat("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Logger.Log.ErrorFormat("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                        msgs += ": " + ve.ErrorMessage;
+                    }
+                }
+                throw new Exception("הייתה בעיה בשמירת הנתונים" + msgs);
+            }
+            catch (Exception ex)
+            {
+                string msg = "";
+                if (ex.InnerException != null)
+                {
+                    var inner = ex.InnerException;
+                    while (inner != null)
+                    {
+                        if (inner.InnerException != null)
+                        {
+                            inner = inner.InnerException;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    msg = inner.Message;
+                }
+                else
+                {
+                    msg = ex.Message;
+                }
+                throw new Exception("הייתה בעיה בשמירת הנתונים: " + msg);
+            }
+            Logger.Log.Debug(operation + " End ");
+        }
 
         public string Delete(int Id)
         {
 
             string msg = "";
-            var person = dbContext.Institutes.SingleOrDefault(f => f.ID == Id);
-            if (person == null)
+            var institute = dbContext.Institutes.SingleOrDefault(f => f.ID == Id);
+            if (institute == null)
             {
 
                 msg = "המכון לא קיים";
@@ -207,7 +349,7 @@ namespace Hypnosis.Web.Data.DbOperations
             }
             try
             {
-                dbContext.Institutes.Remove(person);
+                dbContext.Institutes.Remove(institute);
                 dbContext.SaveChanges();
             }
             catch (System.Data.Entity.Infrastructure.DbUpdateException ex)

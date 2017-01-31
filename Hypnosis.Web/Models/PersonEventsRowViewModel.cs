@@ -91,7 +91,7 @@ namespace Hypnosis.Web.Models
           
      
         public int? SubType_ID { get; set; }
-        [Display(Name = "רק ברשימת תפוצה")]
+        [Display(Name = "? ברשימת תפוצה")]
 
         public bool? InMailingList { get; set; }
 
@@ -199,11 +199,23 @@ namespace Hypnosis.Web.Models
     public class PersonEditModel
     {
 
-       public  PersonEventsViewModel filter;
+       public  PersonEventsViewModel filter { get; set; }
 
-       public  PersonDetailsModel details;
+        [UIHint("PersonDetails")]
+        public  PersonDetailsModel details {get; set; }
         
-       public  EventsListRowViewModel eventsList;
+       public  EventsListRowViewModel eventsList {get; set; }
+
+    }
+
+    public class PersonCreateModel
+    {
+
+        public PersonEventsViewModel filter { get; set; }
+
+        [UIHint("PersonDetails")]
+        public PersonDetailsModel details { get; set; }
+
 
     }
 

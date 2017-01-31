@@ -116,6 +116,11 @@ input[type="checkbox"].input-validation-error {
     }
     
 
+    .text-area-big {
+  
+    min-width:100%;
+    }
+    
 
 .form-inline-margins input, button, select, textarea {
     border-style: solid;
@@ -136,9 +141,10 @@ input[type="checkbox"].input-validation-error {
     margin-right: 5px;
     
 }
-.form-inline-margins label,
+
+.form-inline-margins .label,
 .form-inline-margins .form-control {
     margin-right: 15px;
+ }
 
-  
-}
+

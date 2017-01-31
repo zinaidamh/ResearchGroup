@@ -62,22 +62,7 @@ namespace Hypnosis.Web.Controllers
             return new Models.DataTables.DataTablesActionResult<InstituteEventsListRowViewModel>(source, input, prefilter);
         }
 
-        //public ActionResult Edit(int Id)
-        //{
-        //    //var employee = dbContext.TblEmployees.SingleOrDefault(f => f.E_Id == Id);
-        //    //if (employee == null)
-        //    //{
-        //    //    return RedirectToAction("Index", new { statusId = statusId, managerId = managerId, jobId = jobId });
-        //    //}
-        //    //var model = GetDetailsModel(employee);
-        //    //model.Filter = new EmployeesViewModel
-        //    //{
-        //    //    StatusId = statusId,
-        //    //    ManagerId = managerId,
-        //    //    FilterJobId = jobId
-        //    //};
-        //   // return View(model);
-        //}
+       
         public ActionResult Export(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
             var source = InstituteOperations.GetExportRows(Type_ID, SubType_ID, InMailingListOnly);
@@ -97,6 +82,73 @@ namespace Hypnosis.Web.Controllers
 
 
         }
+
+
+        public ActionResult Edit(int Id, int? type_ID, int? subType_ID, bool inMailingListOnly)
+        {
+            Institute person = InstituteOperations.GetInstituteById(Id);
+            if (person == null)
+            {
+                return RedirectToAction("Index", new { Type_ID = type_ID, SubType_ID = subType_ID, InMailingListOnly = inMailingListOnly });
+            }
+            InstituteEditModel model = InstituteOperations.GetInstituteEditModel(person);
+            model.filter = new InstituteEventsViewModel
+            {
+                Type_ID = type_ID,
+                SubType_ID = subType_ID,
+                InMailingListOnly = inMailingListOnly
+            };
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Edit(InstituteEditModel model)
+        {
+            try
+            {
+
+                InstituteOperations.CreateUpdate(model.details, true);
+                return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
+
+
+        public ActionResult Create(int? type_ID, int? subType_ID, bool inMailingListOnly)
+        {
+            var model = new InstituteCreateModel();
+
+            model.filter = new InstituteEventsViewModel
+            {
+                Type_ID = type_ID,
+                SubType_ID = subType_ID,
+                InMailingListOnly = inMailingListOnly
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Create(InstituteCreateModel model)
+        {
+            try
+            {
+
+                InstituteOperations.CreateUpdate(model.details, false);
+                return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
+
+
 
     }
 }

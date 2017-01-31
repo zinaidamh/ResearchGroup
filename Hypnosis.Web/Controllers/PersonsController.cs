@@ -13,11 +13,16 @@ namespace Hypnosis.Web.Controllers
     {
         //
         // GET: /Persons/
-         private DbPerson PersonOperations;
+
+     
+        private DbPerson PersonOperations;
         public PersonsController()
         {
             dbOperation = new DbPerson();
             PersonOperations = (DbPerson)dbOperation;
+          
+
+           
         }
         public ActionResult Index(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
@@ -78,6 +83,55 @@ namespace Hypnosis.Web.Controllers
             };
             return View(model);
         }
+
+
+        [HttpPost]
+        public ActionResult Edit(PersonEditModel model)
+        {
+            try
+            {
+               
+                PersonOperations.CreateUpdate(model.details,true);
+                return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
+
+
+        public ActionResult Create(int? type_ID, int? subType_ID, bool inMailingListOnly)
+        {
+            var model = new PersonCreateModel();
+
+            model.filter = new PersonEventsViewModel
+            {
+                Type_ID = type_ID,
+                SubType_ID = subType_ID,
+                InMailingListOnly = inMailingListOnly
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Create(PersonCreateModel model)
+        {
+            try
+            {
+
+                PersonOperations.CreateUpdate(model.details, false);
+                return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
+
+
 
         public ActionResult Export(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {

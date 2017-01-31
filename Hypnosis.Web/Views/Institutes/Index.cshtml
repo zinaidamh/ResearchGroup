@@ -163,13 +163,20 @@
     //last event     
 
                    {
-                       "mData": "Name", 
-                       "sTitle": "שם המכון",
+                       "mData": "Id", 
+                       "sTitle": "",
                        "bSortable": false,
                        "mRender": function (a, b, c) {
-                        return '<a href="@Url.Action("Edit", "Institutes")?Id=' + c.ID + '" class="btn"><i class="fa fa-pencil-square-o"></i></a>';
+                           return '<a href="@Url.Action("Edit", "Institutes")?Id=' + c.ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=' + chkInMailingListOnly.is(':checked') + '" class="btn"><i class="fa fa-pencil-square-o"></i></a>';
+
          }
-     },
+                   },
+
+                    {
+                        "mData": "Name",
+                        "sTitle": "שם המכון"
+                        
+                    },
 
                     {
                       "mData": "FirstDate",

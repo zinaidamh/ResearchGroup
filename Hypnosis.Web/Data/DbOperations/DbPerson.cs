@@ -6,12 +6,13 @@ using System.Web.Mvc;
 using Hypnosis.Web.Models;
 using Hypnosis.Web.Data;
 using Hypnosis.Web.Controllers;
+using System.Data.Entity.Validation;
 
 namespace Hypnosis.Web.Data.DbOperations
 {
     public class DbPerson: OperationBase
     {
-
+        public static string tbl = "Persons";
         public IQueryable<Person> GetPersons()
         {
             IQueryable<Person> source = null;
@@ -48,6 +49,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
                 Mobile=person.Mobile,
                 Phones=person.Phones,
+                Email=person.Email,
                 City=person.City,
                 ZipCode=person.ZipCode,
                 Address=person.Address,
@@ -59,8 +61,8 @@ namespace Hypnosis.Web.Data.DbOperations
                 Medicine_LicenseNumber=person.Medicine_LicenseNumber,
                 Medicine_Specialization=person.Medicine_Specialization,
                 Stomatology_LicenseNumber=person.Stomatology_LicenseNumber,
-                Stomatology_Specialization=person.Stomatology_Specialization
-                
+                Stomatology_Specialization=person.Stomatology_Specialization,
+                Ministry_CaseNumber=person.Ministry_CaseNumber
 
             };
            
@@ -116,9 +118,9 @@ namespace Hypnosis.Web.Data.DbOperations
 
                        BirthDate = p.BirthDate,
                        Address=p.Address,
-                       Address_Comments=p.Address_Comments
+                       Address_Comments=p.Address_Comments,
 
-
+                       ZipCode=p.ZipCode
                     
                    };
         }
@@ -242,6 +244,122 @@ namespace Hypnosis.Web.Data.DbOperations
 
         }
 
+
+
+        public void CreateUpdate(PersonDetailsModel model, bool isUpdate)
+        {
+            string operation = tbl + " Create Update ";
+            Logger.Log.Debug(operation + " Begin ");
+            var person=new Person();
+          
+            if (isUpdate)
+            {
+                 person = dbContext.Persons.SingleOrDefault(f => f.ID == model.ID);
+                if (person == null)
+                {
+                    throw new Exception("האדם לא קיים");
+                }
+               
+            }
+            
+            //mandatory
+            if (string.IsNullOrEmpty(model.TZ))
+            {
+                throw new Exception("שדה ת.ז. הוא חובה");
+            }
+
+            if (string.IsNullOrEmpty(model.FirstName))
+            {
+                throw new Exception("שם פרטי הוא חובה");
+            }
+
+
+            if (string.IsNullOrEmpty(model.LastName))
+            {
+                throw new Exception("שם משפחה הוא חובה");
+            }
+
+
+            person.FirstName=model.FirstName;
+            person.LastName=model.LastName;
+            person.TZ = model.TZ;
+            person.Address = model.Address;
+            person.Address_Comments = model.Address_Comments;
+            person.BirthDate = model.BirthDate;
+            person.City = model.City;
+            person.Degree = model.Degree;
+            person.DisplayName = model.DisplayName;
+            person.Email = model.Email;
+            person.InMailingList = model.InMailingList.HasValue ? (bool) model.InMailingList : false;
+            person.Medicine_LicenseNumber = model.Medicine_LicenseNumber;
+            person.Medicine_Specialization = model.Medicine_Specialization;
+            person.Ministry_CaseNumber = model.Ministry_CaseNumber;
+            person.Mobile = model.Mobile;
+            person.Comments = model.Person_Comments;
+            person.Phones = model.Phones;
+            person.Psyhology_LicenseNumber = model.Psyhology_LicenseNumber;
+            person.Psyhology_Specialization = model.Psyhology_Specialization;
+            person.Person_Senior = model.Person_Senior;
+            person.Stomatology_LicenseNumber = model.Stomatology_LicenseNumber;
+            person.Stomatology_Specialization = model.Stomatology_Specialization;
+            person.ZipCode = model.ZipCode;
+            
+            
+           
+           
+            try
+            {
+                if (!isUpdate)
+                {
+                    dbContext.Persons.Add(person);
+                }
+                dbContext.SaveChanges();
+                     
+            }
+            catch (DbEntityValidationException e)
+            {
+                string msgs = "";
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Logger.Log.ErrorFormat("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Logger.Log.ErrorFormat("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                        msgs += ": " + ve.ErrorMessage;
+                    }
+                }
+                throw new Exception("הייתה בעיה בשמירת הנתונים" + msgs);
+            }
+            catch (Exception ex)
+            {
+                string msg = "";
+                if (ex.InnerException != null)
+                {
+                    var inner = ex.InnerException;
+                    while (inner != null)
+                    {
+                        if (inner.InnerException != null)
+                        {
+                            inner = inner.InnerException;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    msg = inner.Message;
+                }
+                else
+                {
+                    msg = ex.Message;
+                }
+                throw new Exception("הייתה בעיה בשמירת הנתונים: " + msg);
+            }
+            Logger.Log.Debug(operation + " End ");
+        }
+    
 
         public string Delete(int Id)
         {
