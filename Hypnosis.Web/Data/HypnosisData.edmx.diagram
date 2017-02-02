@@ -18,12 +18,12 @@
         <EntityTypeShape EntityType="HypnosisData.Person" Width="1.5" PointX="5.375" PointY="9.75" />
         <EntityTypeShape EntityType="HypnosisData.Institute" Width="1.5" PointX="5.375" PointY="1" />
         <EntityTypeShape EntityType="HypnosisData.Agent" Width="1.5" PointX="3.375" PointY="6.875" />
-        <EntityTypeShape EntityType="HypnosisData.Event" Width="1.5" PointX="9.625" PointY="5" />
+        <EntityTypeShape EntityType="HypnosisData.Event" Width="1.5" PointX="9.625" PointY="5.125" />
         <AssociationConnector Association="HypnosisData.FK_Events_ToAgents" />
-        <AssociationConnector Association="HypnosisData.FK_Events_ToSubTypes" />
         <AssociationConnector Association="HypnosisData.FK_Events_ToInstitute" />
         <AssociationConnector Association="HypnosisData.FK_Events_ToPerson" />
-      </Diagram>
+        <AssociationConnector Association="HypnosisData.FK_Events_ToSubTypes" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

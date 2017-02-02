@@ -35,6 +35,13 @@ namespace Hypnosis.Web.Controllers
         }
 
 
+        public JsonResult GetEventTypesJson_ByCategory(string q, int? category_id, int page, int page_limit)
+        {
+            dbOperation = new DbEventTypes();
+            var data = ((DbEventTypes)dbOperation).getEventTypes(q, category_id, page, page_limit);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult EventTypeCategoriesInitJson(int? value)
         {
             dbOperation = new DbEventTypes();
@@ -50,6 +57,7 @@ namespace Hypnosis.Web.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+       
 
    public JsonResult EventSubTypesInitJson(int? value)
         {

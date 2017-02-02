@@ -12,14 +12,9 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Agent_Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Events">
           <Key>
             <PropertyRef Name="ID" />
-            <PropertyRef Name="SubType_ID" />
-            <PropertyRef Name="AlertDone" />
-            <PropertyRef Name="CreatedAt" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SubType_ID" Type="int" Nullable="false" />
@@ -33,8 +28,7 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
           <Property Name="Agent_ID" Type="int" />
           <Property Name="ExpirationDate" Type="date" />
           <Property Name="FileName" Type="nvarchar" MaxLength="50" />
-          <Property Name="FileHref" Type="nvarchar(max)" />
-          <Property Name="SiteName" Type="nvarchar" MaxLength="50" />
+          <Property Name="SiteHref" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="EventSubTypes">
           <Key>
@@ -252,6 +246,7 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
         </Association>
         <EntityContainer Name="HypnosisDataStoreContainer">
           <EntitySet Name="Agents" EntityType="Self.Agents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventSubTypes" EntityType="Self.EventSubTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventTypeCategories" EntityType="Self.EventTypeCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventTypes" EntityType="Self.EventTypes" Schema="dbo" store:Type="Tables" />
@@ -262,24 +257,6 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
           <EntitySet Name="webpages_OAuthMembership" EntityType="Self.webpages_OAuthMembership" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_Roles" EntityType="Self.webpages_Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_UsersInRoles" EntityType="Self.webpages_UsersInRoles" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Events" EntityType="Self.Events" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Events].[ID] AS [ID], 
-    [Events].[SubType_ID] AS [SubType_ID], 
-    [Events].[FirstDate] AS [FirstDate], 
-    [Events].[Person_ID] AS [Person_ID], 
-    [Events].[Institute_ID] AS [Institute_ID], 
-    [Events].[Description] AS [Description], 
-    [Events].[AlertDate] AS [AlertDate], 
-    [Events].[AlertDone] AS [AlertDone], 
-    [Events].[CreatedAt] AS [CreatedAt], 
-    [Events].[Agent_ID] AS [Agent_ID], 
-    [Events].[ExpirationDate] AS [ExpirationDate], 
-    [Events].[FileName] AS [FileName], 
-    [Events].[FileHref] AS [FileHref], 
-    [Events].[SiteName] AS [SiteName]
-    FROM [dbo].[Events] AS [Events]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_Events_ToAgents" Association="Self.FK_Events_ToAgents">
             <End Role="Agents" EntitySet="Agents" />
             <End Role="Events" EntitySet="Events" />
@@ -412,10 +389,6 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
             <End Role="Agent" EntitySet="Agents" />
             <End Role="Event" EntitySet="Events" />
           </AssociationSet>
-          <AssociationSet Name="FK_Events_ToSubTypes" Association="HypnosisData.FK_Events_ToSubTypes">
-            <End Role="EventSubType" EntitySet="EventSubTypes" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
           <AssociationSet Name="FK_Events_ToInstitute" Association="HypnosisData.FK_Events_ToInstitute">
             <End Role="Institute" EntitySet="Institutes" />
             <End Role="Event" EntitySet="Events" />
@@ -424,7 +397,11 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
             <End Role="Person" EntitySet="Persons" />
             <End Role="Event" EntitySet="Events" />
           </AssociationSet>
-        </EntityContainer>
+          <AssociationSet Name="FK_Events_ToSubTypes" Association="HypnosisData.FK_Events_ToSubTypes">
+            <End Role="EventSubType" EntitySet="EventSubTypes" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="EventTypeCategory">
           <Key>
             <PropertyRef Name="ID" />
@@ -516,9 +493,6 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
         <EntityType Name="Event">
           <Key>
             <PropertyRef Name="ID" />
-            <PropertyRef Name="SubType_ID" />
-            <PropertyRef Name="AlertDone" />
-            <PropertyRef Name="CreatedAt" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SubType_ID" Type="Int32" Nullable="false" />
@@ -532,12 +506,11 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
           <Property Name="Agent_ID" Type="Int32" />
           <Property Name="ExpirationDate" Type="DateTime" Precision="0" />
           <Property Name="FileName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="FileHref" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SiteName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SiteHref" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Agent" Relationship="HypnosisData.FK_Events_ToAgents" FromRole="Event" ToRole="Agent" />
-          <NavigationProperty Name="EventSubType" Relationship="HypnosisData.FK_Events_ToSubTypes" FromRole="Event" ToRole="EventSubType" />
           <NavigationProperty Name="Institute" Relationship="HypnosisData.FK_Events_ToInstitute" FromRole="Event" ToRole="Institute" />
           <NavigationProperty Name="Person" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Event" ToRole="Person" />
+          <NavigationProperty Name="EventSubType" Relationship="HypnosisData.FK_Events_ToSubTypes" FromRole="Event" ToRole="EventSubType" />
         </EntityType>
         <Association Name="FK_Events_ToAgents">
           <End Type="HypnosisData.Agent" Role="Agent" Multiplicity="0..1" />
@@ -548,18 +521,6 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
             </Principal>
             <Dependent Role="Event">
               <PropertyRef Name="Agent_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Events_ToSubTypes">
-          <End Type="HypnosisData.EventSubType" Role="EventSubType" Multiplicity="1" />
-          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EventSubType">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="SubType_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -587,7 +548,19 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <Association Name="FK_Events_ToSubTypes">
+          <End Type="HypnosisData.EventSubType" Role="EventSubType" Multiplicity="1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventSubType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="SubType_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -730,8 +703,7 @@ warning 6002: The table/view 'Hypnosis.dbo.Events' does not have a primary key d
           <EntitySetMapping Name="Events">
             <EntityTypeMapping TypeName="HypnosisData.Event">
               <MappingFragment StoreEntitySet="Events">
-                <ScalarProperty Name="SiteName" ColumnName="SiteName" />
-                <ScalarProperty Name="FileHref" ColumnName="FileHref" />
+                <ScalarProperty Name="SiteHref" ColumnName="SiteHref" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="ExpirationDate" ColumnName="ExpirationDate" />
                 <ScalarProperty Name="Agent_ID" ColumnName="Agent_ID" />

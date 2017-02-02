@@ -152,7 +152,7 @@ namespace Hypnosis.Web.Data.DbOperations
             });
         }
 
-        public s2result getEventTypes(string q, int category, int page, int page_limit)
+        public s2result getEventTypes(string q, int? category, int page, int page_limit)
         {
             var dbq = from a in dbContext.EventTypes
                       select new
@@ -166,7 +166,7 @@ namespace Hypnosis.Web.Data.DbOperations
             {
                 dbq = dbq.Where(f => f.text.Contains(q));
             }
-            if (category != 0)
+            if (category.HasValue && category != 0 )
             {
                 dbq = dbq.Where(f => f.category == category);
             }
@@ -200,6 +200,8 @@ namespace Hypnosis.Web.Data.DbOperations
         public s2result getEventTypeCategories(string q, int page, int page_limit)
         {
             var dbq = from a in dbContext.EventTypeCategories
+                       
+                      
                       select new
                       {
                           id = a.ID,
@@ -209,6 +211,7 @@ namespace Hypnosis.Web.Data.DbOperations
             {
                 dbq = dbq.Where(f => f.text.Contains(q));
             }
+           
             var aa = dbq.OrderBy(f => f.text).ToList().Select(f => new s2item { id = f.id, text = f.text });
 
             return new s2result

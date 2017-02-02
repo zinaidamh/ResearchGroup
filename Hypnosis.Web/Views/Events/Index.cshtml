@@ -1,0 +1,480 @@
+﻿@model Hypnosis.Web.Models.EventsFilterViewModel
+@{
+    ViewBag.Title = "רשימת אנשים";
+}
+
+<h2 class="page-header">@ViewBag.Title</h2>
+
+<div class="panel panel-default ">
+    <div class="panel-heading">
+    </div>
+    <div class="panel-body">
+        <div id="Filter1" class="form-inline form-inline-margins">
+            <div class="form-group">
+                @Html.LabelFor(f => f.Category_ID)
+                @Html.EditorFor(f => f.Category_ID)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.Type_ID)
+                @Html.EditorFor(f => f.Type_ID)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.SubType_ID)
+                @Html.EditorFor(f => f.SubType_ID)
+            </div>
+
+            <div id="Filter2" class="form-inline">
+                <div class="form-group">
+                    @Html.LabelFor(f => f.fromDate)
+                    @Html.EditorFor(f => f.fromDate)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(f => f.toDate)
+                    @Html.EditorFor(f => f.toDate)
+                </div>
+            </div>
+            <div id="Filter3" class="form-inline">
+                <div class="form-group">
+                    @Html.LabelFor(f => f.EssenceOnly,htmlAttributes: new { @class = "control-label label-title" })
+                    @Html.CheckBoxFor(f => f.EssenceOnly)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(f => f.OpenOnly, htmlAttributes: new { @class = "control-label label-title" })
+                    @Html.CheckBoxFor(f => f.OpenOnly)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(f => f.ExpiredOnly, htmlAttributes: new { @class = "control-label label-title" })
+                    @Html.CheckBoxFor(f => f.ExpiredOnly)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(f => f.SiteOnly, htmlAttributes: new { @class = "control-label label-title" })
+                    @Html.CheckBoxFor(f => f.SiteOnly)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(f => f.FileOnly, htmlAttributes: new { @class = "control-label label-title" })
+                    @Html.CheckBoxFor(f => f.FileOnly)
+                </div>
+            </div>
+            <br />
+            <table id="events" class="table table-striped table-bordered dataTable no-footer" style="overflow:auto"></table>
+        </div>
+<div class="panel-body">
+  
+    <button type="button" class="btn btn-primary" id="exportBtn">יצוא אירוים</button>
+</div>
+
+@section Scripts{
+    <script>
+    $(function () {
+
+
+        var selectType = $('#@Html.FieldIdFor(f => f.Type_ID)').select2({
+            width: 200,
+            placeholder: "הכל",
+            allowClear: true,
+            initSelection: function (element, callback) {
+                $.ajax({
+                    url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
+                    type: "GET",
+                    data: { value: $(element).val() },
+                    dataType: "json"
+                }).done(function (data) {
+                    if (data && data.length == 1) {
+                        callback(data[0]);
+                    }
+                });
+            },
+            ajax: {
+                url: '@Url.Content("~/JsonResults/GetEventTypesJson_ByCategory")',
+                dataType: "json",
+                data: function (term, page) {
+                    return {
+                        q: term, // search term
+                        category_id: selectCategory.select2('val'),
+                        page: page,
+                        page_limit: 10,
+                        val: this.val()
+                    };
+                },
+                results: function (data, page) {
+                    return {
+                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                    };
+                }
+            }
+        });
+
+
+        var selectSubType = $('#@Html.FieldIdFor(f => f.SubType_ID)').select2({
+            width: 200,
+            placeholder: "הכל",
+            allowClear: true,
+            initSelection: function (element, callback) {
+                $.ajax({
+                    url: '@Url.Content("~/JsonResults/EventSubTypesInitJson")',
+                    type: "GET",
+                    data: { value: $(element).val() },
+                    dataType: "json"
+                }).done(function (data) {
+                    if (data && data.length == 1) {
+                        callback(data[0]);
+                    }
+                });
+            },
+            ajax: {
+                url: '@Url.Content("~/JsonResults/GetEventSubTypesJson")',
+                dataType: "json",
+                data: function (term, page) {
+                    return {
+                        typeId: selectType.select2('val'),
+                        q: term, // search term
+                        page: page,
+                        page_limit: 10,
+                        val: this.val()
+                    };
+                },
+                results: function (data, page) {
+                    return {
+                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                    };
+                }
+            }
+        });
+
+
+        var selectCategory = $('#@Html.FieldIdFor(f => f.Category_ID)').select2({
+            width: 200,
+            placeholder: "הכל",
+            allowClear: true,
+            initSelection: function (element, callback) {
+                $.ajax({
+                    url: '@Url.Content("~/JsonResults/EventTypeCategoriesInitJson")',
+                    data: { value: $(element).val() },
+                    dataType: "json"
+                }).done(function (data) {
+                    if (data && data.length == 1) {
+                        callback(data[0]);
+                    }
+                });
+            },
+            ajax: {
+                url: '@Url.Content("~/JsonResults/GetEventTypeCategoriesJson")',
+                dataType: "json",
+                data: function (term, page) {
+                    return {
+                       
+                        q: term, // search term
+                        page: page,
+                        page_limit: 10,
+                        val: this.val()
+                    };
+                },
+                results: function (data, page) {
+                    return {
+                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                    };
+                }
+            }
+        });
+
+
+
+
+
+        var chkEssenseOnly = $('#@Html.FieldIdFor(f => f.EssenceOnly)');
+        var chkExpiredOnly = $('#@Html.FieldIdFor(f => f.ExpiredOnly)');
+        var chkOpenOnly = $('#@Html.FieldIdFor(f => f.OpenOnly)');
+        var chkFileOnly = $('#@Html.FieldIdFor(f => f.FileOnly)');
+        var chkSiteOnly = $('#@Html.FieldIdFor(f => f.SiteOnly)');
+
+        var fromDate = $('#@Html.FieldIdFor(f => f.fromDate)');
+        var toDate = $('#@Html.FieldIdFor(f => f.toDate)');
+
+
+
+        var oTable = $('#events');
+        oTable.dataTable({
+            stateSave: true,
+            "aaSorting": [[3, 'asc']],
+            "sAjaxSource": "@Url.Action("IndexData")",
+
+            "fnServerParams": function (aoData) {
+                aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
+                aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+                aoData.push({ "name": "Category_ID", "value": selectType.select2('val') });
+                aoData.push({ "name": "fromDate", "value": fromDate.val() });
+                aoData.push({ "name": "toDate", "value": toDate.val() });
+
+                aoData.push({ "name": "EssenseOnly", "value": chkEssenseOnly.is(':checked') });
+                aoData.push({ "name": "ExpiredOnly", "value": chkExpiredOnly.is(':checked') });
+                aoData.push({ "name": "OpenOnly", "value": chkOpenOnly.is(':checked') });
+                aoData.push({ "name": "FileOnly", "value": chkFileOnly.is(':checked') });
+                aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
+
+
+
+
+                console.log(aoData);
+            },
+            "fnDrawCallback": function (oSettings) {
+                if (oSettings.aoData.length == 0) {
+                    oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
+                }
+                else {
+                    oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
+                }
+
+
+            },
+
+            "aoColumns": [
+                {
+                    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
+                    "bSortable": false,
+                    "mRender": function (a, b, c) {
+                        if (b === 'display') {
+                            return '<input type="checkbox" name="ToChange" class="Selector" value="' + c.ID + '" />';
+                        }
+                        return a;
+                    }
+                },
+                {
+                    "mData": null, "sTitle": "",
+                    "bSortable": false,
+                    "mRender": function (a, b, c) {
+                        return '<a href="#" class="btn" onclick="confirmDelete(' + c.ID + ')" ><i class="fa fa-times"></i></a>';
+
+                    }
+                },
+                
+
+               {
+                   "mData": "FirstDate",
+                   "sTitle": "תאריך אירוע תחילה",
+                   "mRender": function (a) { return mRenderDate(a); }
+               },
+
+                {
+                    "mData": "Category_Name",
+                    "sTitle": "  קטגוריית ארוע"
+                },
+                 {
+                     "mData": "SubType_Name",
+                     "sTitle": "תת סוג ארוע "
+                 },
+                  {
+                      "mData": "Type_Name",
+                      "sTitle": " סוג ארוע "
+                  },
+
+                  {
+                      "mData": "TZ", "sTitle": "ת.ז.",
+                      "bSortable": false,
+                      "mRender": function (a, b, c) {
+                          if (c.Person_ID != null) {
+                              return '<a href="@Url.Action("Edit", "Persons")?Id=' + c.Person_ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=false' + '" >'+ c.TZ +'</a>';
+                          }
+                          else
+                              return '';
+
+                      }
+                  },
+
+                  {
+                      "mData": "Person_Name", "sTitle": "שם האדם",
+                      "bSortable": false,
+                      "mRender": function (a, b, c) {
+                          if (c.Person_ID != null) {
+                              return '<a href="@Url.Action("Edit", "Persons")?Id=' + c.Person_ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=false' + '" >'+ c.Person_Name +'</i></a>';
+                          }
+                          else
+                              return '';
+
+                      }
+                  },
+                   {
+                       "mData": "Institute_Name", "sTitle": "שם המכון",
+                       "bSortable": false,
+                       "mRender": function (a, b, c) {
+                           if (c.Institute_ID != null) {
+                               return '<a href="@Url.Action("Edit", "Persons")?Id=' + c.Person_ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=false' + '" class="btn">'+ c.Institute_Name +'</i></a>';
+                           }
+                           else
+                               return '';
+
+                       }
+                   },
+
+                      {
+                          "mData": "Description",
+                          "sTitle": "תאור ארוע אחרון"
+                      },
+
+                        {
+                            "mData": "Agent_Name",
+                            "sTitle": "גורם/ אמצאי הפנייה"
+                        },
+
+                        {
+                            "mData": "ExpirationDate",
+                            "sTitle": "תאריך תוקף/סיום",
+                            "mRender": function (a) { return mRenderDate(a); }
+                        },
+
+                        {
+                            "mData": "AlertDate",
+                            "sTitle": "תאריך הקפצת התראה",
+                            "mRender": function (a) { return mRenderDate(a); }
+                        },
+
+                         {
+                             "mData": "strAlertDone",
+                             "sTitle": "התראה טופלה",
+                             "mRender": function (a) { return mRenderDate(a); }
+                         },
+
+                          {
+                              "mData": "FileName",
+                              "sTitle": "קובץ"
+                          },
+
+                           {
+                               "mData": "SiteHref",
+                               "sTitle": "קישור"
+                           },
+
+                           {
+                               "mData": "CreatedAt",
+                               "sTitle": "תאריך הזנה",
+                               "mRender": function (a) { return mRenderDate(a); }
+                           },
+               
+           
+
+            ],
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                console.log("ao");
+                console.log(aoData);
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
+        });
+
+        oTable.closest('.dataTables_wrapper').find('.dataTables_table_wrapper');
+        selectType.change(function () {
+            oTable.fnDraw();
+        });
+        selectSubType.change(function () {
+            oTable.fnDraw();
+        });
+        selectCategory.change(function () {
+            oTable.fnDraw();
+        });
+        chkEssenseOnly.change(function () {
+            oTable.fnDraw();
+        });
+        chkExpiredOnly.change(function () {
+            oTable.fnDraw();
+        })
+        chkFileOnly.change(function () {
+            oTable.fnDraw();
+        })
+        chkSiteOnly.change(function () {
+            oTable.fnDraw();
+        })
+        chkOpenOnly.change(function () {
+            oTable.fnDraw();
+        })
+        fromDate.change(function () {
+            oTable.fnDraw();
+        })
+        toDate.change(function () {
+            oTable.fnDraw();
+        })
+
+        $('#events tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                oTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+        $('#exportBtn').click(function () {
+            var location = '@Url.Action("Export", "Events")?';
+            var filterValues = [];
+            filterValues.push({ "name": "Type_ID", "value": selectType.select2('val') });
+            filterValues.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+            filterValues.push({ "name": "Category_ID", "value": selectType.select2('val') });
+            filterValues.push({ "name": "fromDate", "value": fromDate.val() });
+            filterValues.push({ "name": "toDate", "value": toDate.val() });
+
+            filterValues.push({ "name": "chkEssenseOnly", "value": chkEssenseOnly.is(':checked') });
+            filterValues.push({ "name": "chkExpiredOnly", "value": chkExpiredOnly.is(':checked') });
+            filterValues.push({ "name": "chkOpenOnly", "value": chkOpenOnly.is(':checked') });
+            filterValues.push({ "name": "chkFileOnly", "value": chkFileOnly.is(':checked') });
+            filterValues.push({ "name": "chkSiteOnly", "value": chkSiteOnly.is(':checked') });
+            location += $.param(filterValues);
+            window.location = location;
+        });
+
+        
+
+        $(document).ready(function () {
+            $dialog = $('<div>האם אתה בטוח שברצונך למחוק את הרשימה?<div>').dialog({
+                autoOpen: false,
+                buttons: [
+                    {
+                        text: "לא",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "כן",
+                        click: function () {
+                            $(this).dialog("close");
+                            $deletingDialog.dialog("open");
+                            $.ajax({
+                                url: '@Url.Action("Delete")',
+                                type: "POST",
+                                data: { Id: $(this).data('id') },
+                                dataType: "json"
+                            }).done(function (data) {
+                                $deletingDialog.dialog("close");
+                                oTable.fnDraw();
+                                alert(data);
+                            });
+                        }
+                    }
+                ]
+            });
+            $deletingDialog = $('<div>אנא המתן בזמן שהמחיקה מתבצעת...<div>').dialog({
+                autoOpen: false
+            });
+        });
+    });
+
+    function selectAll() {
+        if ($("#mainSelector").prop('checked')) {
+            $(".Selector").prop('checked', true);
+        }
+        else {
+            $(".Selector").prop('checked', false);
+        }
+    }
+
+    function confirmDelete(id) {
+        $dialog.data('id', id).dialog("open");
+    }
+    </script>
+}
+

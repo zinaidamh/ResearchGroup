@@ -243,6 +243,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ControllerBase.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\EventSubTypesController .cs" />
     <Compile Include="Controllers\EventTypesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="Data\Agent.cs">
       <DependentUpon>HypnosisData.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\DbOperations\DbEvents.cs" />
     <Compile Include="Data\DbOperations\DbEventSubTypes.cs" />
     <Compile Include="Data\DbOperations\DbEventTypes.cs" />
     <Compile Include="Data\DbOperations\DbInstitute.cs" />
@@ -316,6 +318,7 @@
     <Compile Include="Models\DataTables\jqDataTableInput.cs" />
     <Compile Include="Models\DataTables\jqDataTablesResult.cs" />
     <Compile Include="Models\DataTables\ModelBinder.cs" />
+    <Compile Include="Models\EventsModel.cs" />
     <Compile Include="Models\EventSubTypesModel.cs" />
     <Compile Include="Models\EventTypesModel.cs" />
     <Compile Include="Models\InstituteEventsRowViewModel.cs" />
@@ -1332,6 +1335,7 @@
     <Content Include="Views\Institutes\EditorTemplates\InstituteDetails.cshtml" />
     <Content Include="Views\Institutes\Edit.cshtml" />
     <Content Include="Views\Institutes\Create.cshtml" />
+    <Content Include="Views\Events\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
