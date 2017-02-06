@@ -37,7 +37,7 @@ namespace Hypnosis.Web.Models
         [Display(Name = "רק קבצים")]
         public bool FileOnly{ get; set; }
 
-
+      
     }
 
 
@@ -82,7 +82,10 @@ namespace Hypnosis.Web.Models
         public string Description { get; set; }
 
         [Display(Name = "גורם / אמצאי הפניה")]
-        public string  Agent_Name { get; set; }   //Agent_ID ?
+        public string  Agent_Name { get; set; }   
+
+        [Display(Name = "גורם / אמצאי הפניה")]
+        public int? Agent_ID { get; set; }   
 
         [Display(Name = "תאריך תוקף")]
         public DateTime? ExpirationDate { get; set; }

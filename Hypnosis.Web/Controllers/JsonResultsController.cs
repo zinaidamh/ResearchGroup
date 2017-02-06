@@ -138,6 +138,40 @@ namespace Hypnosis.Web.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+//agents
+        public JsonResult AgentsInitJson(int? value)
+        {
+            dbOperation = new DbEvents();
+
+            var data = ((DbEvents)dbOperation).AgentsInit(value);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetAgentsJson(string q, int page, int page_limit)
+        {
+            dbOperation = new DbEvents();
+            var data = ((DbEvents)dbOperation).getAgents(q, page, page_limit);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+//institutes
+
+        public JsonResult InstitutesInitJson(int? value)
+        {
+            dbOperation = new DbInstitute();
+
+            var data = ((DbInstitute)dbOperation).InstitutesInit(value);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetInstitutesJson(string q, int page, int page_limit)
+        {
+            dbOperation = new DbInstitute();
+            var data = ((DbInstitute)dbOperation).getInstitutes(q, page, page_limit);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+
 
     }
 }

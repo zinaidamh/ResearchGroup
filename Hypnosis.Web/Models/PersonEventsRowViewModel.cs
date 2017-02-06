@@ -201,6 +201,8 @@ namespace Hypnosis.Web.Models
 
        public  PersonEventsViewModel filter { get; set; }
 
+       public EventsFilterViewModel eventsFilter { get; set; }
+
         [UIHint("PersonDetails")]
         public  PersonDetailsModel details {get; set; }
         

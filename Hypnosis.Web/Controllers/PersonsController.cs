@@ -43,6 +43,17 @@ namespace Hypnosis.Web.Controllers
             return View(model);
         }
 
+
+        [HttpPost]
+        public ActionResult IndexDataByPerson(Models.DataTables.jqDataTableInput input, int Person_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        {
+            DbEvents EventsOperations = new DbEvents();
+            var source = EventsOperations.GetEventsByFilter(Person_ID, null, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
+            return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
+
+        }
+
         [HttpPost]
         public ActionResult IndexData(Models.DataTables.jqDataTableInput input, int? Type_ID, int? SubType_ID, bool InMailingListOnly)
         {
@@ -65,6 +76,33 @@ namespace Hypnosis.Web.Controllers
             var source = personEvents;
             System.Linq.Expressions.Expression<Func<PersonEventsListRowViewModel, bool>> prefilter = null;
             return new Models.DataTables.DataTablesActionResult<PersonEventsListRowViewModel>(source, input, prefilter);
+        }
+
+        
+        public JsonResult ChangeEventsData(int? Id, bool isUpdate, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID)
+        {
+            DbEvents EventsOperations = new DbEvents();
+             if (SubType_ID == null)
+            {
+                var data = new JsonObject { result = false };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            if (Type_ID == null)
+            {
+
+                var data = new JsonObject { result = false };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            if (EventsOperations.CreateUpdate(Id, SubType_ID, Type_ID, Agent_ID, Institute_ID, isUpdate))
+            {
+                var data = new JsonObject { result = true };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var data = new JsonObject { result = false };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult Edit(int Id, int? type_ID, int? subType_ID, bool inMailingListOnly)

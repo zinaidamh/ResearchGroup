@@ -33,44 +33,7 @@ namespace Hypnosis.Web.Data.DbOperations
         }
 
 
-        //public EventEditModel GetEventEditModel(Event person)
-        //{
-        //    PersonDetailsModel details = new PersonDetailsModel
-        //    {
-        //        Person_Senior = person.Person_Senior,
-        //        ID = person.ID,
-        //        TZ = person.TZ,
-        //        BirthDate = person.BirthDate,
-        //        FirstName = person.FirstName,
-        //        LastName = person.LastName,
-        //        DisplayName = person.DisplayName,
-        //        InMailingList = person.InMailingList,
-        //        Degree = person.Degree,
-
-        //        Mobile = person.Mobile,
-        //        Phones = person.Phones,
-        //        Email = person.Email,
-        //        City = person.City,
-        //        ZipCode = person.ZipCode,
-        //        Address = person.Address,
-        //        Address_Comments = person.Address_Comments,
-        //        Person_Comments = person.Comments,
-
-        //        Psyhology_LicenseNumber = person.Psyhology_LicenseNumber,
-        //        Psyhology_Specialization = person.Psyhology_Specialization,
-        //        Medicine_LicenseNumber = person.Medicine_LicenseNumber,
-        //        Medicine_Specialization = person.Medicine_Specialization,
-        //        Stomatology_LicenseNumber = person.Stomatology_LicenseNumber,
-        //        Stomatology_Specialization = person.Stomatology_Specialization,
-        //        Ministry_CaseNumber = person.Ministry_CaseNumber
-
-        //    };
-
-        //    PersonEditModel editModel = new PersonEditModel();
-        //    editModel.details = details;
-
-        //    return editModel;
-        //}
+       
 
 
         public IQueryable<EventsFullListRowViewModel> GetRows()
@@ -89,9 +52,11 @@ namespace Hypnosis.Web.Data.DbOperations
                         TZ = person == null ? "" : person.TZ,
                         Person_Name = person == null ? "" : person.DisplayName,
                         Institute_Name = inst == null ? "" : inst.Name,
-                        Person_ID=e.Person_ID,
-                        Institute_ID=e.Institute_ID,
-
+                        Person_ID = e.Person_ID,
+                        Institute_ID = e.Institute_ID,
+                        SubType_ID=e.SubType_ID,
+                        Type_ID=e.EventSubType.Type_ID,
+                        Agent_ID=e.Agent_ID,
 
                         SubType_Name = e.EventSubType.SubType_Name,
                         Type_Name = e.EventSubType.EventType.Type_Name,
@@ -115,6 +80,238 @@ namespace Hypnosis.Web.Data.DbOperations
                     };
             return q;
         }
+
+
+
+        public IQueryable<EventsFullListRowViewModel> GetEventsByFilter(int? Person_ID, int? Institute_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        {
+            var events = this.GetRows();
+
+            if (Person_ID.HasValue)
+            {
+                events.Where(f => f.Person_ID == Person_ID);
+            }
+
+            if (Institute_ID.HasValue)
+            {
+                events.Where(f => f.Institute_ID == Institute_ID);
+            }
+
+            if (Type_ID.HasValue)
+            {
+                events = events.Where(f => f.Type_ID == Type_ID);
+            }
+            if (SubType_ID.HasValue)
+            {
+                events = events.Where(f => f.SubType_ID == SubType_ID);
+            }
+            if (Category_ID.HasValue)
+            {
+                events = events.Where(f => f.Category_ID == Category_ID);
+            }
+            if (ExpiredOnly)
+            {
+                events = events.Where(f => f.ExpirationDate <= DateTime.Now.Date);
+            }
+            //also for Essense after explain
+            if (FileOnly)
+            {
+                events = events.Where(f => f.FileName != null);
+            }
+            if (SiteOnly)
+            {
+                events = events.Where(f => f.SiteHref != null);
+            }
+            if (fromDate.HasValue)
+            {
+                events = events.Where(f => f.FirstDate >= fromDate);
+            }
+            if (toDate.HasValue)
+            {
+                events = events.Where(f => f.FirstDate <= toDate);
+            }
+            if (OpenOnly)
+            {
+                events = events.Where(f => f.AlertDone == false);
+            }
+            return events;
+
+        }
+
+//get agents
+        public IEnumerable<s2item> AgentsInit(int? value)
+        {
+            var q = from a in dbContext.Agents
+                    where value == null || a.ID == value.Value
+                    select new
+                    {
+                        id = a.ID,
+                        text = a.Agent_Name
+                    };
+            return q.ToList().Select(f => new s2item
+            {
+                id = f.id,
+                text = f.text.ToString()
+            });
+        }
+
+        public s2result getAgents(string q, int page, int page_limit)
+        {
+            var dbq = from a in dbContext.Agents
+
+
+                      select new
+                      {
+                          id = a.ID,
+                          text = a.Agent_Name
+                      };
+            if (!string.IsNullOrEmpty(q))
+            {
+                dbq = dbq.Where(f => f.text.Contains(q));
+            }
+
+            var aa = dbq.OrderBy(f => f.text).ToList().Select(f => new s2item { id = f.id, text = f.text });
+
+            return new s2result
+            {
+                results = aa,
+                more = aa.Count() > page_limit
+            };
+        }
+
+
+
+
+        //create-update
+   public bool CreateUpdate(int? Id, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID, bool isUpdate)
+    {
+        string operation = tbl + " Create Update ";
+           Logger.Log.Debug(operation + " Begin ");
+           var _event = new Event();
+
+           if (isUpdate)
+            {
+                _event = dbContext.Events.SingleOrDefault(f => f.ID == Id);
+               if (_event == null)
+                {
+                    throw new Exception("הארוע לא קיים");
+               }
+
+            }
+
+    //        //mandatory
+            if (SubType_ID==null)
+            {
+                throw new Exception("שדה סוג ארוע הוא חובה");
+            }
+
+            if (SubType_ID == null)
+            {
+                throw new Exception("שדה תת סוג ארוע הוא חובה");
+            }
+
+
+            _event.Agent_ID = Agent_ID;
+            _event.Institute_ID=Institute_ID;
+            _event.SubType_ID=(int) SubType_ID;
+            
+
+
+
+
+            try
+            {
+                if (!isUpdate)
+                {
+                    dbContext.Events.Add(_event);
+                }
+                dbContext.SaveChanges();
+                return true;
+
+            }
+            catch (DbEntityValidationException e)
+            {
+                string msgs = "";
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Logger.Log.ErrorFormat("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Logger.Log.ErrorFormat("- Property: \"{0}\", Error: \"{1}\"",
+                           ve.PropertyName, ve.ErrorMessage);
+                       msgs += ": " + ve.ErrorMessage;
+                    }
+               }
+                throw new Exception("הייתה בעיה בשמירת הנתונים" + msgs);
+            }
+            catch (Exception ex)
+            {
+                string msg = "";
+                if (ex.InnerException != null)
+                {
+                    var inner = ex.InnerException;
+                    while (inner != null)
+                    {
+                        if (inner.InnerException != null)
+                        {
+                            inner = inner.InnerException;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    msg = inner.Message;
+                }
+                else
+                {
+                    msg = ex.Message;
+                }
+                throw new Exception("הייתה בעיה בשמירת הנתונים: " + msg);
+                return false;
+            }
+            Logger.Log.Debug(operation + " End ");
+       }
+
+
+    //    public string Delete(int Id)
+    //    {
+
+    //        string msg = "";
+    //        var person = dbContext.Persons.SingleOrDefault(f => f.ID == Id);
+    //        if (person == null)
+    //        {
+
+    //            msg = "האדם לא קיים";
+    //            return msg;
+
+    //        }
+    //        if (dbContext.Events.Any(f => f.Person.ID == Id))
+    //        {
+
+    //            msg = " יש  ארועים-  לא ניתן למחוק את האדם";
+    //            return msg;
+
+    //        }
+    //        try
+    //        {
+    //            dbContext.Persons.Remove(person);
+    //            dbContext.SaveChanges();
+    //        }
+    //        catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
+    //        {
+
+    //            msg = "הייתה בעיה במחיקת האדם: " + ex.Message;
+    //            return msg;
+
+    //        }
+    //        msg = "המחיקה בוצעה בהצלחה";
+    //        return msg;
+
+
+    //    }
+
 
     }
 }
@@ -238,157 +435,6 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
 
-    //    public void CreateUpdate(PersonDetailsModel model, bool isUpdate)
-    //    {
-    //        string operation = tbl + " Create Update ";
-    //        Logger.Log.Debug(operation + " Begin ");
-    //        var person = new Person();
-
-    //        if (isUpdate)
-    //        {
-    //            person = dbContext.Persons.SingleOrDefault(f => f.ID == model.ID);
-    //            if (person == null)
-    //            {
-    //                throw new Exception("האדם לא קיים");
-    //            }
-
-    //        }
-
-    //        //mandatory
-    //        if (string.IsNullOrEmpty(model.TZ))
-    //        {
-    //            throw new Exception("שדה ת.ז. הוא חובה");
-    //        }
-
-    //        if (string.IsNullOrEmpty(model.FirstName))
-    //        {
-    //            throw new Exception("שם פרטי הוא חובה");
-    //        }
-
-
-    //        if (string.IsNullOrEmpty(model.LastName))
-    //        {
-    //            throw new Exception("שם משפחה הוא חובה");
-    //        }
-
-
-    //        person.FirstName = model.FirstName;
-    //        person.LastName = model.LastName;
-    //        person.TZ = model.TZ;
-    //        person.Address = model.Address;
-    //        person.Address_Comments = model.Address_Comments;
-    //        person.BirthDate = model.BirthDate;
-    //        person.City = model.City;
-    //        person.Degree = model.Degree;
-    //        person.DisplayName = model.DisplayName;
-    //        person.Email = model.Email;
-    //        person.InMailingList = model.InMailingList.HasValue ? (bool)model.InMailingList : false;
-    //        person.Medicine_LicenseNumber = model.Medicine_LicenseNumber;
-    //        person.Medicine_Specialization = model.Medicine_Specialization;
-    //        person.Ministry_CaseNumber = model.Ministry_CaseNumber;
-    //        person.Mobile = model.Mobile;
-    //        person.Comments = model.Person_Comments;
-    //        person.Phones = model.Phones;
-    //        person.Psyhology_LicenseNumber = model.Psyhology_LicenseNumber;
-    //        person.Psyhology_Specialization = model.Psyhology_Specialization;
-    //        person.Person_Senior = model.Person_Senior;
-    //        person.Stomatology_LicenseNumber = model.Stomatology_LicenseNumber;
-    //        person.Stomatology_Specialization = model.Stomatology_Specialization;
-    //        person.ZipCode = model.ZipCode;
-
-
-
-
-    //        try
-    //        {
-    //            if (!isUpdate)
-    //            {
-    //                dbContext.Persons.Add(person);
-    //            }
-    //            dbContext.SaveChanges();
-
-    //        }
-    //        catch (DbEntityValidationException e)
-    //        {
-    //            string msgs = "";
-    //            foreach (var eve in e.EntityValidationErrors)
-    //            {
-    //                Logger.Log.ErrorFormat("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-    //                    eve.Entry.Entity.GetType().Name, eve.Entry.State);
-    //                foreach (var ve in eve.ValidationErrors)
-    //                {
-    //                    Logger.Log.ErrorFormat("- Property: \"{0}\", Error: \"{1}\"",
-    //                        ve.PropertyName, ve.ErrorMessage);
-    //                    msgs += ": " + ve.ErrorMessage;
-    //                }
-    //            }
-    //            throw new Exception("הייתה בעיה בשמירת הנתונים" + msgs);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            string msg = "";
-    //            if (ex.InnerException != null)
-    //            {
-    //                var inner = ex.InnerException;
-    //                while (inner != null)
-    //                {
-    //                    if (inner.InnerException != null)
-    //                    {
-    //                        inner = inner.InnerException;
-    //                    }
-    //                    else
-    //                    {
-    //                        break;
-    //                    }
-    //                }
-    //                msg = inner.Message;
-    //            }
-    //            else
-    //            {
-    //                msg = ex.Message;
-    //            }
-    //            throw new Exception("הייתה בעיה בשמירת הנתונים: " + msg);
-    //        }
-    //        Logger.Log.Debug(operation + " End ");
-    //    }
-
-
-    //    public string Delete(int Id)
-    //    {
-
-    //        string msg = "";
-    //        var person = dbContext.Persons.SingleOrDefault(f => f.ID == Id);
-    //        if (person == null)
-    //        {
-
-    //            msg = "האדם לא קיים";
-    //            return msg;
-
-    //        }
-    //        if (dbContext.Events.Any(f => f.Person.ID == Id))
-    //        {
-
-    //            msg = " יש  ארועים-  לא ניתן למחוק את האדם";
-    //            return msg;
-
-    //        }
-    //        try
-    //        {
-    //            dbContext.Persons.Remove(person);
-    //            dbContext.SaveChanges();
-    //        }
-    //        catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
-    //        {
-
-    //            msg = "הייתה בעיה במחיקת האדם: " + ex.Message;
-    //            return msg;
-
-    //        }
-    //        msg = "המחיקה בוצעה בהצלחה";
-    //        return msg;
-
-
-    //    }
-
+  
     //}
 //}

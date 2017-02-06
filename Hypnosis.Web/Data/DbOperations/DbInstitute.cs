@@ -328,6 +328,49 @@ namespace Hypnosis.Web.Data.DbOperations
             Logger.Log.Debug(operation + " End ");
         }
 
+
+        public IEnumerable<s2item> EventTypeCategoriesInit(int? value)
+        {
+            var q = from a in dbContext.EventTypeCategories
+                    where value == null || a.ID == value.Value
+                    select new
+                    {
+                        id = a.ID,
+                        text = a.Category_Name
+                    };
+            return q.ToList().Select(f => new s2item
+            {
+                id = f.id,
+                text = f.text.ToString()
+            });
+        }
+
+        public s2result getEventTypeCategories(string q, int page, int page_limit)
+        {
+            var dbq = from a in dbContext.EventTypeCategories
+
+
+                      select new
+                      {
+                          id = a.ID,
+                          text = a.Category_Name
+                      };
+            if (!string.IsNullOrEmpty(q))
+            {
+                dbq = dbq.Where(f => f.text.Contains(q));
+            }
+
+            var aa = dbq.OrderBy(f => f.text).ToList().Select(f => new s2item { id = f.id, text = f.text });
+
+            return new s2result
+            {
+                results = aa,
+                more = aa.Count() > page_limit
+            };
+        }
+
+
+
         public string Delete(int Id)
         {
 
@@ -364,6 +407,50 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
         }
+
+        //json
+        public IEnumerable<s2item> InstitutesInit(int? value)
+        {
+            var q = from a in dbContext.Institutes
+                    where value == null || a.ID == value.Value
+                    select new
+                    {
+                        id = a.ID,
+                        text = a.Name
+                    };
+            return q.ToList().Select(f => new s2item
+            {
+                id = f.id,
+                text = f.text.ToString()
+            });
+        }
+
+        public s2result getInstitutes(string q, int page, int page_limit)
+        {
+            var dbq = from a in dbContext.Institutes
+
+
+                      select new
+                      {
+                          id = a.ID,
+                          text = a.Name
+                      };
+            if (!string.IsNullOrEmpty(q))
+            {
+                dbq = dbq.Where(f => f.text.Contains(q));
+            }
+
+            var aa = dbq.OrderBy(f => f.text).ToList().Select(f => new s2item { id = f.id, text = f.text });
+
+            return new s2result
+            {
+                results = aa,
+                more = aa.Count() > page_limit
+            };
+        }
+
+
+
 
     }
 }
