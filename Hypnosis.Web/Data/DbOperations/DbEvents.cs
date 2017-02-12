@@ -39,10 +39,11 @@ namespace Hypnosis.Web.Data.DbOperations
         public IQueryable<EventsFullListRowViewModel> GetRows()
         {
             IQueryable<Event> data = GetEvents();
+            var relativePath = System.Configuration.ConfigurationManager.AppSettings["relativePath"];
             var q = from e in data
                     let person = dbContext.Persons.FirstOrDefault(f => e.Person_ID == f.ID)
                     let inst = dbContext.Institutes.FirstOrDefault(f => e.Institute_ID == f.ID)
-
+                  
 
 
                     select new EventsFullListRowViewModel
@@ -72,7 +73,7 @@ namespace Hypnosis.Web.Data.DbOperations
                         AlertDate = e.AlertDate,
                         alertDoneString = e.AlertDone == true ? "כן" : "לא",
                         AlertDone = e.AlertDone,
-                        FileName = e.FileName,
+                        FileName = e.FileName==null ? "": relativePath+"//"+e.FileName,
                         SiteHref = e.SiteHref,
                         CreatedAt = e.CreatedAt
 
@@ -183,7 +184,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
         //create-update
-   public bool CreateUpdate(int? Id, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID, bool isUpdate)
+   public bool CreateUpdate(int? Id, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID, string FileName, bool isUpdate)
     {
         string operation = tbl + " Create Update ";
            Logger.Log.Debug(operation + " Begin ");
@@ -214,7 +215,10 @@ namespace Hypnosis.Web.Data.DbOperations
             _event.Agent_ID = Agent_ID;
             _event.Institute_ID=Institute_ID;
             _event.SubType_ID=(int) SubType_ID;
-            
+            _event.FileName = FileName;
+
+            var RelativePath=System.Configuration.ConfigurationManager.AppSettings["relativePath"];
+
 
 
 

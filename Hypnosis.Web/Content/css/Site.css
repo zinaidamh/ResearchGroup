@@ -121,6 +121,9 @@ input[type="checkbox"].input-validation-error {
     min-width:100%;
     }
     
+    input[type='file'].unused {
+  color: transparent;
+}
 
 .form-inline-margins input, button, select, textarea {
     border-style: solid;

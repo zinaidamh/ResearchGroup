@@ -79,8 +79,28 @@ namespace Hypnosis.Web.Controllers
         }
 
         
-        public JsonResult ChangeEventsData(int? Id, bool isUpdate, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID)
+        public JsonResult ChangeEventsData()
         {
+            int? Id; bool isUpdate; int? SubType_ID; int? Type_ID; int? Agent_ID; int? Institute_ID;
+            try
+            {
+              
+                Id=Int32.Parse(Request["Id"]);
+                SubType_ID = Int32.Parse(Request["SubType_ID"]);
+                Type_ID = Int32.Parse(Request["Type_ID"]);
+                Agent_ID = Int32.Parse(Request["Agent_ID"]);
+                Institute_ID = Int32.Parse(Request["Institute_ID"]);
+                isUpdate = bool.Parse(Request["isUpdate"]);
+
+            
+            }
+            catch
+            {
+                {
+                var data = new JsonObject { result = false };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            }
             DbEvents EventsOperations = new DbEvents();
              if (SubType_ID == null)
             {
@@ -93,17 +113,57 @@ namespace Hypnosis.Web.Controllers
                 var data = new JsonObject { result = false };
                 return Json(data, JsonRequestBehavior.AllowGet);
             }
-            if (EventsOperations.CreateUpdate(Id, SubType_ID, Type_ID, Agent_ID, Institute_ID, isUpdate))
-            {
+            var files = this.Request.Files;
+            string FileName = "";
+            
+            
+                if (files.Count > 0)
+                {
+                    var file0 = files[0];
+                    var relativePath = System.Configuration.ConfigurationManager.AppSettings["relativePath"];
+                    var path = Server.MapPath(relativePath);
+                    try
+                    {
+                        file0.SaveAs(System.IO.Path.Combine(path, file0.FileName));
+                        FileName = file0.FileName;
+                        
+                    }
+                    catch
+                    {
+                        var data = new JsonObject { result = false };
+                        return Json(data, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                if (EventsOperations.CreateUpdate(Id, SubType_ID, Type_ID, Agent_ID, Institute_ID, FileName, isUpdate))
+                {
                 var data = new JsonObject { result = true };
                 return Json(data, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
+                }
+                else
+                {
                 var data = new JsonObject { result = false };
                 return Json(data, JsonRequestBehavior.AllowGet);
-            }
+                }
+            
         }
+
+        // [HttpPost]
+        //public JsonResult ChangeEventsData()
+        //{
+        //    var files = this.Request.Files;
+        //     if (files.Count>0)
+        //     {
+        //         var file0 = files[0];
+        //         var relativePath=System.Configuration.ConfigurationManager.AppSettings["relativePath"];
+        //         var path = Server.MapPath(relativePath);
+        //         file0.SaveAs(System.IO.Path.Combine(path, file0.FileName));
+        //     }
+           
+        //    var data = new JsonObject { result = false };
+        //    return Json(data, JsonRequestBehavior.AllowGet);
+
+        //}
+
 
         public ActionResult Edit(int Id, int? type_ID, int? subType_ID, bool inMailingListOnly)
         {

@@ -310,10 +310,23 @@
                                           }
                                           else {
                                               return "";
+                                          }},
+                                      "mRenderEdit": function (a, b, c) {
+                                          var html = "";
+                                          if (c.FileName != null) {
+                                              html += '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
+                                              html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat" class="unused" type="file" name="file" target="' + c.ID + '"/><span></span> <input  id="datFileName" id="' + c.ID + '"  type="text" class="form-control" style="display:none;" readonly="readonly"></div>'
+                                     
                                           }
-
+                                          else
+                                          {
+                                              html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat"  type="file" name="file"/></span></span> <input id="datFileName"  style="display:none;" id="' + c.ID + '"  type="text" class="form-control" readonly="readonly"></div>'
+                                          }
+                                              return html;
                                       }
-                                  },
+                  
+                                      },
+                                 
 
                                    {
                                        "mData": "SiteHref",
@@ -555,6 +568,32 @@
                     });
                 }
 
+                var fileData;
+                $(function() {
+                    $("input[type='file']").live("change",function(event) {
+
+                        {
+                            // alert('change');
+                            $(this).removeClass('unused')
+                         //   var input = $(this),
+                        //    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                        //    // alert(label);
+                        //    // find the input's first ancestor with class input-group and inside it
+                        //    // look for an input of type=text. then set its value
+
+                        //    var datName = input.closest("div").find("#datFileName");
+                        ////    var tmppath = URL.createObjectURL(event.target.files[0]);
+                        //    // console.log('path');
+                        //    //  console.log(tmppath);
+                        //    datName.val(label);
+
+                         //   var files = $(this).files;
+                            //var myID = 3; //uncomment this to make sure the ajax URL works
+                           
+                        }
+                    })
+                });
+               
 
                 $('#events tbody').on('click', 'tr', function () {
                     if ($(this).hasClass('selected')) {
@@ -609,8 +648,11 @@
                     var columns = settings.aoColumns;
 
                     var dataParams = [];
-                    dataParams.push({ "name": "Id", "value": data.ID });
-                    dataParams.push({ "name": "isUpdate", "value": true });
+                   // dataParams.push({ "name": "Id", "value": data.ID });
+                 //   dataParams.push({ "name": "isUpdate", "value": true });
+                    var fileData = new FormData();
+                    fileData.append("Id", data.ID);
+                    fileData.append("isUpdate", true);
                     console.log(dataParams);
                     alert('ready');
                     $tr.find('td').each(function (i, td) {
@@ -620,33 +662,59 @@
                             switch (col.mData) {
                                 case 'SubType_Name': newdata[col.mData] = $("#dt_subtype").val();
                                     //alert(col.mData);
-                                    dataParams.push({ "name": "SubType_ID", "value": $("#dt_subtype").val() });
+                                   // dataParams.push({ "name": "SubType_ID", "value": $("#dt_subtype").val() });
+                                    fileData.append("SubType_ID", $("#dt_subtype").val());
                                     break;
                                 case 'Type_Name': newdata[col.mData] = $("#dt_type").val();
                                    // alert(col.mData);
-                                    dataParams.push({ "name": "Type_ID", "value": $("#dt_type").select2('val') });
+                                  //  dataParams.push({ "name": "Type_ID", "value": $("#dt_type").select2('val') });
+                                    fileData.append("Type_ID", $("#dt_type").val());
                                     break;
                                 case 'Agent_Name': newdata[col.mData] = $("#dt_agent").val();
                                   //  alert(col.mData);
-                                    dataParams.push({ "name": "Agent_ID", "value": $("#dt_agent").select2('val') });
+                                  //  dataParams.push({ "name": "Agent_ID", "value": $("#dt_agent").select2('val') });
+                                    fileData.append("Agent_ID", $("#dt_agent").val());
                                     break;
-                                case 'Institute_Name': newdata[col.mData] = $("#dt_institute").val();
+                                case 'Institute_Name': newdata[col.mData] = $("#dt_institute").select2('val')
                                    // alert(col.mData);
-                                    dataParams.push({ "name": "Institute_ID", "value": $("#dt_institute").select2('val') });
+                                    //dataParams.push({ "name": "Institute_ID", "value": $("#dt_institute").select2('val') });
+                                    fileData.append("Institute_ID", $("#dt_institute").select2('val'));
                                     break;
+                                case 'FileName': newdata[col.mData] = $("#datFileName").val();
+                                    var files = document.getElementById("dat").files;
+                                    if (files.length > 0) {
+                                       
+                                            
+                                            for (var x = 0; x < files.length; x++) {
+                                                fileData.append("file" + x, files[x]);
+                                          
+                                        }
+                                        
+                                      //  console.log(fileData);
+                                        //   alert(datName.val());
+                                    }
+
+                                                                    //    // alert(col.mData);
+                                //    dataParams.push({ "name": "FileName", "value": $("#datFileName").val() });
+                                //    break;
                             }
                         }
                     });
 
                     console.log('Params');
-                    console.log(dataParams);
+                  //  console.log(dataParams);
+
+                    console.log(fileData);
+                  //  fileData.append("Institute_Id", $("#dt_institute").select2('val'));
 
                     $.ajax({
                         contentType: "application/json; charset=utf-8",
-                        type: "GET",
+                        type: "POST",
                         dataType: "json",
+                        contentType: false, // Not to set any content header  
+                        processData: false, // Not to process data  
                         url: '@Url.Action("ChangeEventsData")',
-                        data: dataParams
+                        data: fileData
                     }).done(function (data) {
                         oTable.fnUpdate(newdata, $tr.get(0));
                         if (!data.result && data.error != "") {
