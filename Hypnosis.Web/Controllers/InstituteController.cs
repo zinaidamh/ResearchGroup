@@ -19,6 +19,7 @@ namespace Hypnosis.Web.Controllers
             dbOperation = new DbInstitute();
             InstituteOperations = (DbInstitute)dbOperation;
         }
+
         public ActionResult Index(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
             var model = new InstituteEventsViewModel();
@@ -37,6 +38,7 @@ namespace Hypnosis.Web.Controllers
             }
             return View(model);
         }
+
 
         [HttpPost]
         public ActionResult IndexData(Models.DataTables.jqDataTableInput input, int? Type_ID, int? SubType_ID, bool InMailingListOnly)
@@ -61,6 +63,40 @@ namespace Hypnosis.Web.Controllers
             System.Linq.Expressions.Expression<Func<InstituteEventsListRowViewModel, bool>> prefilter = null;
             return new Models.DataTables.DataTablesActionResult<InstituteEventsListRowViewModel>(source, input, prefilter);
         }
+
+        [HttpPost]
+        public ActionResult EventsDataByCard(Models.DataTables.jqDataTableInput input, int Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        {
+            DbEvents EventsOperations = new DbEvents();
+            var source = EventsOperations.GetEventsByFilter(Card_ID, null, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
+            return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
+
+        }
+
+       
+        //public ActionResult IndexData(Models.DataTables.jqDataTableInput input, int? Type_ID, int? SubType_ID, bool InMailingListOnly)
+        //{
+        //    var personEvents = InstituteOperations.GetRows();
+
+
+        //    if (Type_ID.HasValue)
+        //    {
+        //        personEvents = personEvents.Where(f => f.Type_ID == Type_ID);
+        //    }
+        //    if (SubType_ID.HasValue)
+        //    {
+        //        personEvents = personEvents.Where(f => f.SubType_ID == SubType_ID);
+        //    }
+        //    if (InMailingListOnly == true)
+        //    {
+        //        personEvents = personEvents.Where(f => f.InMailingList == InMailingListOnly);
+        //    }
+
+        //    var source = personEvents;
+        //    System.Linq.Expressions.Expression<Func<PersonEventsListRowViewModel, bool>> prefilter = null;
+        //    return new Models.DataTables.DataTablesActionResult<PersonEventsListRowViewModel>(source, input, prefilter);
+        //}
 
        
         public ActionResult Export(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
@@ -98,9 +134,15 @@ namespace Hypnosis.Web.Controllers
                 SubType_ID = subType_ID,
                 InMailingListOnly = inMailingListOnly
             };
+            model.eventsFilter = new EventsFilterViewModel()
+            {
+                Category_ID = 1,
+                Card_ID = Id
+            };
+
             return View(model);
         }
-
+        
 
         [HttpPost]
         public ActionResult Edit(InstituteEditModel model)

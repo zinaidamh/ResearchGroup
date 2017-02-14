@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using Hypnosis.Web.Models;
 using Hypnosis.Web.Data;
 using Hypnosis.Web.Data.DbOperations;
-
+using Hypnosis.Web.MyHelpers;
 namespace Hypnosis.Web.Controllers
 {
     public class PersonsController : ControllerBase
@@ -81,18 +81,60 @@ namespace Hypnosis.Web.Controllers
         
         public JsonResult ChangeEventsData()
         {
-            int? Id; bool isUpdate; int? SubType_ID; int? Type_ID; int? Agent_ID; int? Institute_ID;
+            int? Id=null; bool isUpdate=false; int? SubType_ID=null; int? Type_ID=null; int? Agent_ID=null; int? Institute_ID=null;
+            DateTime? FirstDate=null, AlertDate=null, ExpirationDate=null; string SiteHref=""; bool AlertDone=false;
+            int? Person_ID = null;
             try
             {
               
+                if (Request["Id"]!=null)
+                {
                 Id=Int32.Parse(Request["Id"]);
-                SubType_ID = Int32.Parse(Request["SubType_ID"]);
-                Type_ID = Int32.Parse(Request["Type_ID"]);
+                }
+                if (Request["SubType_ID"] != null)
+                {
+                    SubType_ID = Int32.Parse(Request["SubType_ID"]);
+                }
+                if (Request["Type_ID"] != null)
+                {
+                    Type_ID = Int32.Parse(Request["Type_ID"]);
+                }
+                if (Request["Agent_ID"]!=null)
+                {
                 Agent_ID = Int32.Parse(Request["Agent_ID"]);
-                Institute_ID = Int32.Parse(Request["Institute_ID"]);
-                isUpdate = bool.Parse(Request["isUpdate"]);
-
-            
+                }
+                if (Request["Institute_ID"] != null)
+                {
+                    Institute_ID = Int32.Parse(Request["Institute_ID"]);
+                }
+                if (Request["isUpdate"] != null)
+                {
+                    isUpdate = bool.Parse(Request["isUpdate"]);
+                }
+                if (Request["FirstDate"] != null)
+                {
+                    FirstDate = DateTime.Parse(Request["FirstDate"]);
+                }
+                if (Request["AlertDate"] != null)
+                {
+                    AlertDate = DateTime.Parse(Request["AlertDate"]);
+                }
+                if (Request["ExpirationDate"] != null)
+                {
+                    ExpirationDate = DateTime.Parse(Request["ExpirationDate"]);
+                }
+                if (Request["SiteHref"] != null)
+                {
+                    SiteHref = Request["SiteHref"].ToString();
+                }
+                if (Request["AlertDone"] != null)
+                {
+                    AlertDone = bool.Parse(Request["AlertDone"]);
+                }
+                if (Request["Person_ID"] != null)
+                {
+                    Person_ID = Int32.Parse(Request["Person_ID"]);
+                }
             }
             catch
             {
@@ -120,7 +162,7 @@ namespace Hypnosis.Web.Controllers
                 if (files.Count > 0)
                 {
                     var file0 = files[0];
-                    var relativePath = System.Configuration.ConfigurationManager.AppSettings["relativePath"];
+                    var relativePath = FilesHelper.RelativePath;
                     var path = Server.MapPath(relativePath);
                     try
                     {
@@ -134,7 +176,7 @@ namespace Hypnosis.Web.Controllers
                         return Json(data, JsonRequestBehavior.AllowGet);
                     }
                 }
-                if (EventsOperations.CreateUpdate(Id, SubType_ID, Type_ID, Agent_ID, Institute_ID, FileName, isUpdate))
+                if (EventsOperations.CreateUpdate(Id, Person_ID, SubType_ID, Type_ID, Agent_ID, Institute_ID, FileName,FirstDate, ExpirationDate, AlertDate, AlertDone, SiteHref, isUpdate))
                 {
                 var data = new JsonObject { result = true };
                 return Json(data, JsonRequestBehavior.AllowGet);

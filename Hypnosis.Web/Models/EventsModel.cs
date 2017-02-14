@@ -9,6 +9,9 @@ namespace Hypnosis.Web.Models
     public class EventsFilterViewModel
     {
 
+        [ScaffoldColumn(false)]
+        public int Card_ID { get; set; } //person or institute, depend of category
+
         [Display(Name = "קטגוריה")]
         public int? Category_ID { get; set; }
         [Display(Name = "סוג ארוע")]

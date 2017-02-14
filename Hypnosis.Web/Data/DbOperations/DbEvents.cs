@@ -73,7 +73,7 @@ namespace Hypnosis.Web.Data.DbOperations
                         AlertDate = e.AlertDate,
                         alertDoneString = e.AlertDone == true ? "כן" : "לא",
                         AlertDone = e.AlertDone,
-                        FileName = e.FileName==null ? "": relativePath+"//"+e.FileName,
+                        FileName = e.FileName==null ? "": e.FileName,
                         SiteHref = e.SiteHref,
                         CreatedAt = e.CreatedAt
 
@@ -90,12 +90,12 @@ namespace Hypnosis.Web.Data.DbOperations
 
             if (Person_ID.HasValue)
             {
-                events.Where(f => f.Person_ID == Person_ID);
+                events=events.Where(f => f.Person_ID == Person_ID);
             }
 
             if (Institute_ID.HasValue)
             {
-                events.Where(f => f.Institute_ID == Institute_ID);
+                events=events.Where(f => f.Institute_ID == Institute_ID);
             }
 
             if (Type_ID.HasValue)
@@ -184,7 +184,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
         //create-update
-   public bool CreateUpdate(int? Id, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID, string FileName, bool isUpdate)
+   public bool CreateUpdate(int? Id, int? Person_ID, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID, string FileName, DateTime? FirstDate, DateTime? ExpirationDate, DateTime? AlertDate, bool AlertDone, string SiteHref, bool isUpdate)
     {
         string operation = tbl + " Create Update ";
            Logger.Log.Debug(operation + " Begin ");
@@ -216,7 +216,12 @@ namespace Hypnosis.Web.Data.DbOperations
             _event.Institute_ID=Institute_ID;
             _event.SubType_ID=(int) SubType_ID;
             _event.FileName = FileName;
-
+            _event.FirstDate = FirstDate;
+            _event.AlertDate = AlertDate;
+            _event.ExpirationDate = ExpirationDate;
+            _event.AlertDone = AlertDone;
+            _event.SiteHref = SiteHref;
+           
             var RelativePath=System.Configuration.ConfigurationManager.AppSettings["relativePath"];
 
 
@@ -227,6 +232,8 @@ namespace Hypnosis.Web.Data.DbOperations
             {
                 if (!isUpdate)
                 {
+                    _event.CreatedAt = DateTime.Now;
+                    _event.Person_ID = Person_ID;
                     dbContext.Events.Add(_event);
                 }
                 dbContext.SaveChanges();

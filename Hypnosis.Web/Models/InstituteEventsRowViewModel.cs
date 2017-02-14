@@ -203,8 +203,10 @@ namespace Hypnosis.Web.Models
 
     public class InstituteEditModel
     {
+        public InstituteEventsViewModel filter { get; set; }
+
         public InstituteDetailsModel details  { get; set; }
-        public InstituteEventsViewModel filter  { get; set; }
+        public EventsFilterViewModel eventsFilter { get; set; }
         public EventsListRowViewModel eventsList { get; set; }
     }
 
