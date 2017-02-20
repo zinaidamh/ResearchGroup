@@ -123,11 +123,26 @@ namespace Hypnosis.Web.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetEventSubTypesJson_ByCategory(string q, int? category_id, int? typeId, int page, int page_limit)
+        {
+            if (category_id == null) category_id = 0;
+            dbOperation = new DbEventSubTypes();
+            var data = ((DbEventSubTypes)dbOperation).getEventSubTypes(q, typeId, (int)category_id, page, page_limit);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult EventTypesInitJson_Institute(int? value)
         {
             dbOperation = new DbEventSubTypes();
 
             var data = ((DbEventSubTypes)dbOperation).EventSubTypesInit(value);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetEventTypeBySubType(int? subType)
+        {
+            dbOperation = new DbEventTypes();
+            var data = ((DbEventTypes)dbOperation).GetEventTypeBySubType(subType);
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 

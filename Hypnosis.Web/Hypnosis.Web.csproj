@@ -374,9 +374,9 @@
     <Compile Include="Models\EventsModel.cs" />
     <Compile Include="Models\EventSubTypesModel.cs" />
     <Compile Include="Models\EventTypesModel.cs" />
-    <Compile Include="Models\InstituteEventsRowViewModel.cs" />
+    <Compile Include="Models\InstituteModel.cs" />
     <Compile Include="Models\JsonObject.cs" />
-    <Compile Include="Models\PersonEventsRowViewModel.cs" />
+    <Compile Include="Models\PersonModel.cs" />
     <Compile Include="MyHelpers\FilesHelper.cs" />
     <Compile Include="MyHelpers\GlobalHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

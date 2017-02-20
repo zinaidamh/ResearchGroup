@@ -45,7 +45,7 @@ namespace Hypnosis.Web.Controllers
         }
 
 
-        public JsonResult ChangeData(int? Id, string SubType_Name, int Type_ID, bool isUpdate)
+        public JsonResult ChangeData(int? Id, string SubType_Name, int? Type_ID, int? EssenseOrder, bool isUpdate)
         {
             if (string.IsNullOrEmpty(SubType_Name))
             {
@@ -58,7 +58,7 @@ namespace Hypnosis.Web.Controllers
                 var data = new JsonObject { result = false };
                 return Json(data, JsonRequestBehavior.AllowGet);
             }
-            if (EventSubTypeOperations.CreateUpdate(Id, SubType_Name, Type_ID, isUpdate))
+            if (EventSubTypeOperations.CreateUpdate(Id, SubType_Name, Type_ID, EssenseOrder, isUpdate))
             {
                 var data = new JsonObject { result = true };
                 return Json(data, JsonRequestBehavior.AllowGet);

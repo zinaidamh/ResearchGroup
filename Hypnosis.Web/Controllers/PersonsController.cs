@@ -48,7 +48,7 @@ namespace Hypnosis.Web.Controllers
         public ActionResult IndexDataByPerson(Models.DataTables.jqDataTableInput input, int Person_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
         {
             DbEvents EventsOperations = new DbEvents();
-            var source = EventsOperations.GetEventsByFilter(Person_ID, null, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            var source = EventsOperations.GetEventsByFilter(Person_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
             System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
             return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
 
@@ -78,114 +78,19 @@ namespace Hypnosis.Web.Controllers
             return new Models.DataTables.DataTablesActionResult<PersonEventsListRowViewModel>(source, input, prefilter);
         }
 
-        
+
+        [HttpPost]
         public JsonResult ChangeEventsData()
         {
-            int? Id=null; bool isUpdate=false; int? SubType_ID=null; int? Type_ID=null; int? Agent_ID=null; int? Institute_ID=null;
-            DateTime? FirstDate=null, AlertDate=null, ExpirationDate=null; string SiteHref=""; bool AlertDone=false;
-            int? Person_ID = null;
-            try
-            {
-              
-                if (Request["Id"]!=null)
-                {
-                Id=Int32.Parse(Request["Id"]);
-                }
-                if (Request["SubType_ID"] != null)
-                {
-                    SubType_ID = Int32.Parse(Request["SubType_ID"]);
-                }
-                if (Request["Type_ID"] != null)
-                {
-                    Type_ID = Int32.Parse(Request["Type_ID"]);
-                }
-                if (Request["Agent_ID"]!=null)
-                {
-                Agent_ID = Int32.Parse(Request["Agent_ID"]);
-                }
-                if (Request["Institute_ID"] != null)
-                {
-                    Institute_ID = Int32.Parse(Request["Institute_ID"]);
-                }
-                if (Request["isUpdate"] != null)
-                {
-                    isUpdate = bool.Parse(Request["isUpdate"]);
-                }
-                if (Request["FirstDate"] != null)
-                {
-                    FirstDate = DateTime.Parse(Request["FirstDate"]);
-                }
-                if (Request["AlertDate"] != null)
-                {
-                    AlertDate = DateTime.Parse(Request["AlertDate"]);
-                }
-                if (Request["ExpirationDate"] != null)
-                {
-                    ExpirationDate = DateTime.Parse(Request["ExpirationDate"]);
-                }
-                if (Request["SiteHref"] != null)
-                {
-                    SiteHref = Request["SiteHref"].ToString();
-                }
-                if (Request["AlertDone"] != null)
-                {
-                    AlertDone = bool.Parse(Request["AlertDone"]);
-                }
-                if (Request["Person_ID"] != null)
-                {
-                    Person_ID = Int32.Parse(Request["Person_ID"]);
-                }
-            }
-            catch
-            {
-                {
-                var data = new JsonObject { result = false };
-                return Json(data, JsonRequestBehavior.AllowGet);
-            }
-            }
             DbEvents EventsOperations = new DbEvents();
-             if (SubType_ID == null)
-            {
-                var data = new JsonObject { result = false };
-                return Json(data, JsonRequestBehavior.AllowGet);
-            }
-            if (Type_ID == null)
-            {
+            var relativePath = FilesHelper.RelativePath;
+            var path = Server.MapPath(relativePath);
+            bool operationResult=EventsOperations.ChangeData(this.Request, path);
 
-                var data = new JsonObject { result = false };
-                return Json(data, JsonRequestBehavior.AllowGet);
-            }
-            var files = this.Request.Files;
-            string FileName = "";
-            
-            
-                if (files.Count > 0)
-                {
-                    var file0 = files[0];
-                    var relativePath = FilesHelper.RelativePath;
-                    var path = Server.MapPath(relativePath);
-                    try
-                    {
-                        file0.SaveAs(System.IO.Path.Combine(path, file0.FileName));
-                        FileName = file0.FileName;
-                        
-                    }
-                    catch
-                    {
-                        var data = new JsonObject { result = false };
-                        return Json(data, JsonRequestBehavior.AllowGet);
-                    }
-                }
-                if (EventsOperations.CreateUpdate(Id, Person_ID, SubType_ID, Type_ID, Agent_ID, Institute_ID, FileName,FirstDate, ExpirationDate, AlertDate, AlertDone, SiteHref, isUpdate))
-                {
-                var data = new JsonObject { result = true };
-                return Json(data, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                var data = new JsonObject { result = false };
-                return Json(data, JsonRequestBehavior.AllowGet);
-                }
+
+            var data = new JsonObject { result = operationResult };
+            return Json(data, JsonRequestBehavior.AllowGet);
+              
             
         }
 
@@ -215,7 +120,7 @@ namespace Hypnosis.Web.Controllers
                 return RedirectToAction("Index", new { Type_ID = type_ID, SubType_ID = subType_ID, InMailingListOnly = inMailingListOnly });
             }
             PersonEditModel model = PersonOperations.GetPersonEditModel(person);
-            model.filter = new PersonEventsViewModel
+            model.filter = new EventsFilterViewModel_ForList
             {
                 Type_ID = type_ID,
                 SubType_ID = subType_ID,

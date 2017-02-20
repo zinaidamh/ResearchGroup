@@ -41,6 +41,12 @@
                     <td class="line" >
                         <input id="dt_type" type="text" />
                     </td>
+                    <td class="line_title" style="width:25%">
+                        <label for="order">סדר הצגה בתמצית </label>
+                    </td>
+                    <td class="line">
+                        <input id="dt_order" type="text" />
+                    </td>
                     <td class="line_title">
                         <a href="#bottom" title="שמור" id="save"><i class="fa fa-check"></i></a>
                     </td>
@@ -94,6 +100,8 @@
 
 
       
+     
+
 
 
         function dt_type_select() {
@@ -133,6 +141,15 @@
         }
 
         dt_type_select();
+        function dt_order_validate() {
+            $("#dt_order").keypress(function (e) {
+                    if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+                    alert("רק מספר");
+                    return false;
+                }
+            });
+        }
+        dt_order_validate();
 
         var oTable = $('#eventSubTypes');
         oTable.dataTable({
@@ -196,7 +213,16 @@
                     "mRenderEdit": function (a, b, c) {
                         return '<input id="dt_type" class="required"  value="'+ c.Type_ID+'">';;
                     }
-                }
+                },
+                 {
+                     "sWidth": "30%",
+                     "mData": "EssenseOrder",
+                     "sTitle": "סדר הצגה בתמצית ",
+                     "mRenderEdit": function (a, b, c) {
+                         return '<input id="dt_order"  class="digit" class="required"  value="' + c.EssenseOrder + '">';;
+                     }
+                 }
+                
             ]
         });
 
@@ -221,6 +247,7 @@
                 }
             });
             dt_type_select();
+            dt_order_validate();
         });
 
         oTable.on('click', '.cancel', function () {
@@ -256,6 +283,10 @@
                         case 'Type_Name': newdata[col.mData] = $("#dt_type").val();
                             dataParams.push({ "name": "Type_ID", "value": $("#dt_type").select2('val')  });
                             break;
+                        case "EssenseOrder":
+                            dataParams.push({ "name": "EssenseOrder", "value": $("#dt_order").val() });
+                            break;
+
                     }
                 }
             });
@@ -304,7 +335,8 @@
 
             var dataParams = [];
             dataParams.push({ "name": "SubType_Name", "value": $("#dt_name").val()});
-            dataParams.push({ "name": "Type_ID", "value": $('#dt_type').select2('val')  });
+            dataParams.push({ "name": "Type_ID", "value": $('#dt_type').select2('val') });
+            dataParams.push({ "name": "EssenseOrder", "value": $("#dt_order").val() });
             dataParams.push({ "name": "isUpdate", "value": false });
 
             $.ajax({
@@ -336,6 +368,7 @@
             {
                 $("#dt_name").val('');
                 $("#dt_type").select2('val', '');
+                $("#dt_order").val('');
             }
 
             function validate() {
@@ -348,14 +381,10 @@
                 return true;
             };
 
-            @*$('#exportBtn').click(function () {
-                var location = '@Url.Action("Export", "Cities")?';
-                var filterValues = [];
-                filterValues.push({ "name": "filterCityId", "value": typeSelect.select2('val') });
-                location += $.param(filterValues);
-                window.location = location;
-            });*@
+          
         });
+
+        
 
         function deleteRow(id) {
             if (confirm("האם אתה בטוח שברצונך למחוק רשומה זו?")) {

@@ -37,6 +37,7 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Type_ID" Type="int" Nullable="false" />
           <Property Name="SubType_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="EssenseOrder" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="EventTypeCategories">
           <Key>
@@ -303,6 +304,7 @@
           <Property Name="SubType_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="EventType" Relationship="HypnosisData.FK_EventSubTypes_ToTypes" FromRole="EventSubType" ToRole="EventType" />
           <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToSubTypes" FromRole="EventSubType" ToRole="Event" />
+          <Property Name="EssenseOrder" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="EventType">
           <Key>
@@ -569,6 +571,7 @@
           <EntitySetMapping Name="EventSubTypes">
             <EntityTypeMapping TypeName="HypnosisData.EventSubType">
               <MappingFragment StoreEntitySet="EventSubTypes">
+                <ScalarProperty Name="EssenseOrder" ColumnName="EssenseOrder" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Type_ID" ColumnName="Type_ID" />
                 <ScalarProperty Name="SubType_Name" ColumnName="SubType_Name" />

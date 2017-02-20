@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Hypnosis.Web.Models;
 using Hypnosis.Web.Data;
 using Hypnosis.Web.Data.DbOperations;
+using Hypnosis.Web.MyHelpers;
 
 namespace Hypnosis.Web.Controllers
 {
@@ -20,9 +21,10 @@ namespace Hypnosis.Web.Controllers
             InstituteOperations = (DbInstitute)dbOperation;
         }
 
+
         public ActionResult Index(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
-            var model = new InstituteEventsViewModel();
+            var model = new EventsFilterViewModel_ForList();
 
             if (Type_ID.HasValue)
             {
@@ -43,23 +45,7 @@ namespace Hypnosis.Web.Controllers
         [HttpPost]
         public ActionResult IndexData(Models.DataTables.jqDataTableInput input, int? Type_ID, int? SubType_ID, bool InMailingListOnly)
         {
-            var personEvents = InstituteOperations.GetRows();
-
-
-            if (Type_ID.HasValue)
-            {
-                personEvents = personEvents.Where(f => f.Type_ID == Type_ID);
-            }
-            if (SubType_ID.HasValue)
-            {
-                personEvents = personEvents.Where(f => f.SubType_ID == SubType_ID);
-            }
-            if (InMailingListOnly == true)
-            {
-                personEvents = personEvents.Where(f => f.InMailingList == InMailingListOnly);
-            }
-
-            var source = personEvents;
+            var source = InstituteOperations.GetRows(Type_ID,SubType_ID,InMailingListOnly);
             System.Linq.Expressions.Expression<Func<InstituteEventsListRowViewModel, bool>> prefilter = null;
             return new Models.DataTables.DataTablesActionResult<InstituteEventsListRowViewModel>(source, input, prefilter);
         }
@@ -68,41 +54,19 @@ namespace Hypnosis.Web.Controllers
         public ActionResult EventsDataByCard(Models.DataTables.jqDataTableInput input, int Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
         {
             DbEvents EventsOperations = new DbEvents();
-            var source = EventsOperations.GetEventsByFilter(Card_ID, null, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            var source = EventsOperations.GetEventsByFilter(Card_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
             System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
             return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
 
         }
 
        
-        //public ActionResult IndexData(Models.DataTables.jqDataTableInput input, int? Type_ID, int? SubType_ID, bool InMailingListOnly)
-        //{
-        //    var personEvents = InstituteOperations.GetRows();
-
-
-        //    if (Type_ID.HasValue)
-        //    {
-        //        personEvents = personEvents.Where(f => f.Type_ID == Type_ID);
-        //    }
-        //    if (SubType_ID.HasValue)
-        //    {
-        //        personEvents = personEvents.Where(f => f.SubType_ID == SubType_ID);
-        //    }
-        //    if (InMailingListOnly == true)
-        //    {
-        //        personEvents = personEvents.Where(f => f.InMailingList == InMailingListOnly);
-        //    }
-
-        //    var source = personEvents;
-        //    System.Linq.Expressions.Expression<Func<PersonEventsListRowViewModel, bool>> prefilter = null;
-        //    return new Models.DataTables.DataTablesActionResult<PersonEventsListRowViewModel>(source, input, prefilter);
-        //}
-
+      
        
         public ActionResult Export(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
             var source = InstituteOperations.GetExportRows(Type_ID, SubType_ID, InMailingListOnly);
-            return this.Excel("אנשים", "Institutes", source);
+            return this.Excel("מכונים", "Institutes", source);
         }
 
 
@@ -122,19 +86,19 @@ namespace Hypnosis.Web.Controllers
 
         public ActionResult Edit(int Id, int? type_ID, int? subType_ID, bool inMailingListOnly)
         {
-            Institute person = InstituteOperations.GetInstituteById(Id);
-            if (person == null)
+            Institute card = InstituteOperations.GetInstituteById(Id);
+            if (card == null)
             {
                 return RedirectToAction("Index", new { Type_ID = type_ID, SubType_ID = subType_ID, InMailingListOnly = inMailingListOnly });
             }
-            InstituteEditModel model = InstituteOperations.GetInstituteEditModel(person);
-            model.filter = new InstituteEventsViewModel
+            InstituteEditModel model = InstituteOperations.GetInstituteEditModel(card);
+            model.filter = new EventsFilterViewModel_ForList
             {
                 Type_ID = type_ID,
                 SubType_ID = subType_ID,
                 InMailingListOnly = inMailingListOnly
             };
-            model.eventsFilter = new EventsFilterViewModel()
+            model.eventsFilter = new EventsFilterViewModel_ForCard()
             {
                 Category_ID = 1,
                 Card_ID = Id
@@ -159,13 +123,26 @@ namespace Hypnosis.Web.Controllers
                 return View(model);
             }
         }
+        [HttpPost]
+        public JsonResult ChangeEventsData()
+        {
+            DbEvents EventsOperations = new DbEvents();
+            var relativePath = FilesHelper.RelativePath;
+            var path = Server.MapPath(relativePath);
+            bool operationResult = EventsOperations.ChangeData(this.Request, path);
 
+
+            var data = new JsonObject { result = operationResult };
+            return Json(data, JsonRequestBehavior.AllowGet);
+
+
+        }
 
         public ActionResult Create(int? type_ID, int? subType_ID, bool inMailingListOnly)
         {
             var model = new InstituteCreateModel();
 
-            model.filter = new InstituteEventsViewModel
+            model.filter = new  EventsFilterViewModel_ForList
             {
                 Type_ID = type_ID,
                 SubType_ID = subType_ID,

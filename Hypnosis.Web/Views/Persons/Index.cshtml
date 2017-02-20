@@ -1,4 +1,4 @@
-﻿@model Hypnosis.Web.Models.PersonEventsViewModel
+﻿@model Hypnosis.Web.Models.EventsFilterViewModel_ForList
 @{
     ViewBag.Title = "רשימת אנשים";
 }
@@ -192,17 +192,17 @@
 
   //last event short
                      {
-                         "mData": "FirstDate_Short",
+                         "mData": "FirstDate_Essense",
                          "sTitle": "תאריך ארוע אחרון בתמצית",
                          "mRender": function (a) { return mRenderDate(a); }
                      },
 
                     {
-                        "mData": "SubType_Name_Short",
+                        "mData": "SubType_Name_Essense",
                         "sTitle": "תת סוג ארוע אחרון בתמצית"
                     },
                     {
-                        "mData": "Description_Short",
+                        "mData": "Description_Essense",
                         "sTitle": "תאור ארוע אחרון בתמצית"
                     },
   //contacts

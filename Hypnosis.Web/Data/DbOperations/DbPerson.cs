@@ -97,9 +97,9 @@ namespace Hypnosis.Web.Data.DbOperations
                        
                        FirstDate=events.FirstDate,
 
-                       Description_Short = events.Description,
-                       SubType_Name_Short = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-                       FirstDate_Short = events.FirstDate,
+                       Description_Essense = events.Description,
+                       SubType_Name_Essense = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
+                       FirstDate_Essense = events.FirstDate,
 
 
                        Mobile = p.Mobile,
@@ -151,9 +151,9 @@ namespace Hypnosis.Web.Data.DbOperations
 
                        FirstDate = events.FirstDate,
 
-                       Description_Short = events.Description,
-                       SubType_Name_Short = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-                       FirstDate_Short = events.FirstDate,
+                       Description_Essense = events.Description,
+                       SubType_Name_Essense = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
+                       FirstDate_Essense = events.FirstDate,
 
 
                        Mobile = p.Mobile,
@@ -211,9 +211,9 @@ namespace Hypnosis.Web.Data.DbOperations
 
                        FirstDate = p.FirstDate.HasValue ? p.FirstDate.Value.ToShortDateString() : "",
 
-                       Description_Short = p.Description,
-                       SubType_Name_Short =p.SubType_Name,
-                       FirstDate_Short = p.FirstDate_Short.HasValue ? p.FirstDate_Short.Value.ToShortDateString() : "",
+                       Description_Essense = p.Description,
+                       SubType_Name_Essense =p.SubType_Name,
+                       FirstDate_Essense = p.FirstDate_Essense.HasValue ? p.FirstDate_Essense.Value.ToShortDateString() : "",
 
 
 

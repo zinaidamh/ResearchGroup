@@ -68,11 +68,17 @@ namespace Hypnosis.Web.Data.DbOperations
         }
 
 
-        public IQueryable<InstituteEventsListRowViewModel> GetRows()
+        public IQueryable<InstituteEventsListRowViewModel> GetRows(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
-            IQueryable<Institute> data = GetInstitutes();
-            return from p in data
-                   let events = dbContext.Events.OrderByDescending(f => f.ID).FirstOrDefault(f => f.Institute_ID == p.ID) //temporal
+                                                     
+            
+            var data = GetInstitutes();
+            var eventsList = dbContext.Events.Include("EventSubTypes").Include("EventTypes");
+            var list= from p in data
+                   let events = eventsList.OrderByDescending(f => f.ID).FirstOrDefault(f => f.Institute_ID == p.ID)
+                   let events_Essense = eventsList.Where(f=>f.EventSubType.EssenseOrder>0).
+                                           OrderByDescending(f => f.ID).FirstOrDefault(f => f.Institute_ID == p.ID)
+                
 
 
                    select new InstituteEventsListRowViewModel
@@ -83,17 +89,22 @@ namespace Hypnosis.Web.Data.DbOperations
                        Name = p.Name,
 
                        SubType_ID = events.SubType_ID,
+                       Type_ID = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().Type_ID,
+
+                       Type_ID_Essense = events_Essense.EventSubType.Type_ID,
+                       SubType_ID_Essense=events_Essense.SubType_ID,
 
                        Description = events.Description,
                        SubType_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-                       Type_ID = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().Type_ID,
                        Type_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().EventType.Type_Name,
-
                        FirstDate = events.FirstDate,
 
-                       Description_Short = events.Description,
-                       SubType_Name_Short = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-                       FirstDate_Short = events.FirstDate,
+                       Description_Essense = events_Essense.Description,
+                       SubType_Name_Essense =events_Essense.EventSubType.SubType_Name,
+                       Type_Name_Essense=events_Essense.EventSubType.EventType.Type_Name,
+                     
+                       //dbContext.EventSubTypes.Where(s => s.ID == events_Essense.SubType_ID).FirstOrDefault().SubType_Name,
+                       FirstDate_Essense = events.FirstDate,
 
 
                        MainPhone = p.MainPhone,
@@ -115,71 +126,33 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
                    };
+
+            if (Type_ID.HasValue)
+            {
+                list = list.Where(f => f.Type_ID == Type_ID && f.Type_ID_Essense == Type_ID);
+            }
+            if (SubType_ID.HasValue)
+            {
+                list = list.Where(f => f.SubType_ID == SubType_ID && f.SubType_ID_Essense == SubType_ID);
+            }
+            if (InMailingListOnly == true)
+            {
+                list = list.Where(f => f.InMailingList == InMailingListOnly);
+            }
+
+            IQueryable < InstituteEventsListRowViewModel> result= list.OrderBy(f => f.Name);
+            return result;
         }
 
 
 
         public List<InstituteEventsListRowExportModel> GetExportRows(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
-            IQueryable<Institute> data = GetInstitutes();
-            var instituteEvents = from p in data
-                               let events = dbContext.Events.OrderByDescending(f => f.ID).FirstOrDefault(f => f.Institute_ID == p.ID) //temporal
+
+            var instituteEvents = GetRows(Type_ID,SubType_ID,InMailingListOnly);
 
 
-                               select new InstituteEventsListRowViewModel
-                               {
-
-                                   ID = p.ID,
-                                  
-                                   Name = p.Name,
-
-                                   SubType_ID = events.SubType_ID,
-
-                                   Description = events.Description,
-                                   SubType_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-                                   Type_ID = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().Type_ID,
-                                   Type_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().EventType.Type_Name,
-
-                                   FirstDate = events.FirstDate,
-
-                                   Description_Short = events.Description,
-                                   SubType_Name_Short = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-                                   FirstDate_Short = events.FirstDate,
-
-
-                                   MainPhone = p.MainPhone,
-                                   Phones = p.Phones,
-                                   Email = p.Email,
-                                   City = p.City,
-
-                                   InMailingList = p.InMailingList,
-                                   InMailingListString = p.InMailingList ? "כן" : "לא",
-
-                                   
-
-                                   Institute_Comments = p.Comments,
-
-                                
-                                   Address = p.Address,
-                                   Address_Comments = p.Address_Comments
-
-
-
-                               };
-
-
-            if (Type_ID.HasValue)
-            {
-                instituteEvents = instituteEvents.Where(f => f.Type_ID == Type_ID);
-            }
-            if (SubType_ID.HasValue)
-            {
-                instituteEvents = instituteEvents.Where(f => f.SubType_ID == SubType_ID);
-            }
-            if (InMailingListOnly == true)
-            {
-                instituteEvents = instituteEvents.Where(f => f.InMailingList == InMailingListOnly);
-            }
+           
             var source = instituteEvents.ToList();
 
             var export = from p in source
@@ -199,9 +172,9 @@ namespace Hypnosis.Web.Data.DbOperations
 
                              FirstDate = p.FirstDate.HasValue ? p.FirstDate.Value.ToShortDateString() : "",
 
-                             Description_Short = p.Description,
-                             SubType_Name_Short = p.SubType_Name,
-                             FirstDate_Short = p.FirstDate_Short.HasValue ? p.FirstDate_Short.Value.ToShortDateString() : "",
+                             Description_Essense = p.Description,
+                             SubType_Name_Essense = p.SubType_Name,
+                             FirstDate_Essense = p.FirstDate_Essense.HasValue ? p.FirstDate_Essense.Value.ToShortDateString() : "",
 
 
 
@@ -261,14 +234,14 @@ namespace Hypnosis.Web.Data.DbOperations
           
             institute.Name = model.Name;
             institute.Address = model.Address;
-            institute.Address_Comments = model.Address_Comments;
+            institute.Address_Comments = HttpUtility.HtmlDecode(model.Address_Comments);
          
             institute.City = model.City;
         
             institute.Email = model.Email;
             institute.InMailingList = model.InMailingList;
             institute.MainPhone = model.MainPhone;
-            institute.Comments = model.Institute_Comments;
+            institute.Comments = HttpUtility.HtmlDecode(model.Institute_Comments);
             institute.Phones = model.Phones;
             institute.ZipCode = model.ZipCode;
 
@@ -329,45 +302,7 @@ namespace Hypnosis.Web.Data.DbOperations
         }
 
 
-        public IEnumerable<s2item> EventTypeCategoriesInit(int? value)
-        {
-            var q = from a in dbContext.EventTypeCategories
-                    where value == null || a.ID == value.Value
-                    select new
-                    {
-                        id = a.ID,
-                        text = a.Category_Name
-                    };
-            return q.ToList().Select(f => new s2item
-            {
-                id = f.id,
-                text = f.text.ToString()
-            });
-        }
-
-        public s2result getEventTypeCategories(string q, int page, int page_limit)
-        {
-            var dbq = from a in dbContext.EventTypeCategories
-
-
-                      select new
-                      {
-                          id = a.ID,
-                          text = a.Category_Name
-                      };
-            if (!string.IsNullOrEmpty(q))
-            {
-                dbq = dbq.Where(f => f.text.Contains(q));
-            }
-
-            var aa = dbq.OrderBy(f => f.text).ToList().Select(f => new s2item { id = f.id, text = f.text });
-
-            return new s2result
-            {
-                results = aa,
-                more = aa.Count() > page_limit
-            };
-        }
+      
 
 
 

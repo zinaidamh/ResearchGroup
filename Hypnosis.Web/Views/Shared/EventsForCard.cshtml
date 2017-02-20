@@ -1,4 +1,4 @@
-﻿@model Hypnosis.Web.Models.EventsFilterViewModel
+﻿@model Hypnosis.Web.Models.EventsFilterViewModel_ForCard
 @{
     ViewBag.Title = "EventsForCard";
     
@@ -55,6 +55,11 @@
             </div>
             <br />
             <table id="events" class="table table-striped table-bordered dataTable no-footer" style="overflow:auto"></table>
+            <div class="panel-body">
+                @*<button type="button" class="btn btn-primary" id="createNew">הוספת אנשים</button>*@
+                <button type="button" class="btn btn-primary" id="exportBtn">יצוא ארועים</button>
+            </div>
+
             <div style="overflow:auto">
                             <table id="newEvent" class="table table-striped table-bordered dataTable no-footer">
                                 <tbody>
@@ -78,13 +83,13 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <input size="8" id="firstDate" class="datepicker required" type="text" />
+                                            <input size="8" id="firstDate" class="datepicker newFirstDate required" type="text" />
                                         </td>
                                         <td>
                                             <input id="dt_subtype" class="required" />
                                         </td>
                                         <td>
-                                            <input id="dt_type" class="required" />
+                                            <input id="dt_type" disabled="disabled" class="required" />
                                         </td>
                                         <td>
                                             <input id="dt_description" size="50" class="required" />
@@ -102,7 +107,8 @@
                                         <td>
                                             <input id="alertDone" type="checkbox" />
                                         </td>
-                                        <td>
+
+                                        <td id="tdInstitute">
                                             <input id="dt_institute" />
                                         </td>
                                         <td>
@@ -119,332 +125,344 @@
                                         </td>
                                 
                                 <td class="line_title">
-                                    <a href="#bottom" title="שמור" id="save"><i class="fa fa-check"></i></a>
+                                    <a href="#bottom" title="שמור"  id="save"><i class="fa fa-check"></i></a>
                                 </td>
                                 <td class="line_title">
-                                    <a href="#bottom" title="בטל" id="cancel"><i class="fa fa-undo"></i></a>
+                                    <a href="#bottom" title="בטל"  id="cancel"><i class="fa fa-undo"></i></a>
                                 </td>
                                 
                             </table>
                         </div>
                     </div>
 </div>
-
+<a href="#bottom" title="addNew" id="addNew" class=""></a>
     <script>
+      
 
+        $(function () {
 
-    $(function () {
+            var card = $('#@Html.FieldIdFor(f => f.Card_ID)')
+            var category = $('#@Html.FieldIdFor(f => f.Category_ID)')
 
-        var card = $('#@Html.FieldIdFor(f => f.Card_ID)')
-        var category = $('#@Html.FieldIdFor(f => f.Category_ID)')
-
-
-
+            if (category.val() == 1) { //institutes
+                $('#tdInstitute').hide()
+            }
             var selectType = $('#@Html.FieldIdFor(f => f.Type_ID)').select2({
-            width: 200,
-            placeholder: "הכל",
-            allowClear: true,
-            initSelection: function (element, callback) {
-                $.ajax({
-                    url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
-                    type: "GET",
-                    data: { value: $(element).val() },
-                    dataType: "json"
-                }).done(function (data) {
-                    if (data && data.length == 1) {
-                        callback(data[0]);
-                    }
-                });
-            },
-            ajax: {
-                url: '@Url.Content("~/JsonResults/GetEventTypes_ByCategory")',
-                dataType: "json",
-                data: function (term, page) {
-                    return {
-                        q: term, // search term
-                        category_id: f.Category_ID,
-                        page: page,
-                        page_limit: 10,
-                        val: this.val()
-                    };
+                width: 200,
+                placeholder: "הכל",
+                allowClear: true,
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
                 },
-                results: function (data, page) {
-                    return {
-                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
-                    };
-                }
-            }
-        });
-
-
-        var selectSubType = $('#@Html.FieldIdFor(f => f.SubType_ID)').select2({
-            width: 200,
-            placeholder: "הכל",
-            allowClear: true,
-            initSelection: function (element, callback) {
-                $.ajax({
-                    url: '@Url.Content("~/JsonResults/EventSubTypesInitJson")',
-                    type: "GET",
-                    data: { value: $(element).val() },
-                    dataType: "json"
-                }).done(function (data) {
-                    if (data && data.length == 1) {
-                        callback(data[0]);
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetEventTypesJson_ByCategory")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            category_id: category.val(),
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
                     }
-                });
-            },
-            ajax: {
-                url: '@Url.Content("~/JsonResults/GetEventSubTypesJson_ByCategory")',
-                dataType: "json",
-                data: function (term, page) {
-                    return {
-                        typeId: selectType.select2('val'),
-                        category_id: f.Category_ID,
-                        q: term, // search term
-                        page: page,
-                        page_limit: 10,
-                        val: this.val()
-                    };
+                }
+            });
+
+
+            var selectSubType = $('#@Html.FieldIdFor(f => f.SubType_ID)').select2({
+                width: 200,
+                placeholder: "הכל",
+                allowClear: true,
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/EventSubTypesInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
                 },
-                results: function (data, page) {
-                    return {
-                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
-                    };
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetEventSubTypesJson_ByCategory")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            category_id: category.val(),
+                            typeId: selectType.select2('val'),
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
+                    }
                 }
-            }
-        });
+            });
 
 
-        var chkEssenseOnly = $('#@Html.FieldIdFor(f => f.EssenceOnly)');
-        var chkExpiredOnly = $('#@Html.FieldIdFor(f => f.ExpiredOnly)');
-        var chkOpenOnly = $('#@Html.FieldIdFor(f => f.OpenOnly)');
-        var chkFileOnly = $('#@Html.FieldIdFor(f => f.FileOnly)');
-        var chkSiteOnly = $('#@Html.FieldIdFor(f => f.SiteOnly)');
+            var chkEssenseOnly = $('#@Html.FieldIdFor(f => f.EssenceOnly)');
+            var chkExpiredOnly = $('#@Html.FieldIdFor(f => f.ExpiredOnly)');
+            var chkOpenOnly = $('#@Html.FieldIdFor(f => f.OpenOnly)');
+            var chkFileOnly = $('#@Html.FieldIdFor(f => f.FileOnly)');
+            var chkSiteOnly = $('#@Html.FieldIdFor(f => f.SiteOnly)');
 
-        var fromDate = $('#@Html.FieldIdFor(f => f.fromDate)');
-        var toDate = $('#@Html.FieldIdFor(f => f.toDate)');
-
-
-
-
-        var oTable = $('#events');
-        oTable.dataTable({
-            stateSave: true,
-            "aaSorting": [[3, 'asc']],
-            "sAjaxSource": "@Url.Action("EventsDataByCard")",
-
-            "fnServerParams": function (aoData) {
-                aoData.push({ "name": "Card_ID", "value": card.val() });
-                aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
-                aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
-                aoData.push({ "name": "fromDate", "value": fromDate.val() });
-                aoData.push({ "name": "toDate", "value": toDate.val() });
-
-                aoData.push({ "name": "EssenseOnly", "value": chkEssenseOnly.is(':checked') });
-                aoData.push({ "name": "ExpiredOnly", "value": chkExpiredOnly.is(':checked') });
-                aoData.push({ "name": "OpenOnly", "value": chkOpenOnly.is(':checked') });
-                aoData.push({ "name": "FileOnly", "value": chkFileOnly.is(':checked') });
-                aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
+            var fromDate = $('#@Html.FieldIdFor(f => f.fromDate)');
+            var toDate = $('#@Html.FieldIdFor(f => f.toDate)');
 
 
 
 
-                console.log(aoData);
-            },
-            "fnDrawCallback": function (oSettings) {
-                if (oSettings.aoData.length == 0) {
-                    oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
-                }
-                else {
-                    oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
-                }
+            var oTable = $('#events');
+            oTable.dataTable({
+                stateSave: true,
+                "aaSorting": [[1, 'asc']],
+                "sAjaxSource": "@Url.Action("DataByCard","Events")",
 
+                "fnServerParams": function (aoData) {
+                    aoData.push({ "name": "Card_ID", "value": card.val() });
+                    aoData.push({ "name": "Category_ID", "value": category.val() });
+                    aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
+                    aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+                    aoData.push({ "name": "fromDate", "value": fromDate.val() });
+                    aoData.push({ "name": "toDate", "value": toDate.val() });
 
-            },
-
-            "aoColumns": [
-
-
-
-
-               {
-                   "mData": "FirstDate",
-                   "sTitle": "תאריך אירוע תחילה",
-                   "mRender": function (a) { return mRenderDate(a); },
-                   "mRenderEdit": function (a, b, c) {
-                       var firstDate = new Date(c.FirstDate)
-                       return '<input size="8" id="firstDate" class="datepicker required" type="text"  value="' + firstDate.toString("dd/MM/yyyy") + '" />';
-                   }
-               },
-
-
-                 {
-                     "mData": "SubType_Name",
-                     "sTitle": "תת סוג ארוע ",
-                     "mRenderEdit": function (a, b, c) {
-                         return '<input id="dt_subtype" class="required"  value="' + c.SubType_ID + '">';
-                     }
-
-                 },
-                  {
-                      "mData": "Type_Name",
-                      "sTitle": " סוג ארוע ",
-                      "mRenderEdit": function (a, b, c) {
-                          return '<input id="dt_type" class="required"  value="' + c.Type_ID + '">';;
-                      }
-                  },
+                    aoData.push({ "name": "EssenseOnly", "value": chkEssenseOnly.is(':checked') });
+                    aoData.push({ "name": "ExpiredOnly", "value": chkExpiredOnly.is(':checked') });
+                    aoData.push({ "name": "OpenOnly", "value": chkOpenOnly.is(':checked') });
+                    aoData.push({ "name": "FileOnly", "value": chkFileOnly.is(':checked') });
+                    aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
 
 
 
 
+                    console.log(aoData);
+                },
+                "fnDrawCallback": function (oSettings) {
+                    if (oSettings.aoData.length == 0) {
+                        oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
+                    }
+                    else {
+                        oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
+                    }
+
+
+                },
+
+                "aoColumns": [
+
+
+
+
+                   {
+                       "mData": "FirstDate",
+                       "sTitle": "תאריך אירוע תחילה",
+                       "mRender": function (a) { return mRenderDate(a); },
+                       "mRenderEdit": function (a, b, c) {
+                           var firstDate = new Date(c.FirstDate)
+                       
+                           return '<input size="8" id="firstDate" class="datepicker required" type="text"  value="' + firstDate.toString("dd/MM/yyyy") + '" />';
+                       }
+                   },
+
+
+                     {
+                         "mData": "SubType_Name",
+                         "sTitle": "תת סוג ארוע ",
+                         "mRenderEdit": function (a, b, c) {
+                             return '<input id="dt_subtype" class="required"  value="' + c.SubType_ID + '">';
+                         }
+
+                     },
                       {
-                          "mData": "Description",
-                          "sTitle": "תאור ארוע ",
+                          "mData": "Type_Name",
+                          "sTitle": " סוג ארוע ",
                           "mRenderEdit": function (a, b, c) {
-                              return '<input id="dt_description" size="50" class="required"  value="' + c.Description + '">';;
+                              return '<input disabled="disabled" id="dt_type" class="required"  value="' + c.Type_ID + '">';;
                           }
                       },
 
-                        {
-                            "mData": "Agent_Name",
-                            "sTitle": "גורם/ אמצאי הפנייה",
-                            "mRenderEdit": function (a, b, c) {
-                                return '<input id="dt_agent"   value="' + c.Agent_ID + '">';;
-                            }
-                        },
 
-                        {
-                            "mData": "ExpirationDate",
-                            "sTitle": "תאריך תוקף/סיום",
-                            "mRender": function (a) { return mRenderDate(a); },
-                            "mRenderEdit": function (a, b, c) {
-                                var expDate = new Date(c.ExpirationDate)
-                                return '<input size="8" id="expDate" class="datepicker required" type="text"  value="' + expDate.toString("dd/MM/yyyy") + '" />';
-                            }
-                        },
 
-                        {
-                            "mData": "AlertDate",
-                            "sTitle": "תאריך הקפצת התראה",
-                            "mRender": function (a) { return mRenderDate(a); },
-                            "mRenderEdit": function (a, b, c) {
-                                var alertDate = new Date(c.AlertDate)
-                                return '<input size="8" id="alertDate" class="datepicker required" type="text"  value="' + alertDate.toString("dd/MM/yyyy") + '" />';
-                            }
-                        },
 
-                         {
-                             "mData": "alertDoneString",
-                             "sTitle": "התראה טופלה",
-                             "mRenderEdit": function (a, b, c) {
-                                 var checked = ""
-                                 if (c.AlertDone == true) checked = "checked";
-                                 return '<input id="alertDone" type="checkbox" ' + checked + ' />';
-                             }
-
-                         },
+                          {
+                              "mData": "Description",
+                              "sTitle": "תאור ארוע ",
+                              "mRenderEdit": function (a, b, c) {
+                                  return '<input id="dt_description" size="50" class="required"  value="' + c.Description + '">';;
+                              }
+                          },
 
                             {
-                                "mData": "Institute_Name",
-                                "sTitle": "מכון",
+                                "mData": "Agent_Name",
+                                "sTitle": "גורם/ אמצאי הפנייה",
                                 "mRenderEdit": function (a, b, c) {
-                                    return '<input id="dt_institute"   value="' + c.Institute_ID + '">';;
+                                    return '<input id="dt_agent"   value="' + c.Agent_ID + '">';;
                                 }
-
                             },
 
-                          {
-                              "mData": "FileName",
-                              "sTitle": "קובץ",
-                              "mRender": function (a, b, c) {
-                                  if (c.FileName != null) {
-                                      return '<a href="@Url.Action("Get", "Files")?fileName=' + c.FileName + '">' + a + '</a>';
+                            {
+                                "mData": "ExpirationDate",
+                                "sTitle": "תאריך תוקף/סיום",
+                                "mRender": function (a) { return mRenderDate(a); },
+                                "mRenderEdit": function (a, b, c) {
+                                    var expDate = new Date(c.ExpirationDate)
+                                    return '<input size="8" id="expDate" class="datepicker required" type="text"  value="' + expDate.toString("dd/MM/yyyy") + '" />';
+                                }
+                            },
 
-                                      // return '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
+                            {
+                                "mData": "AlertDate",
+                                "sTitle": "תאריך הקפצת התראה",
+                                "mRender": function (a) { return mRenderDate(a); },
+                                "mRenderEdit": function (a, b, c) {
+                                    var alertDate = new Date(c.AlertDate)
+                                    return '<input size="8" id="alertDate" class="datepicker required" type="text"  value="' + alertDate.toString("dd/MM/yyyy") + '" />';
+                                }
+                            },
+
+                             {
+                                 "mData": "alertDoneString",
+                                 "sTitle": "התראה טופלה",
+                                 "mRenderEdit": function (a, b, c) {
+                                     var checked = ""
+                                     if (c.AlertDone == true) checked = "checked";
+                                     return '<input id="alertDone" type="checkbox" ' + checked + ' />';
+                                 }
+
+                             },
+                         
+                                {
+                                    "mData": "Institute_Name",
+                                    "sTitle": "מכון",
+                                    "mRenderEdit": function (a, b, c) {
+                                        '<input id="dt_institute"   value="' + c.Institute_ID + '">';
+                                
+
+           
+                                    },
+                                    "bVisible": function (a, b, c) { //for person only
+                                        if (c.Category_ID == 2)
+                                            return true;
+                                        else
+                                            return false;
+                                    }
+
+                                },
+                         
+                              {
+                                  "mData": "FileName",
+                                  "sTitle": "קובץ",
+                                  "mRender": function (a, b, c) {
+                                      if (c.FileName != null) {
+                                          return '<a href="@Url.Action("Get", "Files")?fileName=' + c.FileName + '">' + a + '</a>';
+
+                                          // return '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
+                                      }
+                                      else {
+                                          return "";
+                                      }
+                                  },
+                                  "mRenderEdit": function (a, b, c) {
+                                      var html = "";
+                                      if (c.FileName != null) {
+                                          html += '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
+                                          html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat" class="unused" type="file" name="file" target="' + c.ID + '"/><span></span> <input  id="datFileName" id="' + c.ID + '"  type="text" class="form-control" style="display:none;" readonly="readonly"></div>'
+
+                                      }
+                                      else {
+                                          html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat"  type="file" name="file"/></span></span> <input id="datFileName"  style="display:none;" id="' + c.ID + '"  type="text" class="form-control" readonly="readonly"></div>'
+                                      }
+                                      return html;
                                   }
-                                  else {
-                                      return "";
-                                  }
+
                               },
-                              "mRenderEdit": function (a, b, c) {
-                                  var html = "";
-                                  if (c.FileName != null) {
-                                      html += '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
-                                      html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat" class="unused" type="file" name="file" target="' + c.ID + '"/><span></span> <input  id="datFileName" id="' + c.ID + '"  type="text" class="form-control" style="display:none;" readonly="readonly"></div>'
-
-                                  }
-                                  else {
-                                      html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat"  type="file" name="file"/></span></span> <input id="datFileName"  style="display:none;" id="' + c.ID + '"  type="text" class="form-control" readonly="readonly"></div>'
-                                  }
-                                  return html;
-                              }
-
-                          },
 
 
-                           {
-                               "mData": "SiteHref",
-                               "sTitle": "קישור",
-                               "mRender": function (a, b, c) {
-                                   if (c.SiteHref != null) {
-                                       {
-                                           var href = c.SiteHref;
-                                           var text = href;
-                                           if (href.indexOf("http") == -1) {
-                                               href = "http://" + href;
+                               {
+                                   "mData": "SiteHref",
+                                   "sTitle": "קישור",
+                                   "mRender": function (a, b, c) {
+                                       if (c.SiteHref != null) {
+                                           {
+                                               var href = c.SiteHref;
+                                               var text = href;
+                                               if (href.indexOf("http") == -1) {
+                                                   href = "http://" + href;
+                                               }
+                                               return '<a target="blank"  href="' + href + '">' + text + '</a>';
+
                                            }
-                                           return '<a target="blank"  href="' + href + '">' + text + '</a>';
-
                                        }
-                                   }
-                                   else {
-                                       return "";
-                                   }
+                                       else {
+                                           return "";
+                                       }
 
+                                   },
+                                   "mRenderEdit": function (a, b, c) {
+                                       return '<input id="dt_href" size="50"   value="' + c.SiteHref + '">';;
+                                   }
                                },
-                               "mRenderEdit": function (a, b, c) {
-                                   return '<input id="dt_href" size="50"   value="' + c.SiteHref + '">';;
-                               }
-                           },
 
-                           {
-                               "mData": "CreatedAt",
-                               "sTitle": "תאריך הזנה",
-                               "mRender": function (a) { return mRenderDate(a); }
-                           },
-                          {
+                               {
+                                   "mData": "CreatedAt",
+                                   "sTitle": "תאריך הזנה",
+                                   "mRender": function (a) { return mRenderDate(a); }
+                               },
+                              {
 
-                              "sWidth": "10%",
-                              "mData": null, "sTitle": "",
-                              "bSortable": false,
-                              "mRender": function (a, b, c) {
-                                  var html = '<a href="#up" class="btn" onclick=deleteRow(' + c.ID + ') title="מחק"><i class="fa fa-times"></i></a>';
-                                  html += "<a class='edit fa fa-pencil-square-o' title='ערוך'></a>";
-                                  return html;
+                                  "sWidth": "10%",
+                                  "mData": null, "sTitle": "",
+                                  "bSortable": false,
+                                  "mRender": function (a, b, c) {
+                                      var html = '<a href="#up" class="btn delete"  onclick=deleteRow(' + c.ID + ') title="מחק"><i class="fa fa-times"></i></a>';
+                                      html += "<a class='edit  fa fa-pencil-square-o' title='ערוך'></a>";
+                                      return html;
+                                  },
+                                  "mRenderEdit": function (a, b, c) {
+                                      var html = "<a class='update fa fa-check ' title='שמור'></a>"
+                                      html += " <a class='cancel fa fa-undo ' title='בטל'></a>";
+                                      return html;
+                                  }
                               },
-                              "mRenderEdit": function (a, b, c) {
-                                  var html = "<a class='update fa fa-check' title='שמור'></a>"
-                                  html += " <a class='cancel fa fa-undo' title='בטל'></a>";
-                                  return html;
-                              }
-                          },
 
 
 
-            ],
-            "fnServerData": function (sSource, aoData, fnCallback) {
-                console.log("ao");
-                console.log(aoData);
-                $.ajax({
-                    "dataType": 'json',
-                    "type": "POST",
-                    "url": sSource,
-                    "data": aoData,
-                    "success": fnCallback
-                });
-            },
-        });
-
+                ],
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    console.log("ao");
+                    console.log(aoData);
+                    $.ajax({
+                        "dataType": 'json',
+                        "type": "POST",
+                        "url": sSource,
+                        "data": aoData,
+                        "success": fnCallback
+                    });
+                },
+            });
+        
         oTable.closest('.dataTables_wrapper').find('.dataTables_table_wrapper');
         selectType.change(function () {
             oTable.fnDraw();
@@ -494,11 +512,12 @@
                     });
                 },
                 ajax: {
-                    url: '@Url.Content("~/JsonResults/GetEventSubTypesJson")',
+                    url: '@Url.Content("~/JsonResults/GetEventSubTypesJson_ByCategory")',
                     dataType: "json",
                     data: function (term, page) {
                         return {
-                            typeId: $('#dt_type').select2('val'),
+                            category_id: category.val(),
+                            typeId: null,
                             q: term, // search term
                             page: page,
                             page_limit: 10,
@@ -514,6 +533,27 @@
             });
         }
 
+        
+        function dt_subtype_onchange() {
+            $("#dt_subtype").on("change", function () {
+                //alert('change');
+                $.ajax({
+                    url: '@Url.Content("~/JsonResults/GetEventTypeBySubType")',
+                    type: "GET",
+                    data: { subType: $("#dt_subtype").select2('val') },
+                    dataType: "json"
+                }).done(function (data) {
+                    console.log('result');
+                    if (data && data.length == 1) {
+                        console.log(data[0]);
+                        //alert(data[0].text);
+                        $('#dt_type').select2("val", data[0].id);
+                    }
+                });
+            });
+        }
+
+      
 
         function dt_type_select() {
             $('#dt_type').select2({
@@ -537,7 +577,7 @@
                     data: function (term, page) {
                         return {
                             q: term, // search term
-                            category_id: f.Category_ID,
+                            category_id: category.val(),
                             page: page,
                             page_limit: 10,
                             val: this.val()
@@ -632,10 +672,14 @@
                 format: 'dd/mm/yyyy',
                 autoclose: true
             });
+            $(".newFirstDate").datepicker('setDate', new Date());
         }
+
+     
 
         dt_type_select();
         dt_subtype_select();
+        dt_subtype_onchange();
         dt_agent_select();
         dt_institute_select();
         dates_set_calendar();
@@ -655,7 +699,7 @@
 
 
         $('#events tbody').on('click', 'tr', function () {
-            oTable.fnDraw(false);
+          
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
             }
@@ -667,48 +711,109 @@
 
 
         $('#newEvent tbody').on('click', 'tr', function () {
+           
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
+               
             }
             else {
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
+              
+               
             }
         });
 
         $('.dataTables_filter').addClass('pull-right');
         $('.dataTables_paginate').addClass('pull-right');
 
+
+        function toggleButtons(allow)
+        {
+            alert('tooggle');
+            if (!allow) {
+               $('.edit').hide();
+               $('.delete').hide();
+             
+                $("#save").hide();
+               // $('.update').show();
+              
+            }
+            else
+            {
+               
+                $('.edit').show();
+                $('.delete').show();
+                $("#save").show();
+              
+               
+            }
+
+        }
+
         oTable.on('click', '.edit', function () {
+           
+           
+            
 
             var $tr = $(this).closest('tr');
+          
+            
+           
             var data = oTable.fnGetData($tr.get(0));
             console.log(data);
             var settings = oTable.fnSettings();
             var columns = settings.aoColumns;
-            console.log(columns);
-            var $tds = $tr.find('td');
-            $tds.each(function (i, td) {
-                var col = columns[i];
-                console.log(col);
-                if (col.mRenderEdit) {
-                    var $td = $(td);
-                    $td.html(col.mRenderEdit(null, null, data));
-                }
+            var vColumns=columns.filter(function(col)
+            {
+                return (col.bVisible == true);
             });
+
+            console.log(vColumns);
+            var $tds = $tr.find('td:visible');
+            console.log($tds);
+            //alert('tds');
+            $tds.each(function (i, td) {
+                var col = vColumns[i];
+               
+              
+                    if (col.mRenderEdit) {
+
+                        var $td = $(td);
+                        $td.html(col.mRenderEdit(null, null, data));
+                    }
+                
+                
+                
+            });
+         //   alert('edit ready')
             dt_type_select();
             dt_subtype_select();
+            dt_subtype_onchange();
             dt_agent_select();
             dt_institute_select();
             dates_set_calendar();
+       //     alert('edit done');
+            toggleButtons(false)
 
         });
 
-        oTable.on('click', '.cancel', function () {
+        function cancelRow() {
+
+         //   alert('redraw');
+
             oTable.fnDraw(false);
-        });
+            toggleButtons(true);
+           
+           
+        }
 
+            oTable.on('click', '.cancel', function () {
+                cancelRow();
+            });
+       
 
+     
 
         oTable.on('click', '.update', function () {
             var settings = oTable.fnSettings();
@@ -726,9 +831,10 @@
             fileData.append("Id", data.ID);
             fileData.append("isUpdate", true);
             fileData.append("Card_ID", card.val());
-            card.val()
+            fileData.append("Category_ID", category.val());
+            
             console.log(dataParams);
-            alert('ready');
+        //    alert('ready');
             $tr.find('td').each(function (i, td) {
                 var col = columns[i];
                 // alert(col.mData);
@@ -790,6 +896,12 @@
                                 fileData.append("ExpirationDate", selectedDate);
                                 break;
                             }
+                        case 'Description':
+                            {
+                                
+                                fileData.append("Description",  $("#dt_description").val());
+                                break;
+                            }
 
                     }
                 }
@@ -807,15 +919,23 @@
                 dataType: "json",
                 contentType: false, // Not to set any content header
                 processData: false, // Not to process data
-                url: '@Url.Action("ChangeEventsData")',
+                // url: '@Url.Action("ChangeEventsData")',
+                url: '@Url.Content("~/Events/ChangeData")',
                 data: fileData
             }).done(function (data) {
                 oTable.fnUpdate(newdata, $tr.get(0));
-                if (!data.result && data.error != "") {
+                if (!data.result && data.error != "" && data.error!=null) {
                     alert(data.error);
                 }
                 else if (!data.result) {
                     alert("הייתה בעיה בשמירת הנתונים");
+                }
+                else {
+                   // alert('redraw1');
+                    toggleButtons(true);
+                    $('#newEvent').show();
+                    oTable.fnDraw(false);
+                  
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
@@ -828,37 +948,61 @@
         $('#eventSubTypes tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
+               
+                
             }
             else {
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
+             
             }
         });
 
 
         $("#cancel").on('click', function () {
 
+           
             clearNewRow();
-
+           
+            
         });
-
+        function validate() {
+         
+            if ($("#dt_subtype").val() == "") {
+                alert('תת סוג ארוע חובה');
+                return false;
+            }
+           
+            if ($("#firstDate").val()== "") {
+                alert('תאריך הארוע חובה');
+            }
+            return true;
+        };
 
         $("#save").on('click', function () {
             //alert('begin');
-            //if (!validate()) {
-            //    alert("חובה למלא את כל השדות");
-            //    return;
-            //}
+            if (!validate()) {
+                //    alert("חובה למלא את כל השדות");
+                return;
+            }
             var fileData = new FormData();
             fileData.append("Id", 0);
             fileData.append("isUpdate", false);
             fileData.append("Card_ID", card.val());
+            fileData.append("Category_ID", category.val());
             // console.log(dataParams);
-            alert('ready');
+        //    alert('ready');
             fileData.append("SubType_ID", $("#dt_subtype").val());
             fileData.append("Type_ID", $("#dt_type").val());
             fileData.append("Agent_ID", $("#dt_agent").val());
-            fileData.append("Institute_ID", $("#dt_institute").select2('val'));
+            if (category.val() == 2) //person
+            {
+                fileData.append("Institute_ID", $("#dt_institute").select2('val'));
+            }
+            else
+            {
+                fileData.append("Institute_ID", card.val());
+            }
             var files = document.getElementById("dat").files;
             if (files.length > 0) {
 
@@ -870,11 +1014,12 @@
             }
 
             fileData.append("AlertDate", $("#alertDate").val());
-            fileData.append("SiteHref", $("#adt_href").val());
+            fileData.append("SiteHref", $("#dt_href").val());
             fileData.append("FirstDate", $("#firstDate").val());
             fileData.append("ExpirationDate", $("#expDate").val());
 
             fileData.append("AlertDone", $("#alertDone").is(':checked'));
+            fileData.append("Description", $("#dt_description").val());
 
             $.ajax({
                 contentType: "application/json; charset=utf-8",
@@ -882,27 +1027,37 @@
                 dataType: "json",
                 contentType: false, // Not to set any content header
                 processData: false, // Not to process data
-                url: '@Url.Action("ChangeEventsData")',
+                // url: '@Url.Action("ChangeEventsData")',
+                url: '@Url.Content("~/Events/ChangeData")',
                 data: fileData
             }).done(function (data) {
 
-                if (!data.result && data.error != "") {
+                if (!data.result && data.error != "" && data.error!=null) {
                     alert(data.error);
                 }
                 else if (!data.result) {
                     alert("הייתה בעיה בשמירת הנתונים");
                 }
+                else {
+                    clearNewRow();
+                    alert('readraw');
+                    var oTable = $('#events').dataTable();
+                    oTable.fnDraw(false);
+                    toggleButtons(true);
+                    
+                }
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 alert("הייתה בעיה בשמירת הנתונים");
             });
-            clearNewRow();
+            
 
         });
 
 
         function clearNewRow() {
-            $("#firstDate").val('');
+           
+            $(".newFirstDate").datepicker('setDate', new Date());
             $("#expDate").val('');
             $("#alertDate").val('');
 
@@ -911,12 +1066,15 @@
             $("#dt_agent").select2('val', '');
             $("#dt_institute").select2('val', '');
 
-            $("#dt_descrition").val('');
+            $("#dt_description").val('');
             $("#dt_href").val('');
             $("#dat").val('');
 
             $('#alertDone').attr('checked', false);
-            oTable.fnDraw(false);
+           
+            toggleButtons(true);
+            
+           
 
         }
 
@@ -924,19 +1082,23 @@
 
         $('#exportBtn').click(function () {
             var location = '@Url.Action("Export", "Events")?';
-            var filterValues = [];
-            filterValues.push({ "name": "Card_ID", "value": card.val() });
-            filterValues.push({ "name": "Type_ID", "value": selectType.select2('val') });
-            filterValues.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
-            filterValues.push({ "name": "fromDate", "value": fromDate.val() });
-            filterValues.push({ "name": "toDate", "value": toDate.val() });
+            var aoData = [];
+            aoData.push({ "name": "Card_ID", "value": card.val() });
+            aoData.push({ "name": "Category_ID", "value": category.val() });
+            aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
+            aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+            aoData.push({ "name": "fromDate", "value": fromDate.val() });
+            aoData.push({ "name": "toDate", "value": toDate.val() });
 
-            filterValues.push({ "name": "chkEssenseOnly", "value": chkEssenseOnly.is(':checked') });
-            filterValues.push({ "name": "chkExpiredOnly", "value": chkExpiredOnly.is(':checked') });
-            filterValues.push({ "name": "chkOpenOnly", "value": chkOpenOnly.is(':checked') });
-            filterValues.push({ "name": "chkFileOnly", "value": chkFileOnly.is(':checked') });
-            filterValues.push({ "name": "chkSiteOnly", "value": chkSiteOnly.is(':checked') });
-            location += $.param(filterValues);
+            aoData.push({ "name": "EssenseOnly", "value": chkEssenseOnly.is(':checked') });
+            aoData.push({ "name": "ExpiredOnly", "value": chkExpiredOnly.is(':checked') });
+            aoData.push({ "name": "OpenOnly", "value": chkOpenOnly.is(':checked') });
+            aoData.push({ "name": "FileOnly", "value": chkFileOnly.is(':checked') });
+            aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
+
+            console.log(aoData);
+            alert('export');
+            location += $.param(aoData);
             window.location = location;
         });
 
@@ -983,6 +1145,30 @@
         }
         else {
             $(".Selector").prop('checked', false);
+        }
+    }
+
+    function deleteRow(id) {
+        if (confirm("האם אתה בטוח שברצונך למחוק רשומה זו?")) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                type: "GET",
+                dataType: "json",
+                url: '@Url.Content("~/Events/Delete")',
+                //url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
+                data: { "Id": id }
+            }).success(function (data) {
+                if (!data.result) {
+                    alert("הייתה בעיה במחיקה");
+                }
+                else {
+                    // alert('deleted');
+                    var oTable = $('#events').dataTable();
+                    console.log('redraw');
+                    oTable.fnDraw(false);
+                }
+            }).error(function () { })
+                        .complete(function () { });
         }
     }
 

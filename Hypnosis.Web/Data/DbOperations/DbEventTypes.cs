@@ -152,6 +152,25 @@ namespace Hypnosis.Web.Data.DbOperations
             });
         }
 
+
+        public IEnumerable<s2item> GetEventTypeBySubType(int? subType)
+        {
+            var q = from a in dbContext.EventSubTypes
+                     from b in dbContext.EventTypes
+                     where a.Type_ID==b.ID
+                    where subType == null || a.ID==subType
+                    select new
+                    {
+                        id = b.ID,
+                        text = b.Type_Name
+                    };
+            return q.ToList().Select(f => new s2item
+            {
+                id = f.id,
+                text = f.text.ToString()
+            });
+        }
+
         public s2result getEventTypes(string q, int? category, int page, int page_limit)
         {
             var dbq = from a in dbContext.EventTypes

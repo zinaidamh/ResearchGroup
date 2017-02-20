@@ -33,7 +33,45 @@ namespace Hypnosis.Web.Data.DbOperations
         }
 
 
-       
+
+        public List<EventsExportModel> GetExportRows(int? Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+
+        {
+            IQueryable<EventsFullListRowViewModel> source = GetEventsByFilter(Card_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            var data = source.ToList();
+             var q= from e in data
+                    select new EventsExportModel
+                    {
+
+                        ID = e.ID,
+                        TZ = e.TZ,
+                        Person_Name = e.Person_Name,
+                        Institute_Name = e.Institute_Name,
+                       
+
+                        SubType_Name = e.SubType_Name,
+                        Type_Name = e.Type_Name,
+                        Category_Name = e.Category_Name,
+                        Description = e.Description,
+                        
+
+                        FirstDate = e.FirstDate==null ?  e.FirstDate.Value.ToShortDateString() : "",
+
+                        Agent_Name = e.Agent_Name,
+
+                        ExpirationDate = e.ExpirationDate,
+                        AlertDate = e.AlertDate == null ? e.AlertDate.Value.ToShortDateString() : "",
+                        alertDoneString = e.AlertDone == true ? "כן" : "לא",
+                        FileName = e.FileName==null ? "": e.FileName,
+                        SiteHref = e.SiteHref==null? "" : e.SiteHref,
+                        CreatedAt = e.CreatedAt.ToShortDateString()
+
+
+                    };
+
+             return q.ToList();
+
+        }
 
 
         public IQueryable<EventsFullListRowViewModel> GetRows()
@@ -62,8 +100,9 @@ namespace Hypnosis.Web.Data.DbOperations
                         SubType_Name = e.EventSubType.SubType_Name,
                         Type_Name = e.EventSubType.EventType.Type_Name,
                         Category_Name = e.EventSubType.EventType.EventTypeCategory.Category_Name,
-                        Description = e.Description,
-
+                        Category_ID=e.EventSubType.EventType.Type_Category,
+                        Description = e.Description==null? "" : e.Description,
+                        EssenseOrder=e.EventSubType.EssenseOrder==null? 0: e.EventSubType.EssenseOrder,
 
                         FirstDate = e.FirstDate,
 
@@ -74,7 +113,7 @@ namespace Hypnosis.Web.Data.DbOperations
                         alertDoneString = e.AlertDone == true ? "כן" : "לא",
                         AlertDone = e.AlertDone,
                         FileName = e.FileName==null ? "": e.FileName,
-                        SiteHref = e.SiteHref,
+                        SiteHref = e.SiteHref==null? "" : e.SiteHref,
                         CreatedAt = e.CreatedAt
 
 
@@ -84,8 +123,17 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
 
-        public IQueryable<EventsFullListRowViewModel> GetEventsByFilter(int? Person_ID, int? Institute_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        public IQueryable<EventsFullListRowViewModel> GetEventsByFilter(int? Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
         {
+            int? Institute_ID=null; int? Person_ID=null;
+            if (Category_ID == (int)EventCategory.InstituteEvent)
+                Institute_ID = Card_ID;
+            else
+                Person_ID = Card_ID;
+
+
+
+            
             var events = this.GetRows();
 
             if (Person_ID.HasValue)
@@ -134,6 +182,11 @@ namespace Hypnosis.Web.Data.DbOperations
             if (OpenOnly)
             {
                 events = events.Where(f => f.AlertDone == false);
+            
+            }
+            if (EssenseOnly)
+            {
+                events = events.Where(f => f.EssenseOrder > 0);
             }
             return events;
 
@@ -181,10 +234,132 @@ namespace Hypnosis.Web.Data.DbOperations
         }
 
 
+        public bool ChangeData(HttpRequestBase Request, string path)
+        {
+            int? Id = null; bool isUpdate = false; int? SubType_ID = null; int? Type_ID = null; int? Agent_ID = null; int? Institute_ID = null;
+            DateTime? FirstDate = null, AlertDate = null, ExpirationDate = null; string SiteHref = ""; bool AlertDone = false;
+            int? Person_ID = null;
+            int? Category_ID = null; int? Card_ID = null;
+            string Description="";
+            try
+            {
+
+                if (Request["Id"] != null)
+                {
+                    Id = Int32.Parse(Request["Id"]);
+                }
+                if (Request["Category_ID"] != null)
+                {
+                    Category_ID = Int32.Parse(Request["Category_ID"]);
+
+                }
+                if (Request["Card_ID"] != null)
+                {
+                    Card_ID = Int32.Parse(Request["Card_ID"]);
+
+                }
+                if (Request["SubType_ID"] != null && Request["SubType_ID"]!="" && Request["SubType_ID"]!="null")
+                {
+                    SubType_ID = Int32.Parse(Request["SubType_ID"]);
+                }
+                if (Request["Type_ID"] != null && Request["Type_ID"] != "" && Request["Type_ID"] != "null")
+                {
+                    Type_ID = Int32.Parse(Request["Type_ID"]);
+                }
+                if (Request["Agent_ID"] != null && Request["Agent_ID"]!="" && Request["Agent_ID"]!="null" )
+                {
+                    Agent_ID = Int32.Parse(Request["Agent_ID"]);
+                }
+                if (Request["Institute_ID"] != null && Request["Institute_ID"] !="" && Request["Institute_ID"]!="null")
+                {
+                    Institute_ID = Int32.Parse(Request["Institute_ID"]);
+                }
+                if (Request["isUpdate"] != null)
+                {
+                    isUpdate = bool.Parse(Request["isUpdate"]);
+                }
+                if (Request["FirstDate"] != null && Request["FirstDate"] != "" && Request["FirstDate"] != "null")
+                {
+                    FirstDate = DateTime.Parse(Request["FirstDate"] );
+                }
+                if (Request["AlertDate"] != null && Request["AlertDate"] != "" && Request["AlertDate"] != "null")
+                {
+                    AlertDate = DateTime.Parse(Request["AlertDate"]);
+                }
+                if (Request["ExpirationDate"] != null && Request["ExpirationDate"]!="" && Request["ExpirationDate"] != "")
+                {
+                    ExpirationDate = DateTime.Parse(Request["ExpirationDate"]);
+                }
+                if (Request["SiteHref"] != null && Request["SiteHref"]!="" &&  Request["SiteHref"]!="null" )
+                {
+                    SiteHref = Request["SiteHref"].ToString();
+                }
+                if (Request["AlertDone"] != null && Request["AlertDone"]!="")
+                {
+                    AlertDone = bool.Parse(Request["AlertDone"]);
+                }
+                if (Request["Person_ID"] != null && Request["Person_ID"] != "" && Request["Person_ID"] != "null")
+                {
+                    Person_ID = Int32.Parse(Request["Person_ID"]);
+                }
+                if (Request["Description"] != null && Request["Description"] != "" && Request["Description"] != "null")
+                {
+                    Description = Request["Description"];
+                }
+            }
+            catch
+            {
+                {
+                    return false;
+                }
+            }
+
+            if (SubType_ID == null || Card_ID==null || Category_ID==null || Id==null)
+            {
+          
+                return false;
+            }
+
+            //set by card
+            if (Institute_ID == null && Category_ID ==(int) EventCategory.InstituteEvent) 
+                Institute_ID = Card_ID;
+            if (Person_ID == null && Category_ID == (int) EventCategory.PersonEvent)
+                Person_ID = Card_ID;
 
 
+            var files = Request.Files;
+            string FileName = "";
+
+
+            if (files.Count > 0)
+            {
+                var file0 = files[0];
+              
+                try
+                {
+                    file0.SaveAs(System.IO.Path.Combine(path, file0.FileName));
+                    FileName = file0.FileName;
+
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            if (CreateUpdate(Id, Person_ID, SubType_ID, Type_ID, Agent_ID, Institute_ID, FileName, FirstDate, ExpirationDate, AlertDate, AlertDone, SiteHref, Description, isUpdate))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        
+        
+        }
         //create-update
-   public bool CreateUpdate(int? Id, int? Person_ID, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID, string FileName, DateTime? FirstDate, DateTime? ExpirationDate, DateTime? AlertDate, bool AlertDone, string SiteHref, bool isUpdate)
+   public bool CreateUpdate(int? Id, int? Person_ID, int? SubType_ID, int? Type_ID, int? Agent_ID, int? Institute_ID, string FileName, DateTime? FirstDate, DateTime? ExpirationDate, DateTime? AlertDate, bool AlertDone, string SiteHref, string Description, bool isUpdate)
     {
         string operation = tbl + " Create Update ";
            Logger.Log.Debug(operation + " Begin ");
@@ -214,6 +389,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
             _event.Agent_ID = Agent_ID;
             _event.Institute_ID=Institute_ID;
+            _event.Person_ID = Person_ID;
             _event.SubType_ID=(int) SubType_ID;
             _event.FileName = FileName;
             _event.FirstDate = FirstDate;
@@ -221,8 +397,9 @@ namespace Hypnosis.Web.Data.DbOperations
             _event.ExpirationDate = ExpirationDate;
             _event.AlertDone = AlertDone;
             _event.SiteHref = SiteHref;
+            _event.Description = Description;
            
-            var RelativePath=System.Configuration.ConfigurationManager.AppSettings["relativePath"];
+         //   var RelativePath=System.Configuration.ConfigurationManager.AppSettings["relativePath"];
 
 
 
@@ -233,7 +410,7 @@ namespace Hypnosis.Web.Data.DbOperations
                 if (!isUpdate)
                 {
                     _event.CreatedAt = DateTime.Now;
-                    _event.Person_ID = Person_ID;
+                    
                     dbContext.Events.Add(_event);
                 }
                 dbContext.SaveChanges();
@@ -286,166 +463,79 @@ namespace Hypnosis.Web.Data.DbOperations
        }
 
 
-    //    public string Delete(int Id)
-    //    {
+   public IEnumerable<s2item> EventTypeCategoriesInit(int? value)
+   {
+       var q = from a in dbContext.EventTypeCategories
+               where value == null || a.ID == value.Value
+               select new
+               {
+                   id = a.ID,
+                   text = a.Category_Name
+               };
+       return q.ToList().Select(f => new s2item
+       {
+           id = f.id,
+           text = f.text.ToString()
+       });
+   }
 
-    //        string msg = "";
-    //        var person = dbContext.Persons.SingleOrDefault(f => f.ID == Id);
-    //        if (person == null)
-    //        {
-
-    //            msg = "האדם לא קיים";
-    //            return msg;
-
-    //        }
-    //        if (dbContext.Events.Any(f => f.Person.ID == Id))
-    //        {
-
-    //            msg = " יש  ארועים-  לא ניתן למחוק את האדם";
-    //            return msg;
-
-    //        }
-    //        try
-    //        {
-    //            dbContext.Persons.Remove(person);
-    //            dbContext.SaveChanges();
-    //        }
-    //        catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
-    //        {
-
-    //            msg = "הייתה בעיה במחיקת האדם: " + ex.Message;
-    //            return msg;
-
-    //        }
-    //        msg = "המחיקה בוצעה בהצלחה";
-    //        return msg;
+   public s2result getEventTypeCategories(string q, int page, int page_limit)
+   {
+       var dbq = from a in dbContext.EventTypeCategories
 
 
-    //    }
+                 select new
+                 {
+                     id = a.ID,
+                     text = a.Category_Name
+                 };
+       if (!string.IsNullOrEmpty(q))
+       {
+           dbq = dbq.Where(f => f.text.Contains(q));
+       }
+
+       var aa = dbq.OrderBy(f => f.text).ToList().Select(f => new s2item { id = f.id, text = f.text });
+
+       return new s2result
+       {
+           results = aa,
+           more = aa.Count() > page_limit
+       };
+   }
+
+   public string Delete(int Id)
+   {
+
+       string msg = "";
+       var _event = dbContext.Events.SingleOrDefault(f => f.ID == Id);
+       if (_event == null)
+       {
+
+           msg = "הארוע לא קיים";
+           return msg;
+
+       }
+       
+       try
+       {
+           dbContext.Events.Remove(_event);
+           dbContext.SaveChanges();
+       }
+       catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
+       {
+
+           msg = "הייתה בעיה במחיקת האדם: " + ex.Message;
+           return msg;
+
+       }
+       msg = "המחיקה בוצעה בהצלחה";
+       return msg;
+
+
+   }
 
 
     }
 }
 
-    //    public List<PersonEventsListRowExportModel> GetExportRows(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
-    //    {
-    //        IQueryable<Person> data = GetPersons();
-    //        var personEvents = from p in data
-    //                           let events = dbContext.Events.OrderByDescending(f => f.ID).FirstOrDefault(f => f.Person_ID == e.ID) //temporal
-
-
-    //                           select new PersonEventsListRowViewModel
-    //                           {
-
-    //                               ID = e.ID,
-    //                               TZ = e.TZ,
-    //                               LastName = e.LastName,
-    //                               FirstName = e.FirstName,
-
-    //                               SubType_ID = events.SubType_ID,
-
-    //                               Description = events.Description,
-    //                               SubType_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-    //                               Type_ID = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().Type_ID,
-    //                               Type_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().EventType.Type_Name,
-
-    //                               FirstDate = events.FirstDate,
-
-    //                               Description_Short = events.Description,
-    //                               SubType_Name_Short = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
-    //                               FirstDate_Short = events.FirstDate,
-
-
-    //                               Mobile = e.Mobile,
-    //                               Phones = e.Phones,
-    //                               Email = e.Email,
-    //                               City = e.City,
-
-    //                               InMailingList = e.InMailingList,
-    //                               InMailingListString = e.InMailingList ? "כן" : "לא",
-
-    //                               Psyhology_LicenseNumber = e.Psyhology_LicenseNumber,
-    //                               Medicine_LicenseNumber = e.Medicine_LicenseNumber,
-    //                               Stomatology_LicenseNumber = e.Stomatology_LicenseNumber,
-
-    //                               Person_Comments = e.Comments,
-
-    //                               BirthDate = e.BirthDate,
-    //                               Address = e.Address,
-    //                               Address_Comments = e.Address_Comments
-
-
-
-    //                           };
-
-
-    //        if (Type_ID.HasValue)
-    //        {
-    //            personEvents = personEvents.Where(f => f.Type_ID == Type_ID);
-    //        }
-    //        if (SubType_ID.HasValue)
-    //        {
-    //            personEvents = personEvents.Where(f => f.SubType_ID == SubType_ID);
-    //        }
-    //        if (InMailingListOnly == true)
-    //        {
-    //            personEvents = personEvents.Where(f => f.InMailingList == InMailingListOnly);
-    //        }
-    //        var source = personEvents.ToList();
-
-    //        var export = from p in source
-    //                     select new PersonEventsListRowExportModel
-
-    //                     {
-
-    //                         ID = e.ID,
-    //                         TZ = e.TZ,
-    //                         LastName = e.LastName,
-    //                         FirstName = e.FirstName,
-
-
-
-    //                         Description = e.Description,
-    //                         SubType_Name = e.SubType_Name,
-    //                         Type_Name = e.Type_Name,
-
-    //                         FirstDate = e.FirstDate.HasValue ? e.FirstDate.Value.ToShortDateString() : "",
-
-    //                         Description_Short = e.Description,
-    //                         SubType_Name_Short = e.SubType_Name,
-    //                         FirstDate_Short = e.FirstDate_Short.HasValue ? e.FirstDate_Short.Value.ToShortDateString() : "",
-
-
-
-    //                         Mobile = e.Mobile,
-    //                         Phones = e.Phones,
-    //                         Email = e.Email,
-    //                         City = e.City,
-
-
-    //                         InMailingListString = e.InMailingListString,
-
-    //                         Psyhology_LicenseNumber = e.Psyhology_LicenseNumber,
-    //                         Medicine_LicenseNumber = e.Medicine_LicenseNumber,
-    //                         Stomatology_LicenseNumber = e.Stomatology_LicenseNumber,
-
-    //                         Person_Comments = HttpUtility.HtmlDecode(e.Person_Comments),
-
-    //                         BirthDate = e.BirthDate.HasValue ? e.BirthDate.Value.ToShortDateString() : "",
-
-    //                         Address = e.Address,
-    //                         Address_Comments = e.Address_Comments
-
-
-
-    //                     };
-
-    //        return export.ToList();
-
-    //    }
-
-
-
-  
-    //}
-//}
+    

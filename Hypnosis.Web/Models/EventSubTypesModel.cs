@@ -19,6 +19,9 @@ namespace Hypnosis.Web.Models
 
         [Display(Name = " סוג אירוע")]
         public string Type_Name { get; set; }
+
+        [RegularExpression("([1-9][0-9]*)", ErrorMessage = "צריך להיות מספר")]
+        public int EssenseOrder { get; set; }
     }
 
 

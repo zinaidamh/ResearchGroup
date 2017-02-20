@@ -11,12 +11,16 @@ namespace Hypnosis.Web.Data.DbOperations
         public static string tbl = "Event Sub Types";
 
 
-        public  bool CreateUpdate(int? Id, string Name, int TypeId, bool isUpdate)
+        public  bool CreateUpdate(int? Id, string Name, int? TypeId, int? EssenseOrder, bool isUpdate)
         {
             string operation =  tbl+ " Create Update ";
 
             Logger.Log.Debug(operation + "- Begin");
             if (string.IsNullOrEmpty(Name))
+            {
+                return false;
+            }
+            if (TypeId==null)
             {
                 return false;
             }
@@ -27,7 +31,8 @@ namespace Hypnosis.Web.Data.DbOperations
                 if (c == null) return false;
             }
             c.SubType_Name = Name;
-            c.Type_ID = TypeId;
+            c.Type_ID = (int)TypeId;
+            c.EssenseOrder = EssenseOrder == null ? 0 : (int) EssenseOrder;  
             try
             {
                 if (!isUpdate)
@@ -87,7 +92,8 @@ namespace Hypnosis.Web.Data.DbOperations
                        ID = c.ID,
                        SubType_Name = c.SubType_Name,
                        Type_ID = c.Type_ID,
-                       Type_Name=c.EventType.Type_Name
+                       Type_Name=c.EventType.Type_Name,
+                       EssenseOrder=c.EssenseOrder
                    };
         }
 

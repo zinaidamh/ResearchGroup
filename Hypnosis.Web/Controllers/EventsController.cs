@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Hypnosis.Web.Models;
 using Hypnosis.Web.Data;
 using Hypnosis.Web.Data.DbOperations;
+using Hypnosis.Web.MyHelpers;
 
 namespace Hypnosis.Web.Controllers
 {
@@ -26,7 +27,7 @@ namespace Hypnosis.Web.Controllers
         }
         public ActionResult Index()
         {
-            var model = new EventsFilterViewModel();
+            var model = new EventsFilterViewModel_ForCard();
             return View(model);
         }
 
@@ -35,107 +36,66 @@ namespace Hypnosis.Web.Controllers
         [HttpPost]
         public ActionResult IndexData(Models.DataTables.jqDataTableInput input, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
         {
-            var source = EventsOperations.GetEventsByFilter(null,null,Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            var source = EventsOperations.GetEventsByFilter(null,Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
             System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
             return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
         }
 
+        [HttpPost]
+        public ActionResult DataByCard(Models.DataTables.jqDataTableInput input, int Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        {
+            DbEvents EventsOperations = new DbEvents();
+           
+        
+            
+            var source = EventsOperations.GetEventsByFilter( Card_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
+            return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
 
-       
-        //[HttpPost]
-        //public ActionResult IndexDataByInstitute(Models.DataTables.jqDataTableInput input, int Institute_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
-        //{
-        //    var source = GetEventsByFilter(null, Institute_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
-        //    System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
-        //    return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
+        }
 
-        //}
-
-        //public ActionResult Edit(int Id, int? type_ID, int? subType_ID, bool inMailingListOnly)
-        //{
-        //    Person person = PersonOperations.GetPersonById(Id);
-        //    if (person == null)
-        //    {
-        //        return RedirectToAction("Index", new { Type_ID = type_ID, SubType_ID = subType_ID, InMailingListOnly = inMailingListOnly });
-        //    }
-        //    PersonEditModel model = PersonOperations.GetPersonEditModel(person);
-        //    model.filter = new PersonEventsViewModel
-        //    {
-        //        Type_ID = type_ID,
-        //        SubType_ID = subType_ID,
-        //        InMailingListOnly = inMailingListOnly
-        //    };
-        //    return View(model);
-        //}
+        [HttpPost]
+        public JsonResult ChangeData()
+        {
+            DbEvents EventsOperations = new DbEvents();
+            var relativePath = FilesHelper.RelativePath;
+            var path = Server.MapPath(relativePath);
+            bool operationResult = EventsOperations.ChangeData(this.Request, path);
 
 
-        //[HttpPost]
-        //public ActionResult Edit(PersonEditModel model)
-        //{
-        //    try
-        //    {
-
-        //        PersonOperations.CreateUpdate(model.details, true);
-        //        return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError("", ex.Message);
-        //        return View(model);
-        //    }
-        //}
+            var data = new JsonObject { result = operationResult };
+            return Json(data, JsonRequestBehavior.AllowGet);
 
 
-        //public ActionResult Create(int? type_ID, int? subType_ID, bool inMailingListOnly)
-        //{
-        //    var model = new PersonCreateModel();
-
-        //    model.filter = new PersonEventsViewModel
-        //    {
-        //        Type_ID = type_ID,
-        //        SubType_ID = subType_ID,
-        //        InMailingListOnly = inMailingListOnly
-        //    };
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //public ActionResult Create(PersonCreateModel model)
-        //{
-        //    try
-        //    {
-
-        //        PersonOperations.CreateUpdate(model.details, false);
-        //        return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError("", ex.Message);
-        //        return View(model);
-        //    }
-        //}
+        }
 
 
 
-        //public ActionResult Export(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
-        //{
-        //    var source = PersonOperations.GetExportRows(Type_ID, SubType_ID, InMailingListOnly);
-        //    return this.Excel("אנשים", "Persons", source);
-        //}
+        public ActionResult Export(int Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        {
+            var source = EventsOperations.GetExportRows(Card_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
+            return this.Excel("ארועים", "Events", source);
+        }
 
 
-        //[HttpPost]
-        //public JsonResult Delete(int Id)
-        //{
-        //    var data = PersonOperations.Delete(Id);
-        //    if (data != "המחיקה בוצעה בהצלחה")
-        //    {
-        //        ModelState.AddModelError("", data);
-        //    }
-        //    return Json(data, JsonRequestBehavior.AllowGet);
+
+        public JsonResult Delete(int Id)
+        {
+            var msg = EventsOperations.Delete(Id);
+            if (msg != "המחיקה בוצעה בהצלחה")
+            {
+                ModelState.AddModelError("", msg);
+                var data = new JsonObject { result = false };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var data = new JsonObject { result = true };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
 
 
-        //}
+        }
 
     }
 }

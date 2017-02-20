@@ -1,4 +1,4 @@
-﻿@model Hypnosis.Web.Models.InstituteEventsViewModel
+﻿@model Hypnosis.Web.Models.EventsFilterViewModel_ForList
 @{
     ViewBag.Title = "רשימת מכונים";
 }
@@ -34,149 +34,145 @@
 
 @section Scripts{
     <script>
-        $(function () {
-         
+    $(function () {
 
-            var selectType = $('#@Html.FieldIdFor(f => f.Type_ID)').select2({
-                width: 200,
-                placeholder: "הכל",
-                allowClear: true,
-                initSelection: function (element, callback) {
-                    $.ajax({
-                        url: '@Url.Content("~/JsonResults/EventTypesInitJson_Institute")',
-                        type: "GET",
-                        data: { value: $(element).val() },
-                        dataType: "json"
-                    }).done(function (data) {
-                        if (data && data.length == 1) {
-                            callback(data[0]);
-                        }
-                    });
-                },
-                ajax: {
-                    url: '@Url.Content("~/JsonResults/GetEventTypesJson_Institute")',
-                    dataType: "json",
-                    data: function (term, page) {
-                        return {
-                            q: term, // search term
-                            page: page,
-                            page_limit: 10,
-                            val: this.val()
-                        };
-                    },
-                    results: function (data, page) {
-                        return {
-                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
-                        };
+
+        var selectType = $('#@Html.FieldIdFor(f => f.Type_ID)').select2({
+            width: 200,
+            placeholder: "הכל",
+            allowClear: true,
+            initSelection: function (element, callback) {
+                $.ajax({
+                    url: '@Url.Content("~/JsonResults/EventTypesInitJson_Institute")',
+                    type: "GET",
+                    data: { value: $(element).val() },
+                    dataType: "json"
+                }).done(function (data) {
+                    if (data && data.length == 1) {
+                        callback(data[0]);
                     }
-                }
-            });
-
-
-            var selectSubType = $('#@Html.FieldIdFor(f => f.SubType_ID)').select2({
-                width: 200,
-                placeholder: "הכל",
-                allowClear: true,
-                initSelection: function (element, callback) {
-                    $.ajax({
-                        url: '@Url.Content("~/JsonResults/EventSubTypesInitJson_Institute")',
-                        type: "GET",
-                        data: { value: $(element).val() },
-                        dataType: "json"
-                    }).done(function (data) {
-                        if (data && data.length == 1) {
-                            callback(data[0]);
-                        }
-                    });
+                });
+            },
+            ajax: {
+                url: '@Url.Content("~/JsonResults/GetEventTypesJson_Institute")',
+                dataType: "json",
+                data: function (term, page) {
+                    return {
+                        q: term, // search term
+                        page: page,
+                        page_limit: 10,
+                        val: this.val()
+                    };
                 },
-                ajax: {
-                    url: '@Url.Content("~/JsonResults/GetEventSubTypesJson_Institute")',
-                    dataType: "json",
-                    data: function (term, page) {
-                        return {
-                            typeId: selectType.select2('val'),
-                            q: term, // search term
-                            page: page,
-                            page_limit: 10,
-                            val: this.val()
-                        };
-                    },
-                    results: function (data, page) {
-                        return {
-                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
-                        };
-                    }
+                results: function (data, page) {
+                    return {
+                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                    };
                 }
-            });
+            }
+        });
 
 
-           
-       
+        var selectSubType = $('#@Html.FieldIdFor(f => f.SubType_ID)').select2({
+            width: 200,
+            placeholder: "הכל",
+            allowClear: true,
+            initSelection: function (element, callback) {
+                $.ajax({
+                    url: '@Url.Content("~/JsonResults/EventSubTypesInitJson_Institute")',
+                    type: "GET",
+                    data: { value: $(element).val() },
+                    dataType: "json"
+                }).done(function (data) {
+                    if (data && data.length == 1) {
+                        callback(data[0]);
+                    }
+                });
+            },
+            ajax: {
+                url: '@Url.Content("~/JsonResults/GetEventSubTypesJson_Institute")',
+                dataType: "json",
+                data: function (term, page) {
+                    return {
+                        typeId: selectType.select2('val'),
+                        q: term, // search term
+                        page: page,
+                        page_limit: 10,
+                        val: this.val()
+                    };
+                },
+                results: function (data, page) {
+                    return {
+                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                    };
+                }
+            }
+        });
+
+
+
+
 
 
         var chkInMailingListOnly = $('#@Html.FieldIdFor(f => f.InMailingListOnly)');
 
 
-            var oTable = $('#Institutes');
-            oTable.dataTable({
-                stateSave: true,
-                "aaSorting": [[3, 'asc']],
-                "sAjaxSource": "@Url.Action("IndexData")",
-                
-                "fnServerParams": function (aoData) {
-                    aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
-                    aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
-                    aoData.push({ "name": "InMailingListOnly", "value": chkInMailingListOnly.is(':checked') });
-                    console.log(aoData);
-                },
-                "fnDrawCallback": function (oSettings) {
-                    if (oSettings.aoData.length == 0) {
-                        oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
-                    }
-                    else {
-                        oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
-                    }
-                   
+        var oTable = $('#Institutes');
+        oTable.dataTable({
+            stateSave: true,
+            "aaSorting": [[0, 'asc']],
+            "sAjaxSource": "@Url.Action("IndexData")",
 
-                },
-                
-                "aoColumns": [
-                    {
-                        "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
-                        "bSortable": false,
-                        "mRender": function (a, b, c) {
-                            if (b === 'display') {
-                                return '<input type="checkbox" name="ToChange" class="Selector" value="' + c.ID + '" />';
-                            }
-                            return a;
-                        }
-                    },
-                    {
-                        "mData": null, "sTitle": "",
-                        "bSortable": false,
-                        "mRender": function (a, b, c) {
-                            return '<a href="#" class="btn" onclick="confirmDelete(' + c.ID + ')" ><i class="fa fa-times"></i></a>';
+            "fnServerParams": function (aoData) {
+                aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
+                aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+                aoData.push({ "name": "InMailingListOnly", "value": chkInMailingListOnly.is(':checked') });
+                console.log(aoData);
+            },
+            "fnDrawCallback": function (oSettings) {
+                if (oSettings.aoData.length == 0) {
+                    oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
+                }
+                else {
+                    oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
+                }
 
-                        }
-                    },
-                   
-    //last event     
 
-                   {
-                       "mData": "Id", 
-                       "sTitle": "",
-                       "bSortable": false,
-                       "mRender": function (a, b, c) {
-                           return '<a href="@Url.Action("Edit", "Institutes")?Id=' + c.ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=' + chkInMailingListOnly.is(':checked') + '" class="btn"><i class="fa fa-pencil-square-o"></i></a>';
+            },
 
+            "aoColumns": [
+                //{
+                //    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
+                //    "bSortable": false,
+                //    "mRender": function (a, b, c) {
+                //        if (b === 'display') {
+                //            return '<input type="checkbox" name="ToChange" class="Selector" value="' + c.ID + '" />';
+                //        }
+                //        return a;
+                //    }
+                //},
+                //{
+                //    "mData": null, "sTitle": "",
+                //    "bSortable": false,
+                //    "mRender": function (a, b, c) {
+                //        return '<a href="#" class="btn" onclick="confirmDelete(' + c.ID + ')" ><i class="fa fa-times"></i></a>';
+
+                //    }
+                //},
+
+//last event
+
+               {
+                   "mData": "Name",
+                   "sTitle": "שם המכון",
+                   "bSortable": true,
+                   "mRender": function (a, b, c) {
+                    
+                         return '<a href="@Url.Action("Edit", "Institutes")?Id=' + c.ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=' + chkInMailingListOnly.is(':checked') + '" class="btn">'+c.Name+'</i></a>';
          }
                    },
 
-                    {
-                        "mData": "Name",
-                        "sTitle": "שם המכון"
-                        
-                    },
+                   
 
                     {
                       "mData": "FirstDate",
@@ -184,6 +180,10 @@
                       "mRender": function (a) { return mRenderDate(a); }
                     },
 
+                     {
+                         "mData": "Type_Name",
+                         "sTitle": "סוג ארוע אחרון"
+                     },
                     {
                         "mData": "SubType_Name",
                         "sTitle": "תת סוג ארוע אחרון"
@@ -193,19 +193,23 @@
                         "sTitle": "תאור ארוע אחרון"
                     },
 
-  //last event short
+  //last event essense
                      {
-                         "mData": "FirstDate_Short",
+                         "mData": "FirstDate_Essense",
                          "sTitle": "תאריך ארוע אחרון בתמצית",
                          "mRender": function (a) { return mRenderDate(a); }
                      },
+                      {
+                          "mData": "Type_Name_Essense",
+                          "sTitle": "סוג ארוע אחרון בתמצית"
+                      },
 
                     {
-                        "mData": "SubType_Name_Short",
+                        "mData": "SubType_Name_Essense",
                         "sTitle": "תת סוג ארוע אחרון בתמצית"
                     },
                     {
-                        "mData": "Description_Short",
+                        "mData": "Description_Essense",
                         "sTitle": "תאור ארוע אחרון בתמצית"
                     },
   //contacts
@@ -218,7 +222,7 @@
                         "mData": "Phones",
                         "sTitle": "טלפונים נוספים"
                     },
-                   
+
                     {
                         "mData": "Email",
                         "sTitle": 'דוא"ל'
@@ -227,21 +231,21 @@
                         "mData": "City",
                         "sTitle": "ישוב"
                     },
-                   
+
                     {
                         "mData": "InMailingListString",
                         "sTitle": "ברשימת תפוצה ?"
                     },
 
 
-                  
-    //address, comments 
-                    
+
+    //address, comments
+
                 {
                     "mData": "Institute_Comments",
                     "sTitle": "הערות אדם",
                     'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
-                       
+
                         if (oData.Institute_Comments != "null")
                         nTd.title = oData.Institute_Comments;
                     },
@@ -253,12 +257,12 @@
 
                         return "";
                     }
-                    
-                        
-                   
+
+
+
                 },
-                    
-              
+
+
                 {
                       "mData": "Address",
                       "sTitle": "רחוב ומספר",
@@ -289,16 +293,16 @@
                            nTd.title = oData.Address_Comments;
                        }
                    },
-                    
+
                 ],
                 "fnServerData": function (sSource, aoData, fnCallback) {
                     console.log("ao");
                     console.log(aoData);
                     $.ajax( {
-                        "dataType": 'json', 
-                        "type": "POST", 
-                        "url": sSource, 
-                        "data": aoData, 
+                        "dataType": 'json',
+                        "type": "POST",
+                        "url": sSource,
+                        "data": aoData,
                         "success": fnCallback
                     } );
                 },
@@ -327,72 +331,72 @@
 
             $('#exportBtn').click(function () {
                 var location = '@Url.Action("Export", "Institutes")?';
-                var filterValues = [];
-                filterValues.push({ "name": "Type_ID", "value": selectType.select2('val') });
-                filterValues.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
-                filterValues.push({ "name": "InMailingListOnly", "value": chkInMailingListOnly.is(':checked') });
-                location += $.param(filterValues);
-                window.location = location;
-            });
-
-            $('#createNew').click(function () {
-                var location = '@Url.Action("Create", "Institutes")?';
-                var filterValues = [];
-                filterValues.push({ "name": "Type_ID", "value": selectType.select2('val') });
-                filterValues.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
-                filterValues.push({ "name": "InMailingListOnly", "value": chkInMailingListOnly.is(':checked') });
- 
-                location += $.param(filterValues);
-                window.location = location;
-            });
-
-            $(document).ready(function () {
-                $dialog = $('<div>האם אתה בטוח שברצונך למחוק את הרשימה?<div>').dialog({
-                    autoOpen: false,
-                    buttons: [
-                        {
-                            text: "לא",
-                            click: function () {
-                                $(this).dialog("close");
-                            }
-                        },
-                        {
-                            text: "כן",
-                            click: function () {
-                                $(this).dialog("close");
-                                $deletingDialog.dialog("open");
-                                $.ajax({
-                                    url: '@Url.Action("Delete")',
-                                    type: "POST",
-                                    data: { Id: $(this).data('id') },
-                                    dataType: "json"
-                                }).done(function (data) {
-                                    $deletingDialog.dialog("close");
-                                    oTable.fnDraw();
-                                    alert(data);
-                                });
-                            }
-                        }
-                    ]
-                });
-                $deletingDialog = $('<div>אנא המתן בזמן שהמחיקה מתבצעת...<div>').dialog({
-                    autoOpen: false
-                });
-            });
+            var filterValues = [];
+            filterValues.push({ "name": "Type_ID", "value": selectType.select2('val') });
+            filterValues.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+            filterValues.push({ "name": "InMailingListOnly", "value": chkInMailingListOnly.is(':checked') });
+            location += $.param(filterValues);
+            window.location = location;
         });
 
-        function selectAll() {
-            if ($("#mainSelector").prop('checked')) {
-                $(".Selector").prop('checked', true);
-            }
-            else {
-                $(".Selector").prop('checked', false);
-            }
-        }
+        $('#createNew').click(function () {
+            var location = '@Url.Action("Create", "Institutes")?';
+            var filterValues = [];
+            filterValues.push({ "name": "Type_ID", "value": selectType.select2('val') });
+            filterValues.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+            filterValues.push({ "name": "InMailingListOnly", "value": chkInMailingListOnly.is(':checked') });
 
-        function confirmDelete(id) {
-            $dialog.data('id', id).dialog("open");
+            location += $.param(filterValues);
+            window.location = location;
+        });
+
+        $(document).ready(function () {
+            $dialog = $('<div>האם אתה בטוח שברצונך למחוק את הרשימה?<div>').dialog({
+                autoOpen: false,
+                buttons: [
+                    {
+                        text: "לא",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "כן",
+                        click: function () {
+                            $(this).dialog("close");
+                            $deletingDialog.dialog("open");
+                            $.ajax({
+                                url: '@Url.Action("Delete")',
+                                type: "POST",
+                                data: { Id: $(this).data('id') },
+                                dataType: "json"
+                            }).done(function (data) {
+                                $deletingDialog.dialog("close");
+                                oTable.fnDraw();
+                                alert(data);
+                            });
+                        }
+                    }
+                ]
+            });
+            $deletingDialog = $('<div>אנא המתן בזמן שהמחיקה מתבצעת...<div>').dialog({
+                autoOpen: false
+            });
+        });
+    });
+
+    function selectAll() {
+        if ($("#mainSelector").prop('checked')) {
+            $(".Selector").prop('checked', true);
         }
+        else {
+            $(".Selector").prop('checked', false);
+        }
+    }
+
+    function confirmDelete(id) {
+        $dialog.data('id', id).dialog("open");
+    }
     </script>
 }
 

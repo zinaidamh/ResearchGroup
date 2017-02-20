@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Hypnosis.Web.Models
 {
-    public class EventsFilterViewModel
+    public class EventsFilterViewModel_ForCard
     {
 
         [ScaffoldColumn(false)]
@@ -44,6 +44,16 @@ namespace Hypnosis.Web.Models
     }
 
 
+    public class EventsFilterViewModel_ForList
+    {
+        [Display(Name = "סוג ארוע")]
+        public int? Type_ID { get; set; }
+        [Display(Name = "תת סוג ארוע")]
+        public int? SubType_ID { get; set; }
+        [Display(Name = "רק ברשימת תפוצה")]
+        public bool InMailingListOnly { get; set; }
+    }
+
     public class EventsFullListRowViewModel
     {
 
@@ -53,6 +63,8 @@ namespace Hypnosis.Web.Models
         [ScaffoldColumn(false)]
         public int ID { get; set; }
 
+        [ScaffoldColumn(false)]
+        public int EssenseOrder { get; set; }
 
         [Display(Name = "תאריך תחילה")]
         public DateTime? FirstDate { get; set; }
@@ -120,7 +132,106 @@ namespace Hypnosis.Web.Models
         [Display(Name = "תת סוג ארוע")]
         public int? SubType_ID { get; set; }
 
+
+
        
+    }
+
+
+    public class EventsExportModel
+    {
+
+
+
+
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+        [ScaffoldColumn(false)]
+        public int EssenseOrder { get; set; }
+
+        [Display(Name = "תאריך תחילה")]
+        public string FirstDate { get; set; }
+
+        [Display(Name = "קטגוריה")]
+        public string Category_Name { get; set; }
+        [Display(Name = "סוג ארוע")]
+        public string Type_Name { get; set; }
+        [Display(Name = "תת סוג ארוע")]
+        public string SubType_Name { get; set; }
+
+        [Display(Name = "ת.ז")]
+        public string TZ { get; set; }
+
+
+        [Display(Name = "שם האדם")]
+        public string Person_Name { get; set; }
+
+        [Display(Name = "שם המכון")]
+        public string Institute_Name { get; set; }
+
+               
+        [Display(Name = "תאור")]
+        public string Description { get; set; }
+
+        [Display(Name = "גורם / אמצאי הפניה")]
+        public string Agent_Name { get; set; }
+
+      
+        [Display(Name = "תאריך תוקף")]
+        public DateTime? ExpirationDate { get; set; }
+
+        [Display(Name = "תאריך התראה")]
+        public string AlertDate { get; set; }
+
+        [Display(Name = "התראה טופלה")]
+        public string alertDoneString { get; set; }
+
+       
+
+        [Display(Name = "קובץ")]
+        public string FileName { get; set; }
+
+        [Display(Name = "קישור")]
+        public string SiteHref { get; set; }
+
+        [Display(Name = "תאריך הזנה")]
+        public string CreatedAt { get; set; }
+
+       
+
+
+
+
+    }
+
+
+    public class EventsListRowViewModel
+    {
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+        [Display(Name = "תאריך ארוע אחרון")]
+        public DateTime? FirstDate { get; set; }
+
+        [Display(Name = " תת סוג ארוע אחרון")]
+        public string SubType_Name { get; set; }
+
+
+        [Display(Name = " תאור ארוע אחרון")]
+        public string Description { get; set; }
+
+
+        [Display(Name = "תאריך ארוע אחרון בתמצית ")]
+        public DateTime? FirstDate_Essense { get; set; }
+
+        [Display(Name = "תת סוג ארוע אחרון בתמצית")]
+        public string SubType_Name_Essense { get; set; }
+
+
+        [Display(Name = "תאור ארוע אחרון בתמצית")]
+        public string Description_Essense { get; set; }
+
     }
 
 }
