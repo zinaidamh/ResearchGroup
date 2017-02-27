@@ -154,7 +154,7 @@
         var oTable = $('#eventSubTypes');
         oTable.dataTable({
             stateSave: true,
-            "aaSorting": [[2, 'asc']],
+            "aaSorting": [[0, 'asc']],
             "bAutoWidth": false, // Disable the auto width calculation 
           
             "sAjaxSource": "@Url.Action("IndexData")",
@@ -171,33 +171,18 @@
                 }
             },
             "aoColumns": [
-                {
-                    "sWidth": "10%",
-                    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
-                    "bSortable": false,
-                    "mRender": function (a, b, c) {
-                        if (b === 'display') {
-                            return '<input type="checkbox" name="typesToChange" class="typesSelector" value="' + c.ID + '" />';
-                        }
-                        return a;
-                    }
-                },
-                {
-
-                    "sWidth": "10%",
-                    "mData": null, "sTitle": "",
-                    "bSortable": false,
-                    "mRender": function (a, b, c) {
-                        var html = '<a href="#up" class="btn" onclick=deleteRow(' + c.ID + ') title="מחק"><i class="fa fa-times"></i></a>';
-                        html += "<a class='edit fa fa-pencil-square-o' title='ערוך'></a>";
-                        return html;
-                    },
-                    "mRenderEdit": function (a, b, c) {
-                        var html = "<a class='update fa fa-check' title='שמור'></a>"
-                        html += " <a class='cancel fa fa-undo' title='בטל'></a>";
-                        return html;
-                    }
-                },
+                //{
+                //    "sWidth": "10%",
+                //    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
+                //    "bSortable": false,
+                //    "mRender": function (a, b, c) {
+                //        if (b === 'display') {
+                //            return '<input type="checkbox" name="typesToChange" class="typesSelector" value="' + c.ID + '" />';
+                //        }
+                //        return a;
+                //    }
+                //},
+                
                 {
                     "sWidth": "50%",
                     "mData": "SubType_Name",
@@ -221,7 +206,23 @@
                      "mRenderEdit": function (a, b, c) {
                          return '<input id="dt_order"  class="digit" class="required"  value="' + c.EssenseOrder + '">';;
                      }
-                 }
+                 },
+                 {
+
+                     "sWidth": "10%",
+                     "mData": null, "sTitle": "",
+                     "bSortable": false,
+                     "mRender": function (a, b, c) {
+                         var html = '<a href="#up" class="btn" onclick=deleteRow(' + c.ID + ') title="מחק"><i class="fa fa-times"></i></a>';
+                         html += "<a class='edit fa fa-pencil-square-o' title='ערוך'></a>";
+                         return html;
+                     },
+                     "mRenderEdit": function (a, b, c) {
+                         var html = "<a class='update fa fa-check' title='שמור'></a>"
+                         html += " <a class='cancel fa fa-undo' title='בטל'></a>";
+                         return html;
+                     }
+                 },
                 
             ]
         });
@@ -261,6 +262,10 @@
         });
 
         oTable.on('click', '.update', function () {
+            if (!validate()) {
+                alert("חובה למלא את כל השדות");
+                return false;
+            }
             var settings = oTable.fnSettings();
             var $tr = $(this).closest('tr');
             var data = oTable.fnGetData($tr.get(0));

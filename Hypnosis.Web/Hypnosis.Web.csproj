@@ -455,6 +455,7 @@
       <DependentUpon>HypnosisData.edmx</DependentUpon>
     </Content>
     <Content Include="Images\TmpHypnosisBanner.png" />
+    <Content Include="Scripts\bootstrap-session-timeout.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Properties\PublishProfiles\HypnosisDemo.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />

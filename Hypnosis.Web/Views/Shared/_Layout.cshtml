@@ -224,9 +224,33 @@
                 $(this).siblings().removeClass('open');
                 $(this).toggleClass('open');
             });
+
+             
+           
         });
     </script>
 
+@if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("LogOn"))
+{
+    <script>             
+        $(document).ready(function () {
+                $.sessionTimeout({
+                keepAliveUrl: window.location.pathname,
+                logoutUrl: 'Account/LogOn',
+                redirUrl: 'Account/LogOn',
+                warnAfter: 120000,
+                redirAfter: 130000,
+                countdownBar: true,
+                title: 'Your Session is About to Expire!',
+                message: 'Your session is about to expire.',
+                keepAliveButton: 'Stay Connected',
+                logoutButton: 'Logout',
+                ignoreUserActivity: true
+
+                });
+        });
+    </script>
+}
     @RenderSection("scripts", required: false)
 </head>
 <body data-spy="scroll" data-target=".bs-docs-sidebar">
@@ -238,7 +262,7 @@
     </div>
     <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner" style="background-color: #F9F9F9">
         <div class="container-fluid">
-            @if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("Login"))
+            @if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("LogOn"))
             {
                 <ul class="nav navbar-top-links @(System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft? " navbar-left":"navbar-right")">
                     @Html.Partial("_LogOnPartial")

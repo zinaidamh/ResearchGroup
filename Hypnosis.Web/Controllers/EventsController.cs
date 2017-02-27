@@ -42,7 +42,7 @@ namespace Hypnosis.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult DataByCard(Models.DataTables.jqDataTableInput input, int Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        public ActionResult DataByCard(Models.DataTables.jqDataTableInput input, int? Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
         {
             DbEvents EventsOperations = new DbEvents();
            
@@ -71,7 +71,7 @@ namespace Hypnosis.Web.Controllers
 
 
 
-        public ActionResult Export(int Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
+        public ActionResult Export(int? Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
         {
             var source = EventsOperations.GetExportRows(Card_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
             return this.Excel("ארועים", "Events", source);

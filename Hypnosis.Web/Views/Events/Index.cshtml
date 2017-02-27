@@ -1,6 +1,6 @@
-﻿@model Hypnosis.Web.Models.EventsFilterViewModel
+﻿@model Hypnosis.Web.Models.EventsFilterViewModel_ForCard
 @{
-    ViewBag.Title = "רשימת אנשים";
+    ViewBag.Title = "רשימת ארועים";
 }
 
 <h2 class="page-header">@ViewBag.Title</h2>
@@ -196,13 +196,13 @@
         var oTable = $('#events');
         oTable.dataTable({
             stateSave: true,
-            "aaSorting": [[3, 'asc']],
+            "aaSorting": [[0, 'asc']],
             "sAjaxSource": "@Url.Action("IndexData")",
 
             "fnServerParams": function (aoData) {
                 aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
                 aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
-                aoData.push({ "name": "Category_ID", "value": selectType.select2('val') });
+                aoData.push({ "name": "Category_ID", "value": selectCategory.select2('val') });
                 aoData.push({ "name": "fromDate", "value": fromDate.val() });
                 aoData.push({ "name": "toDate", "value": toDate.val() });
 
@@ -229,24 +229,17 @@
             },
 
             "aoColumns": [
-                {
-                    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
-                    "bSortable": false,
-                    "mRender": function (a, b, c) {
-                        if (b === 'display') {
-                            return '<input type="checkbox" name="ToChange" class="Selector" value="' + c.ID + '" />';
-                        }
-                        return a;
-                    }
-                },
-                {
-                    "mData": null, "sTitle": "",
-                    "bSortable": false,
-                    "mRender": function (a, b, c) {
-                        return '<a href="#" class="btn" onclick="confirmDelete(' + c.ID + ')" ><i class="fa fa-times"></i></a>';
-
-                    }
-                },
+                //{
+                //    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
+                //    "bSortable": false,
+                //    "mRender": function (a, b, c) {
+                //        if (b === 'display') {
+                //            return '<input type="checkbox" name="ToChange" class="Selector" value="' + c.ID + '" />';
+                //        }
+                //        return a;
+                //    }
+                //},
+                
                 
 
                {
@@ -298,7 +291,7 @@
                        "bSortable": false,
                        "mRender": function (a, b, c) {
                            if (c.Institute_ID != null) {
-                               return '<a href="@Url.Action("Edit", "Persons")?Id=' + c.Person_ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=false' + '" class="btn">'+ c.Institute_Name +'</i></a>';
+                               return '<a href="@Url.Action("Edit", "Institutes")?Id=' + c.Institute_ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=false' + '" class="btn">'+ c.Institute_Name +'</i></a>';
                            }
                            else
                                return '';
@@ -336,13 +329,44 @@
 
                           {
                               "mData": "FileName",
-                              "sTitle": "קובץ"
+                              "sTitle": "קובץ",
+                              "mRender": function (a, b, c) {
+                                  if (c.FileName != null) {
+                                      return '<a href="@Url.Action("Get", "Files")?fileName=' + c.FileName + '">' + a + '</a>';
+
+                                      // return '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
+                                  }
+                                  else {
+                                      return "";
+                                  }
+                              }
+                             
+
                           },
 
-                           {
-                               "mData": "SiteHref",
-                               "sTitle": "קישור"
-                           },
+
+                               {
+                                   "mData": "SiteHref",
+                                   "sTitle": "קישור",
+                                   "mRender": function (a, b, c) {
+                                       if (c.SiteHref != null) {
+                                           {
+                                               var href = c.SiteHref;
+                                               var text = href;
+                                               if (href.indexOf("http") == -1) {
+                                                   href = "http://" + href;
+                                               }
+                                               return '<a target="blank"  href="' + href + '">' + text + '</a>';
+
+                                           }
+                                       }
+                                       else {
+                                           return "";
+                                       }
+
+                                   }
+                                  
+                               },
 
                            {
                                "mData": "CreatedAt",
@@ -350,6 +374,14 @@
                                "mRender": function (a) { return mRenderDate(a); }
                            },
                
+               {
+                   "mData": null, "sTitle": "",
+                    "bSortable": false,
+                    "mRender": function (a, b, c) {
+                        return '<a href="#" class="btn" onclick="confirmDelete(' + c.ID + ')" ><i class="fa fa-times"></i></a>';
+
+                    }
+                },
            
 
             ],
@@ -410,19 +442,23 @@
 
         $('#exportBtn').click(function () {
             var location = '@Url.Action("Export", "Events")?';
-            var filterValues = [];
-            filterValues.push({ "name": "Type_ID", "value": selectType.select2('val') });
-            filterValues.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
-            filterValues.push({ "name": "Category_ID", "value": selectType.select2('val') });
-            filterValues.push({ "name": "fromDate", "value": fromDate.val() });
-            filterValues.push({ "name": "toDate", "value": toDate.val() });
+            var aoData = [];
+            aoData.push({ "name": "Card_ID", "value": null });
+            aoData.push({ "name": "Category_ID", "value": selectCategory.val() });
+            aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
+            aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+            aoData.push({ "name": "fromDate", "value": fromDate.val() });
+            aoData.push({ "name": "toDate", "value": toDate.val() });
 
-            filterValues.push({ "name": "chkEssenseOnly", "value": chkEssenseOnly.is(':checked') });
-            filterValues.push({ "name": "chkExpiredOnly", "value": chkExpiredOnly.is(':checked') });
-            filterValues.push({ "name": "chkOpenOnly", "value": chkOpenOnly.is(':checked') });
-            filterValues.push({ "name": "chkFileOnly", "value": chkFileOnly.is(':checked') });
-            filterValues.push({ "name": "chkSiteOnly", "value": chkSiteOnly.is(':checked') });
-            location += $.param(filterValues);
+            aoData.push({ "name": "EssenseOnly", "value": chkEssenseOnly.is(':checked') });
+            aoData.push({ "name": "ExpiredOnly", "value": chkExpiredOnly.is(':checked') });
+            aoData.push({ "name": "OpenOnly", "value": chkOpenOnly.is(':checked') });
+            aoData.push({ "name": "FileOnly", "value": chkFileOnly.is(':checked') });
+            aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
+
+            console.log(aoData);
+           // alert('export');
+            location += $.param(aoData);
             window.location = location;
         });
 
@@ -451,7 +487,7 @@
                             }).done(function (data) {
                                 $deletingDialog.dialog("close");
                                 oTable.fnDraw();
-                                alert(data);
+                              //  alert(data);
                             });
                         }
                     }
@@ -463,6 +499,33 @@
         });
     });
 
+        function deleteRow(id) {
+            if (confirm("האם אתה בטוח שברצונך למחוק רשומה זו?")) {
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    type: "GET",
+                    dataType: "json",
+                    url: '@Url.Content("~/Events/Delete")',
+                    //url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
+                    data: { "Id": id }
+                }).success(function (data) {
+                    if (!data.result) {
+                        alert("הייתה בעיה במחיקה");
+                    }
+                    else {
+                        // alert('deleted');
+                        var oTable = $('#events').dataTable();
+                        console.log('redraw');
+                        oTable.fnDraw(false);
+                    }
+                }).error(function () { })
+                            .complete(function () { });
+            }
+        }
+
+        function confirmDelete(id) {
+            $dialog.data('id', id).dialog("open");
+        }
     function selectAll() {
         if ($("#mainSelector").prop('checked')) {
             $(".Selector").prop('checked', true);

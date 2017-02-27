@@ -32,6 +32,7 @@ namespace Hypnosis.Web.Models
         public string Description { get; set; }
 
 
+
         [Display(Name = "תאריך ארוע אחרון בתמצית ")]
         public DateTime? FirstDate_Essense { get; set; }
 
@@ -39,9 +40,20 @@ namespace Hypnosis.Web.Models
         public string SubType_Name_Essense { get; set; }
 
 
+
+
+        [Display(Name = "סוג ארוע אחרון בתמצית")]
+        public string Type_Name_Essense { get; set; }
+
+
         [Display(Name = "תאור ארוע אחרון בתמצית")]
         public string Description_Essense { get; set; }
 
+        [Display(Name = "סוג ארוע אחרון בתמצית")]
+        public int? Type_ID_Essense { get; set; }
+
+        [Display(Name = "תת סוג ארוע אחרון בתמצית")]
+        public int? SubType_ID_Essense { get; set; }
 
         [Display(Name = "טלפון נייד ")]
         public string Mobile { get; set; }
@@ -185,41 +197,25 @@ namespace Hypnosis.Web.Models
     }
 
 
-    public class PersonEventsViewModel
+   
+
+
+    public class PersonCreateModel
     {
-        [Display(Name = "סוג ארוע")]
-        public int? Type_ID { get; set; }
-        [Display(Name = "תת סוג ארוע")]
-        public int? SubType_ID { get; set; }
-        [Display(Name = "רק ברשימת תפוצה")]
-        public bool InMailingListOnly { get; set; }
+        public PersonDetailsModel details { get; set; } //to use the same template for edit/create
+        public EventsFilterViewModel_ForList filter { get; set; }
     }
 
 
     public class PersonEditModel
     {
+        public EventsFilterViewModel_ForList filter { get; set; }
 
-       public EventsFilterViewModel_ForList filter { get; set; }
-
-       public EventsFilterViewModel_ForCard eventsFilter { get; set; }
-
-        [UIHint("PersonDetails")]
-        public  PersonDetailsModel details {get; set; }
-
-        public PersonEventsListRowViewModel eventsList { get; set; }
-
-    }
-
-    public class PersonCreateModel
-    {
-
-        public PersonEventsViewModel filter { get; set; }
-
-        [UIHint("PersonDetails")]
         public PersonDetailsModel details { get; set; }
-
-
+        public EventsFilterViewModel_ForCard eventsFilter { get; set; }
+        public PersonEventsListRowViewModel eventsList { get; set; }
     }
+
 
     public class PersonDetailsModel
     {
@@ -232,12 +228,15 @@ namespace Hypnosis.Web.Models
 
 
         [Display(Name = "שם משפחה")]
+        [Required(ErrorMessage = "שם משפחה חובה")]
         public string LastName { get; set; }
 
         [Display(Name = "שם פרטי")]
+        [Required(ErrorMessage = "שם פרטי חובה")]
         public string FirstName { get; set; }
 
         [Display(Name = "שם לתצוגה")]
+        [Required(ErrorMessage = "שם לתצוגה חובה")]
         public string DisplayName { get; set; }
 
         [Display(Name = "טלפון נייד ")]
@@ -248,6 +247,8 @@ namespace Hypnosis.Web.Models
 
 
         [Display(Name = "דוא\"ל")]
+        [RegularExpression(@"^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$", ErrorMessage = "דוא\"ל לא נכון")]
+
         public string Email { get; set; }
 
         [Display(Name = "ברשימת תפוצה ? ")]
@@ -297,7 +298,7 @@ namespace Hypnosis.Web.Models
         public int? SubType_ID { get; set; }
         [Display(Name = "רק ברשימת תפוצה")]
 
-        public bool? InMailingList { get; set; }
+        public bool InMailingList { get; set; }
 
         [Display(Name = "סוג ארוע")]
         public string Type_Name { get; set; }

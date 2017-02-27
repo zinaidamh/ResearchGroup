@@ -69,8 +69,7 @@ namespace Hypnosis.Web.Models
         [Display(Name = "תאריך תחילה")]
         public DateTime? FirstDate { get; set; }
 
-        [Display(Name = "קטגוריה")]
-        public string Category_Name { get; set; }
+       
         [Display(Name = "סוג ארוע")]
         public string Type_Name { get; set; }
         [Display(Name = "תת סוג ארוע")]
@@ -127,6 +126,9 @@ namespace Hypnosis.Web.Models
 
         [Display(Name = "קטגוריה")]
         public int? Category_ID { get; set; }
+
+        [Display(Name = "קטגוריה")]
+        public string Category_Name { get; set; }
         [Display(Name = "סוג ארוע")]
         public int? Type_ID { get; set; }
         [Display(Name = "תת סוג ארוע")]
@@ -149,6 +151,8 @@ namespace Hypnosis.Web.Models
 
         [ScaffoldColumn(false)]
         public int EssenseOrder { get; set; }
+        
+      
 
         [Display(Name = "תאריך תחילה")]
         public string FirstDate { get; set; }
@@ -179,7 +183,7 @@ namespace Hypnosis.Web.Models
 
       
         [Display(Name = "תאריך תוקף")]
-        public DateTime? ExpirationDate { get; set; }
+        public string ExpirationDate { get; set; }
 
         [Display(Name = "תאריך התראה")]
         public string AlertDate { get; set; }

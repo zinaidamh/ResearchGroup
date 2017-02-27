@@ -120,7 +120,7 @@
             var oTable = $('#persons');
             oTable.dataTable({
                 stateSave: true,
-                "aaSorting": [[3, 'asc']],
+                "aaSorting": [[1, 'asc']],
                 "sAjaxSource": "@Url.Action("IndexData")",
                 
                 "fnServerParams": function (aoData) {
@@ -141,29 +141,31 @@
                 },
                 
                 "aoColumns": [
-                    {
-                        "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
-                        "bSortable": false,
-                        "mRender": function (a, b, c) {
-                            if (b === 'display') {
-                                return '<input type="checkbox" name="ToChange" class="Selector" value="' + c.ID + '" />';
-                            }
-                            return a;
-                        }
-                    },
-                    {
-                        "mData": null, "sTitle": "",
-                        "bSortable": false,
-                        "mRender": function (a, b, c) {
-                            return '<a href="#" class="btn" onclick="confirmDelete(' + c.ID + ')" ><i class="fa fa-times"></i></a>';
+                    //{
+                    //    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
+                    //    "bSortable": false,
+                    //    "mRender": function (a, b, c) {
+                    //        if (b === 'display') {
+                    //            return '<input type="checkbox" name="ToChange" class="Selector" value="' + c.ID + '" />';
+                    //        }
+                    //        return a;
+                    //    }
+                    //},
+                    //{
+                    //    "mData": null, "sTitle": "",
+                    //    "bSortable": false,
+                    //    "mRender": function (a, b, c) {
+                    //        return '<a href="#" class="btn" onclick="confirmDelete(' + c.ID + ')" ><i class="fa fa-times"></i></a>';
 
-                        }
-                    },
+                    //    }
+                    //},
+
+              
                     {
                         "mData": "TZ", "sTitle": "ת.ז.",
                         "bSortable": false,
                         "mRender": function (a, b, c) {
-                            return '<a href="@Url.Action("Edit", "Persons")?Id=' + c.ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=' + chkInMailingListOnly.is(':checked') + '" class="btn"><i class="fa fa-pencil-square-o"></i></a>';
+                            return '<a href="@Url.Action("Edit", "Persons")?Id=' + c.ID + '&Type_ID=' + selectType.select2('val') + '&SubType_id=' + selectSubType.select2('val') + '&InMailingListOnly=' + chkInMailingListOnly.is(':checked') + '" class="btn">' + c.TZ + '</i></a>';
                         }
                     },
                     {

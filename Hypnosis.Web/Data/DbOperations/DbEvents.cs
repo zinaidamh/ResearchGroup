@@ -52,15 +52,15 @@ namespace Hypnosis.Web.Data.DbOperations
                         SubType_Name = e.SubType_Name,
                         Type_Name = e.Type_Name,
                         Category_Name = e.Category_Name,
-                        Description = e.Description,
+                        Description = e.Description!=null? e.Description: "",
                         
 
-                        FirstDate = e.FirstDate==null ?  e.FirstDate.Value.ToShortDateString() : "",
+                        FirstDate = e.FirstDate!=null ?  e.FirstDate.Value.ToShortDateString() : "",
 
                         Agent_Name = e.Agent_Name,
 
-                        ExpirationDate = e.ExpirationDate,
-                        AlertDate = e.AlertDate == null ? e.AlertDate.Value.ToShortDateString() : "",
+                        ExpirationDate = e.ExpirationDate != null ? e.ExpirationDate.Value.ToShortDateString() : "",
+                        AlertDate = e.AlertDate != null ? e.AlertDate.Value.ToShortDateString() : "",
                         alertDoneString = e.AlertDone == true ? "כן" : "לא",
                         FileName = e.FileName==null ? "": e.FileName,
                         SiteHref = e.SiteHref==null? "" : e.SiteHref,
@@ -158,18 +158,19 @@ namespace Hypnosis.Web.Data.DbOperations
             {
                 events = events.Where(f => f.Category_ID == Category_ID);
             }
+            var date = DateTime.Now.Date;
             if (ExpiredOnly)
             {
-                events = events.Where(f => f.ExpirationDate <= DateTime.Now.Date);
+                events = events.Where(f => f.ExpirationDate <= date);
             }
             //also for Essense after explain
             if (FileOnly)
             {
-                events = events.Where(f => f.FileName != null);
+                events = events.Where(f => f.FileName != null && f.FileName!="");
             }
             if (SiteOnly)
             {
-                events = events.Where(f => f.SiteHref != null);
+                events = events.Where(f => f.SiteHref != null && f.SiteHref!="");
             }
             if (fromDate.HasValue)
             {

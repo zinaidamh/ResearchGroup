@@ -75,9 +75,11 @@
                                         <th>תאריך תוקף/סיום</th>
                                         <th>תאריך הקפצת התראה</th>
                                         <th>התראה טופלה</th>
-                                        <th>מכון</th>
+                                        <th class="tdInstitute">מכון</th>
                                         <th>קובץ</th>
                                         <th>קישור</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -108,7 +110,7 @@
                                             <input id="alertDone" type="checkbox" />
                                         </td>
 
-                                        <td id="tdInstitute">
+                                        <td class="tdInstitute">
                                             <input id="dt_institute" />
                                         </td>
                                         <td>
@@ -145,7 +147,7 @@
             var category = $('#@Html.FieldIdFor(f => f.Category_ID)')
 
             if (category.val() == 1) { //institutes
-                $('#tdInstitute').hide()
+                $('.tdInstitute').hide()
             }
             var selectType = $('#@Html.FieldIdFor(f => f.Type_ID)').select2({
                 width: 200,
@@ -281,8 +283,14 @@
                        "mRender": function (a) { return mRenderDate(a); },
                        "mRenderEdit": function (a, b, c) {
                            var firstDate = new Date(c.FirstDate)
-                       
-                           return '<input size="8" id="firstDate" class="datepicker required" type="text"  value="' + firstDate.toString("dd/MM/yyyy") + '" />';
+                           if (c.firstDate != null) {
+                               return '<input size="8" id="firstDate" class="datepicker required" type="text"  value="' + firstDate.toString("dd/MM/yyyy") + '" />';
+                           }
+                           else
+                           {
+                               return '<input size="8" id="firstDate" class="datepicker required" type="text"  value="" />';
+
+                           }
                        }
                    },
 
@@ -328,7 +336,15 @@
                                 "mRender": function (a) { return mRenderDate(a); },
                                 "mRenderEdit": function (a, b, c) {
                                     var expDate = new Date(c.ExpirationDate)
-                                    return '<input size="8" id="expDate" class="datepicker required" type="text"  value="' + expDate.toString("dd/MM/yyyy") + '" />';
+
+                                    if (c.ExpirationDate != null) {
+                                        return '<input size="8" id="expDate" class="datepicker required" type="text"  value="' + expDate.toString("dd/MM/yyyy") + '" />';
+                                    }
+                                    else
+                                    {
+                                        return '<input size="8" id="expDate" class="datepicker required" type="text"  value="" />';
+
+                                    }
                                 }
                             },
 
@@ -338,7 +354,14 @@
                                 "mRender": function (a) { return mRenderDate(a); },
                                 "mRenderEdit": function (a, b, c) {
                                     var alertDate = new Date(c.AlertDate)
-                                    return '<input size="8" id="alertDate" class="datepicker required" type="text"  value="' + alertDate.toString("dd/MM/yyyy") + '" />';
+                                    if (c.AlertDate != null) {
+                                        return '<input size="8" id="alertDate" class="datepicker required" type="text"  value="' + alertDate.toString("dd/MM/yyyy") + '" />';
+                                    }
+                                    else
+                                    {
+                                        return '<input size="8" id="alertDate" class="datepicker required" type="text"  value="" />';
+
+                                    }
                                 }
                             },
 
@@ -730,7 +753,7 @@
 
         function toggleButtons(allow)
         {
-            alert('tooggle');
+           // alert('tooggle');
             if (!allow) {
                $('.edit').hide();
                $('.delete').hide();
@@ -1040,7 +1063,7 @@
                 }
                 else {
                     clearNewRow();
-                    alert('readraw');
+                //    alert('readraw');
                     var oTable = $('#events').dataTable();
                     oTable.fnDraw(false);
                     toggleButtons(true);
@@ -1097,7 +1120,7 @@
             aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
 
             console.log(aoData);
-            alert('export');
+          //  alert('export');
             location += $.param(aoData);
             window.location = location;
         });

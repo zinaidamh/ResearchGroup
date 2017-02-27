@@ -31,8 +31,7 @@ namespace Hypnosis.Web.Models
         public string SubType_Name_Essense { get; set; }
 
 
-        [Display(Name = "סוג ארוע אחרון")]
-        public string Type_Name { get; set; }
+       
 
         [Display(Name = "סוג ארוע אחרון בתמצית")]
         public string Type_Name_Essense { get; set; }
@@ -41,6 +40,14 @@ namespace Hypnosis.Web.Models
         [Display(Name = "תאור ארוע אחרון בתמצית")]
         public string Description_Essense { get; set; }
 
+        [Display(Name = "סוג ארוע אחרון בתמצית")]
+        public int? Type_ID_Essense { get; set; }
+       
+        [Display(Name = "תת סוג ארוע אחרון בתמצית")]
+        public int? SubType_ID_Essense { get; set; }
+
+        [Display(Name = "סוג ארוע אחרון")]
+        public string Type_Name { get; set; }
 
         [Display(Name = "טלפון ראשי ")]
         public string MainPhone { get; set; }
@@ -76,14 +83,12 @@ namespace Hypnosis.Web.Models
         [Display(Name = "סוג ארוע")]
         public int? Type_ID { get; set; }
 
-        [Display(Name = "סוג ארוע אחרון בתמצית")]
-        public int? Type_ID_Essense { get; set; }
+       
 
         [Display(Name = "תת סוג ארוע אחרון")]
         public int? SubType_ID { get; set; }
 
-        [Display(Name = "תת סוג ארוע אחרון בתמצית")]
-        public int? SubType_ID_Essense { get; set; }
+       
 
        
         

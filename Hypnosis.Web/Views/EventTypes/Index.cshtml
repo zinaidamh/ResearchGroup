@@ -137,7 +137,7 @@
         var oTable = $('#eventTypes');
         oTable.dataTable({
             stateSave: true,
-            "aaSorting": [[2, 'asc']],
+            "aaSorting": [[0, 'asc']],
             "bAutoWidth": false, // Disable the auto width calculation 
           
             "sAjaxSource": "@Url.Action("IndexData")",
@@ -153,15 +153,32 @@
                 }
             },
             "aoColumns": [
+                //{
+                //    "sWidth": "10%",
+                //    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
+                //    "bSortable": false,
+                //    "mRender": function (a, b, c) {
+                //        if (b === 'display') {
+                //            return '<input type="checkbox" name="typesToChange" class="typesSelector" value="' + c.ID + '" />';
+                //        }
+                //        return a;
+                //    }
+                //},
+                
                 {
-                    "sWidth": "10%",
-                    "mData": null, "sTitle": '<input type="checkbox" onClick="selectAll()" id="mainSelector" />',
-                    "bSortable": false,
-                    "mRender": function (a, b, c) {
-                        if (b === 'display') {
-                            return '<input type="checkbox" name="typesToChange" class="typesSelector" value="' + c.ID + '" />';
+                    "sWidth": "50%",
+                    "mData": "Type_Name",
+                    "sTitle": "שם סוג אירוע",
+                    "mRenderEdit": function (a, b, c) {
+                        return '<input id="dt_name" class="required"  value="'+ c.Type_Name+'">';;
                         }
-                        return a;
+                },
+                {
+                    "sWidth": "30%",
+                    "mData": "Type_Category_Name",
+                    "sTitle": "קטגוריית סוג אירוע",
+                    "mRenderEdit": function (a, b, c) {
+                        return '<input id="dt_category" class="required"  value="'+ c.Type_Category+'">';;
                     }
                 },
                 {
@@ -180,22 +197,6 @@
                         return html;
                     }
                 },
-                {
-                    "sWidth": "50%",
-                    "mData": "Type_Name",
-                    "sTitle": "שם סוג אירוע",
-                    "mRenderEdit": function (a, b, c) {
-                        return '<input id="dt_name" class="required"  value="'+ c.Type_Name+'">';;
-                        }
-                },
-                {
-                    "sWidth": "30%",
-                    "mData": "Type_Category_Name",
-                    "sTitle": "קטגוריית סוג אירוע",
-                    "mRenderEdit": function (a, b, c) {
-                        return '<input id="dt_category" class="required"  value="'+ c.Type_Category+'">';;
-                    }
-                }
             ]
         });
 
@@ -233,6 +234,10 @@
         });
 
         oTable.on('click', '.update', function () {
+            if (!validate()) {
+                alert("חובה למלא את כל השדות");
+                return;
+            }
             var settings = oTable.fnSettings();
             var $tr = $(this).closest('tr');
             var data = oTable.fnGetData($tr.get(0));

@@ -40,6 +40,7 @@ namespace Hypnosis
             scriptBundle.Include("~/Scripts/jquery.qtip2/jquery.qtip.min.js");
             scriptBundle.Include("~/Scripts/vis.min.js");
             scriptBundle.Include("~/Scripts/jquery-loader/jquery-loader.js");
+            scriptBundle.Include("~/Scripts/bootstrap-session-timeout.js");
 
             bundles.Add(scriptBundle);
 

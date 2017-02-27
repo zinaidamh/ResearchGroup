@@ -50,16 +50,7 @@ namespace Hypnosis.Web.Controllers
             return new Models.DataTables.DataTablesActionResult<InstituteEventsListRowViewModel>(source, input, prefilter);
         }
 
-        [HttpPost]
-        public ActionResult EventsDataByCard(Models.DataTables.jqDataTableInput input, int Card_ID, int? Type_ID, int? SubType_ID, int? Category_ID, DateTime? fromDate, DateTime? toDate, bool EssenseOnly, bool ExpiredOnly, bool OpenOnly, bool FileOnly, bool SiteOnly)
-        {
-            DbEvents EventsOperations = new DbEvents();
-            var source = EventsOperations.GetEventsByFilter(Card_ID, Type_ID, SubType_ID, Category_ID, fromDate, toDate, EssenseOnly, ExpiredOnly, OpenOnly, FileOnly, SiteOnly);
-            System.Linq.Expressions.Expression<Func<EventsFullListRowViewModel, bool>> prefilter = null;
-            return new Models.DataTables.DataTablesActionResult<EventsFullListRowViewModel>(source, input, prefilter);
-
-        }
-
+      
        
       
        
@@ -73,12 +64,18 @@ namespace Hypnosis.Web.Controllers
         [HttpPost]
         public JsonResult Delete(int Id)
         {
-            var data = InstituteOperations.Delete(Id);
-            if (data != "המחיקה בוצעה בהצלחה")
+            var msg = InstituteOperations.Delete(Id);
+            if (msg != "המחיקה בוצעה בהצלחה")
             {
-                ModelState.AddModelError("", data);
+                ModelState.AddModelError("", msg);
+                var data = new JsonObject { result = false };
+                return Json(data, JsonRequestBehavior.AllowGet);
             }
-            return Json(data, JsonRequestBehavior.AllowGet);
+            else
+            {
+                var data = new JsonObject { result = true };
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
 
 
         }
@@ -123,20 +120,7 @@ namespace Hypnosis.Web.Controllers
                 return View(model);
             }
         }
-        [HttpPost]
-        public JsonResult ChangeEventsData()
-        {
-            DbEvents EventsOperations = new DbEvents();
-            var relativePath = FilesHelper.RelativePath;
-            var path = Server.MapPath(relativePath);
-            bool operationResult = EventsOperations.ChangeData(this.Request, path);
-
-
-            var data = new JsonObject { result = operationResult };
-            return Json(data, JsonRequestBehavior.AllowGet);
-
-
-        }
+       
 
         public ActionResult Create(int? type_ID, int? subType_ID, bool inMailingListOnly)
         {

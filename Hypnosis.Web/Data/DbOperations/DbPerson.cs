@@ -73,12 +73,17 @@ namespace Hypnosis.Web.Data.DbOperations
         }
 
 
-        public IQueryable<PersonEventsListRowViewModel> GetRows()
+        public IQueryable<PersonEventsListRowViewModel> GetRows(int? Type_ID, int? SubType_ID, bool? InMailingListOnly)
         {
+          
             IQueryable<Person> data = GetPersons();
-            return from p in data
-                   let events = dbContext.Events.OrderByDescending(f=>f.ID).FirstOrDefault(f => f.Person_ID ==p.ID) //temporal
-                  
+            var eventsList = dbContext.Events.Include("EventSubTypes").Include("EventTypes");
+            var list= from p in data
+                      let events = eventsList.OrderByDescending(f => f.ID).FirstOrDefault(f => f.Institute_ID == p.ID)
+                      let events_Essense = eventsList.Where(f => f.EventSubType.EssenseOrder > 0).
+                                              OrderByDescending(f => f.ID).FirstOrDefault(f => f.Institute_ID == p.ID)
+                
+    
                    
                    select new PersonEventsListRowViewModel
                    {
@@ -88,18 +93,24 @@ namespace Hypnosis.Web.Data.DbOperations
                        LastName=p.LastName,
                        FirstName=p.FirstName,
 
-                       SubType_ID=events.SubType_ID,
-                      
-                       Description=events.Description,
-                       SubType_Name=dbContext.EventSubTypes.Where(s=>s.ID==events.SubType_ID).FirstOrDefault().SubType_Name,
+                       SubType_ID = events.SubType_ID,
                        Type_ID = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().Type_ID,
-                       Type_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().EventType.Type_Name,
-                       
-                       FirstDate=events.FirstDate,
 
-                       Description_Essense = events.Description,
-                       SubType_Name_Essense = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
+                       Type_ID_Essense = events_Essense.EventSubType.Type_ID,
+                       SubType_ID_Essense = events_Essense.SubType_ID,
+
+                       Description = events.Description,
+                       SubType_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().SubType_Name,
+                       Type_Name = dbContext.EventSubTypes.Where(s => s.ID == events.SubType_ID).FirstOrDefault().EventType.Type_Name,
+                       FirstDate = events.FirstDate,
+
+                       Description_Essense = events_Essense.Description,
+                       SubType_Name_Essense = events_Essense.EventSubType.SubType_Name,
+                       Type_Name_Essense = events_Essense.EventSubType.EventType.Type_Name,
+
+                       //dbContext.EventSubTypes.Where(s => s.ID == events_Essense.SubType_ID).FirstOrDefault().SubType_Name,
                        FirstDate_Essense = events.FirstDate,
+
 
 
                        Mobile = p.Mobile,
@@ -123,6 +134,22 @@ namespace Hypnosis.Web.Data.DbOperations
                        ZipCode=p.ZipCode
                     
                    };
+
+            if (Type_ID.HasValue)
+            {
+                list = list.Where(f => f.Type_ID == Type_ID && f.Type_ID_Essense == Type_ID);
+            }
+            if (SubType_ID.HasValue)
+            {
+                list = list.Where(f => f.SubType_ID == SubType_ID && f.SubType_ID_Essense == SubType_ID);
+            }
+            if (InMailingListOnly == true)
+            {
+                list = list.Where(f => f.InMailingList == InMailingListOnly);
+            }
+
+            IQueryable<PersonEventsListRowViewModel> result = list;
+            return result;
         }
 
 
@@ -263,9 +290,9 @@ namespace Hypnosis.Web.Data.DbOperations
             }
             
             //mandatory
-            if (string.IsNullOrEmpty(model.TZ))
+            if (string.IsNullOrEmpty(model.DisplayName))
             {
-                throw new Exception("שדה ת.ז. הוא חובה");
+                throw new Exception("שם לתצוגה חובה");
             }
 
             if (string.IsNullOrEmpty(model.FirstName))
@@ -282,20 +309,20 @@ namespace Hypnosis.Web.Data.DbOperations
 
             person.FirstName=model.FirstName;
             person.LastName=model.LastName;
-            person.TZ = model.TZ;
+            person.TZ = model.TZ == null ? "-------" : model.TZ;
             person.Address = model.Address;
-            person.Address_Comments = model.Address_Comments;
+            person.Address_Comments = HttpUtility.HtmlDecode(model.Address_Comments);
             person.BirthDate = model.BirthDate;
             person.City = model.City;
             person.Degree = model.Degree;
             person.DisplayName = model.DisplayName;
             person.Email = model.Email;
-            person.InMailingList = model.InMailingList.HasValue ? (bool) model.InMailingList : false;
+            person.InMailingList = model.InMailingList;
             person.Medicine_LicenseNumber = model.Medicine_LicenseNumber;
             person.Medicine_Specialization = model.Medicine_Specialization;
             person.Ministry_CaseNumber = model.Ministry_CaseNumber;
             person.Mobile = model.Mobile;
-            person.Comments = model.Person_Comments;
+            person.Comments = HttpUtility.HtmlDecode(model.Person_Comments);
             person.Phones = model.Phones;
             person.Psyhology_LicenseNumber = model.Psyhology_LicenseNumber;
             person.Psyhology_Specialization = model.Psyhology_Specialization;
