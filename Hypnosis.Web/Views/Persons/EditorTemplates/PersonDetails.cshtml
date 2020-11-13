@@ -12,8 +12,6 @@
     .display_none {
         display: none !important;
     }
-    
-
 </style>
 
 <div class="form-inline form-inline-margins">
@@ -93,7 +91,12 @@
         @*@Html.ValidationMessageFor(model => model.Person_Senior, "", new { @class = "text-danger" })*@
     </div>
 </div>
+<div class="form-group">
 
+    @Html.EditorFor(model => model.ImageName, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.EditorFor(model => model.ImageOriginalName, new { htmlAttributes = new { @class = "form-control" } })
+    @*@Html.ValidationMessageFor(model => model.Person_Senior, "", new { @class = "text-danger" })*@
+</div>
 <div class="form-inline form-inline-margins" style="min-height:100px">
     <form id="Form" name="Form" method="post">
         @{
@@ -108,16 +111,16 @@
                     string modelImage = relPath + imageName;
                     @modelImage;
 
-                <img id="photo" src=@modelImage style="display:block" />
+                    <img id="photo" src=@modelImage style="display:block" />
                     imageExists = true;
                 }
             }
             if (!imageExists)
             {
                 <img id="photo" src="#" style="display:none" />
-                }
-
             }
+
+        }
 
         <input type="file" id="url" name="url" /><br />
 

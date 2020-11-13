@@ -380,8 +380,8 @@ namespace Hypnosis.Web.Data.DbOperations
             person.Stomatology_LicenseNumber = model.Stomatology_LicenseNumber;
             person.Stomatology_Specialization = model.Stomatology_Specialization;
             person.ZipCode = model.ZipCode;
-            //person.ImageOriginalName = "bbb";
-            //person.ImageName = "xxx";
+            person.ImageOriginalName = model.ImageOriginalName;
+            person.ImageName = model.ImageName;
 
 
 
