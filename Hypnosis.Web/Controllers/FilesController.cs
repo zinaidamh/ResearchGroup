@@ -28,7 +28,7 @@ namespace Hypnosis.Web.Controllers
        
             public ActionResult GetImage(string fileName)
             {
-               fileName = "e4b337ec-442a-4f49-948e-4b61c8fbb703.jpg";
+               //fileName = "e4b337ec-442a-4f49-948e-4b61c8fbb703.jpg";
                string filePath = FilesHelper.RelativePath + fileName;
                string ext = System.IO.Path.GetExtension(fileName);
                string path = Server.MapPath(filePath);
