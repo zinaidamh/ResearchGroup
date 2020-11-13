@@ -225,77 +225,143 @@
                 $(this).toggleClass('open');
             });
 
-             
-           
+
+
         });
     </script>
 
-@if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("LogOn"))
-{
-    <script>             
-        $(document).ready(function () {
+    @if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("LogOn"))
+    {
+        <script>
+            $(document).ready(function () {
                 $.sessionTimeout({
-                keepAliveUrl: window.location.pathname,
-                logoutUrl: 'Account/LogOn',
-                redirUrl: 'Account/LogOn',
-                warnAfter: 120000,
-                redirAfter: 130000,
-                countdownBar: true,
-                title: 'Your Session is About to Expire!',
-                message: 'Your session is about to expire.',
-                keepAliveButton: 'Stay Connected',
-                logoutButton: 'Logout',
-                ignoreUserActivity: true
+                    keepAliveUrl: window.location.pathname,
+                    logoutUrl: 'Account/LogOn',
+                    redirUrl: 'Account/LogOn',
+                    warnAfter: 120000,
+                    redirAfter: 130000,
+                    countdownBar: true,
+                    title: 'Your Session is About to Expire!',
+                    message: 'Your session is about to expire.',
+                    keepAliveButton: 'Stay Connected',
+                    logoutButton: 'Logout',
+                    ignoreUserActivity: true
 
                 });
-        });
-    </script>
-}
+            });
+        </script>
+    }
     @RenderSection("scripts", required: false)
+  
 </head>
 <body data-spy="scroll" data-target=".bs-docs-sidebar">
 
     <!-- Navbar
     ================================================== -->
-    <div class="bannerPlaceHolder">
-        <img src="~/images/TmpHypnosisBanner.png" alt="Top Banner" height="149" width="931" />
-    </div>
-    <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner" style="background-color: #F9F9F9">
-        <div class="container-fluid">
-            @if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("LogOn"))
-            {
-                <ul class="nav navbar-top-links @(System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft? " navbar-left":"navbar-right")">
-                    @Html.Partial("_LogOnPartial")
-                </ul>
-            }
-            <div class="navbar-header">
-                @*<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>*@
-                @if (User != null && User.Identity.IsAuthenticated)
-                {
-                    <div class="collapse navbar-collapse" id="navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            <li>@Html.ActionLink("רשימת אנשים", "Index", "Persons", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
-                            <li>@Html.ActionLink("רשימת מכונים", "Index", "Institutes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
-                            <li>@Html.ActionLink("רשימת אירועים ", "Index", "Events", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
-                            <li>@Html.ActionLink("ניהול סוגי אירועים", "Index", "EventTypes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
-                            <li>@Html.ActionLink("ניהול תת סוגי אירועים", "Index", "EventSubTypes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
-
-                        </ul>  
+    @*<div class="bannerPlaceHolder">
+            <img src="~/images/breadcrumb-bg.jpg" alt="Top Banner" height="149" width="931" />
+        </div>*@
+    <!-- Page-header start -->
+    <div class="page-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="page-header-title">
+     
+                            
                     </div>
-                }
-
+                </div>
+                @*<div class="col-md-4">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="index.html"> <i class="fa fa-home"></i> </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#!">Dashboard</a>
+                            </li>
+                        </ul>
+                    </div>*@
             </div>
-            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-                <ul class="nav navbar-nav">
-                    @RenderSection("featured", false)
-                </ul>
-            </nav>
         </div>
-    </header>
+    </div>
+  
+    <!-- Page-header end -->
+    @*<header class="navbar navbar-expand-lg navbar-dark primary-color" id="top" role="banner" style="background-color: #F9F9F9">
+        <div class="container-fluid">*@
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    @if (!this.ViewContext.RequestContext.RouteData.Values["action"].Equals("LogOn"))
+                    {
+                        <ul class="nav navbar-top-links @(System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft? " navbar-left":"navbar-right")">
+                            @Html.Partial("_LogOnPartial")
+                        </ul>
+                    }
+                <div class="navbar-header">
+                    @*<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>*@
+                    @if (User != null && User.Identity.IsAuthenticated)
+                    {
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+
+                        <div class="collapse navbar-collapse mr-auto" id="navbar-collapse-1">
+
+                            <ul class="nav navbar-nav">
+                                <li>@Html.ActionLink("רשימת אנשים", "Index", "Persons", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("רשימת מחקרים", "Index", "Projects", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("רשימת אירועים ", "Index", "Events", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("ניהול סוגי אירועים", "Index", "EventTypes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("ניהול תת סוגי אירועים", "Index", "EventSubTypes", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("בית", "Index", "Home", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("צוות", "Persons", "Gallery", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("מחקרים ", "Events", "Gallery", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+
+                            </ul>
+
+                        </div>
+                    }
+                    else
+                    {
+
+
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+
+                        <div class="collapse navbar-collapse mr-auto" id="navbar-collapse-1">
+
+                            <ul class="nav navbar-nav">
+                                <li>@Html.ActionLink("בית", "Index", "Home", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("צוות", "Persons", "Gallery", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+                                <li>@Html.ActionLink("מחקרים ", "Events", "Gallery", new { area = string.Empty }, new { @class = "navbar-brand" })</li>
+
+
+                            </ul>
+                         </div>
+
+                    }
+                </div>
+                    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                        <ul class="nav navbar-nav">
+                            @RenderSection("featured", false)
+                        </ul>
+                    </nav>
+                </div>
+</nav>
 
     <div class="container-fluid" id="page-wrapper">
         <div class="main" style="padding:0 20px">
@@ -306,7 +372,7 @@
     <footer class="container-fluid" style="padding:0 20px">
         <hr />
         <p>
-            <a href="http://www.prog4biz.com" target="_blank">&copy; @DateTime.Now.Year - Prog4biz Software Development</a>
+          @DateTime.Now.Year
         </p>
     </footer>
 </body>

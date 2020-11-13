@@ -93,7 +93,7 @@ namespace Hypnosis.Web.Data.DbOperations
                        SubType_Name = c.SubType_Name,
                        Type_ID = c.Type_ID,
                        Type_Name=c.EventType.Type_Name,
-                       EssenseOrder=c.EssenseOrder
+                       EssenseOrder=(int)(c.EssenseOrder==null? 0:c.EssenseOrder)
                    };
         }
 

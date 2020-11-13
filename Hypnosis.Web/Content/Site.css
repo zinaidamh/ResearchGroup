@@ -754,3 +754,7 @@ tr.pager td {
             margin: 0;
         }
 }
+
+.display_none {
+    display: none;
+}

@@ -17,6 +17,7 @@ namespace Hypnosis.Web.Data
         public Person()
         {
             this.Events = new HashSet<Event>();
+            this.PersonsProjects = new HashSet<PersonsProject>();
         }
     
         public int ID { get; set; }
@@ -43,7 +44,10 @@ namespace Hypnosis.Web.Data
         public Nullable<System.DateTime> BirthDate { get; set; }
         public string Address_Comments { get; set; }
         public string Degree { get; set; }
+        public string ImageOriginalName { get; set; }
+        public string ImageName { get; set; }
     
         public virtual ICollection<Event> Events { get; set; }
+        public virtual ICollection<PersonsProject> PersonsProjects { get; set; }
     }
 }

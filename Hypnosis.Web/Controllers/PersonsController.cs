@@ -106,12 +106,29 @@ namespace Hypnosis.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Edit(PersonEditModel model)
+        public ActionResult Edit(HttpPostedFileBase File, PersonEditModel model)
         {
             try
             {
+               // var file = Request.Files[0];//get image
 
-                PersonOperations.CreateUpdate(model.details, true);
+                var files = Request.Files;
+                
+
+
+                if (files.Count > 0)
+                {
+                    var file0 = files[0];
+                    var relativePath = FilesHelper.RelativePath;
+                    var path = Server.MapPath(relativePath);
+                    PersonOperations.CreateUpdate(model.details, files[0], path, true);
+
+                }
+                else
+                {
+                   
+                    PersonOperations.CreateUpdate(model.details, null, "", true);
+                }
                 return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
             }
             catch (Exception ex)
@@ -141,7 +158,7 @@ namespace Hypnosis.Web.Controllers
             try
             {
 
-                PersonOperations.CreateUpdate(model.details, false);
+                PersonOperations.CreateUpdate(model.details, null,"",false);
                 return RedirectToAction("Index", new { Type_ID = model.filter.Type_ID, SubType_ID = model.filter.SubType_ID, InMailingListOnly = model.filter.InMailingListOnly });
             }
             catch (Exception ex)

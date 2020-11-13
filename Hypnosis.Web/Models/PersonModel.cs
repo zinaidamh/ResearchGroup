@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+
 namespace Hypnosis.Web.Models
 {
+    
+
     public class PersonEventsListRowViewModel
     {
         [ScaffoldColumn(false)]
@@ -217,6 +221,31 @@ namespace Hypnosis.Web.Models
     }
 
 
+    public class PersonImageListModel
+    {
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+
+        [Display(Name = "ת.ז")]
+        public string TZ { get; set; }
+
+
+        [Display(Name = "שם משפחה")]
+        [Required(ErrorMessage = "שם משפחה חובה")]
+        public string LastName { get; set; }
+
+        [Display(Name = "שם פרטי")]
+        [Required(ErrorMessage = "שם פרטי חובה")]
+        public string FirstName { get; set; }
+
+      
+
+
+    }
+
+
+
     public class PersonDetailsModel
     {
         [ScaffoldColumn(false)]
@@ -235,8 +264,8 @@ namespace Hypnosis.Web.Models
         [Required(ErrorMessage = "שם פרטי חובה")]
         public string FirstName { get; set; }
 
-        [Display(Name = "שם לתצוגה")]
-        [Required(ErrorMessage = "שם לתצוגה חובה")]
+        [Display(Name = "תפקיד")]
+        [Required(ErrorMessage = "תפקיד חובה")]
         public string DisplayName { get; set; }
 
         [Display(Name = "טלפון נייד ")]
@@ -252,16 +281,20 @@ namespace Hypnosis.Web.Models
         public string Email { get; set; }
 
         [Display(Name = "ברשימת תפוצה ? ")]
+       
         public string InMailingListString { get; set; }
 
         [Display(Name = "מס רשיון")]
+       
         public string Psyhology_LicenseNumber { get; set; }
 
 
         [Display(Name = "מס רשיון")]
+       
         public string Medicine_LicenseNumber { get; set; }
 
         [Display(Name = "מס רשיון")]
+       
         public string Stomatology_LicenseNumber { get; set; }
 
 
@@ -269,12 +302,14 @@ namespace Hypnosis.Web.Models
         public string Psyhology_Specialization { get; set; }
         
         [Display(Name = "מומחיות")]
+       
         public string Medicine_Specialization { get; set; }
 
         [Display(Name = "מומחיות")]
+       
         public string Stomatology_Specialization { get; set; }
 
-        [Display(Name = "הערות כלליות")]
+        [Display(Name = "תחומי מחקר")]
         public string Person_Comments { get; set; }
 
         [Display(Name = "תאריך לידה")]
@@ -289,32 +324,41 @@ namespace Hypnosis.Web.Models
         [Display(Name = "מיקןד")]
         public string ZipCode { get; set; }
 
-        [Display(Name = "הערות כתובת")]
+        [Display(Name = "השכלה")]
         public string Address_Comments { get; set; }
+
         [Display(Name = "סוג ארוע")]
+       
         public int? Type_ID { get; set; }
         [Display(Name = "תת סוג ארוע")]
 
         public int? SubType_ID { get; set; }
+       
         [Display(Name = "רק ברשימת תפוצה")]
 
         public bool InMailingList { get; set; }
-
+       
         [Display(Name = "סוג ארוע")]
         public string Type_Name { get; set; }
 
 
         [Display(Name = "בכיר")]
+       
         public bool Person_Senior { get; set; }
 
 
-        [Display(Name = "תואר")]
+        [Display(Name = "תפקיד")]
         public string Degree { get; set; }
 
          [Display(Name = "מספר תיק במשרד הבריאות ")]
+       
         public string Ministry_CaseNumber { get; set; }
 
+        [Display(Name = "תמונה")]
+        public string ImageName { get; set; }
 
+        public string ImageOriginalName { get; set; }
+     
     }
    
 

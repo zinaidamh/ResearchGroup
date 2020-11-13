@@ -7,6 +7,7 @@ using Hypnosis.Web.Models;
 using Hypnosis.Web.Data;
 using Hypnosis.Web.Controllers;
 using System.Data.Entity.Validation;
+using System.Net;
 
 namespace Hypnosis.Web.Data.DbOperations
 {
@@ -32,9 +33,57 @@ namespace Hypnosis.Web.Data.DbOperations
             return person;
         }
 
+        public PersonDetailsModel GetPersonDetailsById(int ID)
+        {
+            var person = dbContext.Persons.SingleOrDefault(p => p.ID == ID);
+            var model = GetPersonDetailsModel(person);
+            return model;
+        }
+    
+
+        public PersonDetailsModel GetPersonDetailsModel(Person person)
+        {
+
+            PersonDetailsModel details = new PersonDetailsModel
+            {
+                Person_Senior = person.Person_Senior,
+                ID = person.ID,
+                TZ = person.TZ,
+                BirthDate = person.BirthDate,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                DisplayName = person.DisplayName,
+                InMailingList = person.InMailingList,
+                Degree = person.Degree,
+
+                Mobile = person.Mobile,
+                Phones = person.Phones,
+                Email = person.Email,
+                City = person.City,
+                ZipCode = person.ZipCode,
+                Address = person.Address,
+                Address_Comments = person.Address_Comments,
+                Person_Comments = person.Comments,
+                Psyhology_LicenseNumber = person.Psyhology_LicenseNumber,
+                Psyhology_Specialization = person.Psyhology_Specialization,
+                Medicine_LicenseNumber = person.Medicine_LicenseNumber,
+                Medicine_Specialization = person.Medicine_Specialization,
+                Stomatology_LicenseNumber = person.Stomatology_LicenseNumber,
+                Stomatology_Specialization = person.Stomatology_Specialization,
+                Ministry_CaseNumber = person.Ministry_CaseNumber,
+                ImageName = person.ImageName,
+
+            };
+
+           
+
+            return details;
+        }
+
 
         public PersonEditModel GetPersonEditModel(Person person)
         {
+            
             PersonDetailsModel details = new PersonDetailsModel
             {
                 Person_Senior=person.Person_Senior,
@@ -62,7 +111,8 @@ namespace Hypnosis.Web.Data.DbOperations
                 Medicine_Specialization=person.Medicine_Specialization,
                 Stomatology_LicenseNumber=person.Stomatology_LicenseNumber,
                 Stomatology_Specialization=person.Stomatology_Specialization,
-                Ministry_CaseNumber=person.Ministry_CaseNumber
+                Ministry_CaseNumber=person.Ministry_CaseNumber,
+                ImageName=person.ImageName,
 
             };
            
@@ -273,7 +323,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
 
-        public void CreateUpdate(PersonDetailsModel model, bool isUpdate)
+        public void CreateUpdate(PersonDetailsModel model, HttpPostedFileBase fileUploaded, string path, bool isUpdate)
         {
             string operation = tbl + " Create Update ";
             Logger.Log.Debug(operation + " Begin ");
@@ -330,18 +380,31 @@ namespace Hypnosis.Web.Data.DbOperations
             person.Stomatology_LicenseNumber = model.Stomatology_LicenseNumber;
             person.Stomatology_Specialization = model.Stomatology_Specialization;
             person.ZipCode = model.ZipCode;
-            
-            
-           
-           
+            //person.ImageOriginalName = "bbb";
+            //person.ImageName = "xxx";
+
+
+
             try
             {
                 if (!isUpdate)
                 {
                     dbContext.Persons.Add(person);
                 }
+                if (fileUploaded != null && path != "")
+                {
+                    Guid uniqfilename = Guid.NewGuid();
+                    string oldFileName = fileUploaded.FileName;
+                    string extension = System.IO.Path.GetExtension(oldFileName);
+                    string newFileName = uniqfilename.ToString() + extension;
+                    string fullFileName = System.IO.Path.Combine(path, newFileName);
+                    fileUploaded.SaveAs(fullFileName);
+                    //string newFileName = Hypnosis.Web.MyHelpers.FilesHelper.RelativePath+uniqfilename;
+                    person.ImageOriginalName = newFileName;
+                    person.ImageName = newFileName;
+                }
+               
                 dbContext.SaveChanges();
-                     
             }
             catch (DbEntityValidationException e)
             {

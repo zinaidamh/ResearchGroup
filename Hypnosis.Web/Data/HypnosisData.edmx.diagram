@@ -23,6 +23,11 @@
         <AssociationConnector Association="HypnosisData.FK_Events_ToInstitute" />
         <AssociationConnector Association="HypnosisData.FK_Events_ToPerson" />
         <AssociationConnector Association="HypnosisData.FK_Events_ToSubTypes" />
+        <EntityTypeShape EntityType="HypnosisData.PersonsProject" Width="1.5" PointX="7.625" PointY="12" />
+        <EntityTypeShape EntityType="HypnosisData.Project" Width="1.5" PointX="2.375" PointY="11.25" />
+        <AssociationConnector Association="HypnosisData.FK_Events_ToProject" />
+        <AssociationConnector Association="HypnosisData.FK__PersonsPr__Perso__251C81ED" />
+        <AssociationConnector Association="HypnosisData.FK__PersonsPr__Proje__24285DB4" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

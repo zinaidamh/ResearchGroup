@@ -102,7 +102,7 @@ namespace Hypnosis.Web.Data.DbOperations
                         Category_Name = e.EventSubType.EventType.EventTypeCategory.Category_Name,
                         Category_ID=e.EventSubType.EventType.Type_Category,
                         Description = e.Description==null? "" : e.Description,
-                        EssenseOrder=e.EventSubType.EssenseOrder==null? 0: e.EventSubType.EssenseOrder,
+                        EssenseOrder=(int)(e.EventSubType.EssenseOrder==null? 0: e.EventSubType.EssenseOrder),
 
                         FirstDate = e.FirstDate,
 

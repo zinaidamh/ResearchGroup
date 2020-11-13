@@ -84,8 +84,9 @@ namespace Hypnosis
                 cssBundle.Include("~/Content/css/plugins/dataTables/dataTables.bootstrap-rtl.css");
             }
 
+               
 
-            bundles.Add(cssBundle);
+               bundles.Add(cssBundle);
         }
     }
 }

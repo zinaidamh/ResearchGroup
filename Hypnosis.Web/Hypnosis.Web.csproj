@@ -20,6 +20,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -294,15 +296,18 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\ControllerBase.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\EventSubTypesController .cs" />
     <Compile Include="Controllers\EventTypesController.cs" />
     <Compile Include="Controllers\FilesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ImagePreviewController.cs" />
     <Compile Include="Controllers\InstituteController.cs" />
     <Compile Include="Controllers\JsonResultsController.cs" />
     <Compile Include="Controllers\PersonsController.cs" />
+    <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Data\Agent.cs">
       <DependentUpon>HypnosisData.tt</DependentUpon>
     </Compile>
@@ -311,6 +316,7 @@
     <Compile Include="Data\DbOperations\DbEventTypes.cs" />
     <Compile Include="Data\DbOperations\DbInstitute.cs" />
     <Compile Include="Data\DbOperations\DbPerson.cs" />
+    <Compile Include="Data\DbOperations\DbProject.cs" />
     <Compile Include="Data\DbOperations\OperationBase.cs" />
     <Compile Include="Data\Enums.cs" />
     <Compile Include="Data\Event.cs">
@@ -347,6 +353,12 @@
     <Compile Include="Data\Person.cs">
       <DependentUpon>HypnosisData.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\PersonsProject.cs">
+      <DependentUpon>HypnosisData.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Project.cs">
+      <DependentUpon>HypnosisData.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\UserProfile.cs">
       <DependentUpon>HypnosisData.tt</DependentUpon>
     </Compile>
@@ -377,6 +389,8 @@
     <Compile Include="Models\InstituteModel.cs" />
     <Compile Include="Models\JsonObject.cs" />
     <Compile Include="Models\PersonModel.cs" />
+    <Compile Include="Models\PersonProjectModel.cs" />
+    <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="MyHelpers\FilesHelper.cs" />
     <Compile Include="MyHelpers\GlobalHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -454,6 +468,8 @@
     <Content Include="Data\HypnosisData.edmx.diagram">
       <DependentUpon>HypnosisData.edmx</DependentUpon>
     </Content>
+    <Content Include="Images\breadcrumb-bg.jpg" />
+    <Content Include="Images\site-admin-600x600-2x_0.png" />
     <Content Include="Images\TmpHypnosisBanner.png" />
     <Content Include="Scripts\bootstrap-session-timeout.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
@@ -1394,6 +1410,12 @@
     <Content Include="Views\Institutes\Create.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Shared\EventsForCard.cshtml" />
+    <Content Include="Views\Gallery\Persons.cshtml" />
+    <Content Include="Views\Gallery\PersonResume.cshtml" />
+    <Content Include="Views\Projects\Create.cshtml" />
+    <Content Include="Views\Projects\Edit.cshtml" />
+    <Content Include="Views\Projects\Index.cshtml" />
+    <Content Include="Views\Projects\EditorTemplates\ProjectDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Files\" />

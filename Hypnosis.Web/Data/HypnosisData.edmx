@@ -21,6 +21,7 @@
           <Property Name="FirstDate" Type="date" />
           <Property Name="Person_ID" Type="int" />
           <Property Name="Institute_ID" Type="int" />
+          <Property Name="Project_ID" Type="int" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="AlertDate" Type="date" />
           <Property Name="AlertDone" Type="bit" Nullable="false" />
@@ -29,6 +30,7 @@
           <Property Name="ExpirationDate" Type="date" />
           <Property Name="FileName" Type="nvarchar" MaxLength="50" />
           <Property Name="SiteHref" Type="nvarchar" MaxLength="50" />
+          <Property Name="EssenseOrder" Type="int" />
         </EntityType>
         <EntityType Name="EventSubTypes">
           <Key>
@@ -37,7 +39,7 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Type_ID" Type="int" Nullable="false" />
           <Property Name="SubType_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="EssenseOrder" Type="int" Nullable="false" />
+          <Property Name="EssenseOrder" Type="int" />
         </EntityType>
         <EntityType Name="EventTypeCategories">
           <Key>
@@ -99,6 +101,28 @@
           <Property Name="Address_Comments" Type="nvarchar(max)" />
           <Property Name="BirthDate" Type="date" />
           <Property Name="Degree" Type="nvarchar" MaxLength="50" />
+          <Property Name="ImageOriginalName" Type="nvarchar" MaxLength="500" />
+          <Property Name="ImageName" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="PersonsProjects">
+          <Key>
+            <PropertyRef Name="Project_ID" />
+            <PropertyRef Name="Person_ID" />
+          </Key>
+          <Property Name="Project_ID" Type="int" Nullable="false" />
+          <Property Name="Person_ID" Type="int" Nullable="false" />
+          <Property Name="PersonOrder" Type="int" />
+        </EntityType>
+        <EntityType Name="Projects">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="Comments" Type="nvarchar(max)" />
+          <Property Name="ImageName" Type="nvarchar" MaxLength="500" />
+          <Property Name="ImageOriginalName" Type="nvarchar" MaxLength="500" />
+          <Property Name="CreatedAt" Type="datetime" />
         </EntityType>
         <EntityType Name="UserProfile">
           <Key>
@@ -149,6 +173,30 @@
           <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="RoleId" Type="int" Nullable="false" />
         </EntityType>
+        <Association Name="FK__PersonsPr__Perso__251C81ED">
+          <End Role="Persons" Type="Self.Persons" Multiplicity="1" />
+          <End Role="PersonsProjects" Type="Self.PersonsProjects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persons">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PersonsProjects">
+              <PropertyRef Name="Person_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PersonsPr__Proje__24285DB4">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="PersonsProjects" Type="Self.PersonsProjects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PersonsProjects">
+              <PropertyRef Name="Project_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Events_ToAgents">
           <End Role="Agents" Type="Self.Agents" Multiplicity="0..1" />
           <End Role="Events" Type="Self.Events" Multiplicity="*" />
@@ -182,6 +230,18 @@
             </Principal>
             <Dependent Role="Events">
               <PropertyRef Name="Person_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_ToProject">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
+          <End Role="Events" Type="Self.Events" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="Project_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -253,11 +313,21 @@
           <EntitySet Name="EventTypes" EntityType="Self.EventTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Institutes" EntityType="Self.Institutes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Persons" EntityType="Self.Persons" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PersonsProjects" EntityType="Self.PersonsProjects" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_Membership" EntityType="Self.webpages_Membership" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_OAuthMembership" EntityType="Self.webpages_OAuthMembership" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_Roles" EntityType="Self.webpages_Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_UsersInRoles" EntityType="Self.webpages_UsersInRoles" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__PersonsPr__Perso__251C81ED" Association="Self.FK__PersonsPr__Perso__251C81ED">
+            <End Role="Persons" EntitySet="Persons" />
+            <End Role="PersonsProjects" EntitySet="PersonsProjects" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PersonsPr__Proje__24285DB4" Association="Self.FK__PersonsPr__Proje__24285DB4">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="PersonsProjects" EntitySet="PersonsProjects" />
+          </AssociationSet>
           <AssociationSet Name="FK_Events_ToAgents" Association="Self.FK_Events_ToAgents">
             <End Role="Agents" EntitySet="Agents" />
             <End Role="Events" EntitySet="Events" />
@@ -268,6 +338,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_Events_ToPerson" Association="Self.FK_Events_ToPerson">
             <End Role="Persons" EntitySet="Persons" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_ToProject" Association="Self.FK_Events_ToProject">
+            <End Role="Projects" EntitySet="Projects" />
             <End Role="Events" EntitySet="Events" />
           </AssociationSet>
           <AssociationSet Name="FK_Events_ToSubTypes" Association="Self.FK_Events_ToSubTypes">
@@ -304,7 +378,7 @@
           <Property Name="SubType_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="EventType" Relationship="HypnosisData.FK_EventSubTypes_ToTypes" FromRole="EventSubType" ToRole="EventType" />
           <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToSubTypes" FromRole="EventSubType" ToRole="Event" />
-          <Property Name="EssenseOrder" Type="Int32" Nullable="false" />
+          <Property Name="EssenseOrder" Type="Int32" />
         </EntityType>
         <EntityType Name="EventType">
           <Key>
@@ -403,6 +477,20 @@
             <End Role="EventSubType" EntitySet="EventSubTypes" />
             <End Role="Event" EntitySet="Events" />
           </AssociationSet>
+          <EntitySet Name="PersonsProjects" EntityType="HypnosisData.PersonsProject" />
+          <EntitySet Name="Projects" EntityType="HypnosisData.Project" />
+          <AssociationSet Name="FK_Events_ToProject" Association="HypnosisData.FK_Events_ToProject">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PersonsPr__Perso__251C81ED" Association="HypnosisData.FK__PersonsPr__Perso__251C81ED">
+            <End Role="Person" EntitySet="Persons" />
+            <End Role="PersonsProject" EntitySet="PersonsProjects" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PersonsPr__Proje__24285DB4" Association="HypnosisData.FK__PersonsPr__Proje__24285DB4">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="PersonsProject" EntitySet="PersonsProjects" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="EventTypeCategory">
           <Key>
@@ -465,6 +553,9 @@
           <Property Name="Address_Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Degree" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Person" ToRole="Event" />
+          <Property Name="ImageOriginalName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ImageName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PersonsProjects" Relationship="HypnosisData.FK__PersonsPr__Perso__251C81ED" FromRole="Person" ToRole="PersonsProject" />
         </EntityType>
         <EntityType Name="Institute">
           <Key>
@@ -513,6 +604,9 @@
           <NavigationProperty Name="Institute" Relationship="HypnosisData.FK_Events_ToInstitute" FromRole="Event" ToRole="Institute" />
           <NavigationProperty Name="Person" Relationship="HypnosisData.FK_Events_ToPerson" FromRole="Event" ToRole="Person" />
           <NavigationProperty Name="EventSubType" Relationship="HypnosisData.FK_Events_ToSubTypes" FromRole="Event" ToRole="EventSubType" />
+          <Property Name="EssenseOrder" Type="Int32" />
+          <Property Name="Project_ID" Type="Int32" />
+          <NavigationProperty Name="Project" Relationship="HypnosisData.FK_Events_ToProject" FromRole="Event" ToRole="Project" />
         </EntityType>
         <Association Name="FK_Events_ToAgents">
           <End Type="HypnosisData.Agent" Role="Agent" Multiplicity="0..1" />
@@ -559,6 +653,66 @@
             </Principal>
             <Dependent Role="Event">
               <PropertyRef Name="SubType_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PersonsProject">
+          <Key>
+            <PropertyRef Name="Project_ID" />
+            <PropertyRef Name="Person_ID" />
+          </Key>
+          <Property Name="Project_ID" Type="Int32" Nullable="false" />
+          <Property Name="Person_ID" Type="Int32" Nullable="false" />
+          <Property Name="PersonOrder" Type="Int32" />
+          <NavigationProperty Name="Person" Relationship="HypnosisData.FK__PersonsPr__Perso__251C81ED" FromRole="PersonsProject" ToRole="Person" />
+          <NavigationProperty Name="Project" Relationship="HypnosisData.FK__PersonsPr__Proje__24285DB4" FromRole="PersonsProject" ToRole="Project" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ImageName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ImageOriginalName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Events" Relationship="HypnosisData.FK_Events_ToProject" FromRole="Project" ToRole="Event" />
+          <NavigationProperty Name="PersonsProjects" Relationship="HypnosisData.FK__PersonsPr__Proje__24285DB4" FromRole="Project" ToRole="PersonsProject" />
+        </EntityType>
+        <Association Name="FK_Events_ToProject">
+          <End Type="HypnosisData.Project" Role="Project" Multiplicity="0..1" />
+          <End Type="HypnosisData.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="Project_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PersonsPr__Perso__251C81ED">
+          <End Type="HypnosisData.Person" Role="Person" Multiplicity="1" />
+          <End Type="HypnosisData.PersonsProject" Role="PersonsProject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PersonsProject">
+              <PropertyRef Name="Person_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PersonsPr__Proje__24285DB4">
+          <End Type="HypnosisData.Project" Role="Project" Multiplicity="1" />
+          <End Type="HypnosisData.PersonsProject" Role="PersonsProject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PersonsProject">
+              <PropertyRef Name="Project_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -650,6 +804,8 @@
           <EntitySetMapping Name="Persons">
             <EntityTypeMapping TypeName="HypnosisData.Person">
               <MappingFragment StoreEntitySet="Persons">
+                <ScalarProperty Name="ImageName" ColumnName="ImageName" />
+                <ScalarProperty Name="ImageOriginalName" ColumnName="ImageOriginalName" />
                 <ScalarProperty Name="Degree" ColumnName="Degree" />
                 <ScalarProperty Name="Address_Comments" ColumnName="Address_Comments" />
                 <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
@@ -706,6 +862,8 @@
           <EntitySetMapping Name="Events">
             <EntityTypeMapping TypeName="HypnosisData.Event">
               <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />
+                <ScalarProperty Name="EssenseOrder" ColumnName="EssenseOrder" />
                 <ScalarProperty Name="SiteHref" ColumnName="SiteHref" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="ExpirationDate" ColumnName="ExpirationDate" />
@@ -718,6 +876,27 @@
                 <ScalarProperty Name="Person_ID" ColumnName="Person_ID" />
                 <ScalarProperty Name="FirstDate" ColumnName="FirstDate" />
                 <ScalarProperty Name="SubType_ID" ColumnName="SubType_ID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PersonsProjects">
+            <EntityTypeMapping TypeName="HypnosisData.PersonsProject">
+              <MappingFragment StoreEntitySet="PersonsProjects">
+                <ScalarProperty Name="PersonOrder" ColumnName="PersonOrder" />
+                <ScalarProperty Name="Person_ID" ColumnName="Person_ID" />
+                <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="HypnosisData.Project">
+              <MappingFragment StoreEntitySet="Projects">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="ImageOriginalName" ColumnName="ImageOriginalName" />
+                <ScalarProperty Name="ImageName" ColumnName="ImageName" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

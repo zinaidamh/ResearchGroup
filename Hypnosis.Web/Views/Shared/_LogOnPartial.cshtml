@@ -1,19 +1,25 @@
-﻿@if (Request.IsAuthenticated) {
+﻿@if (Request.IsAuthenticated)
+{
     <text>
-             @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
-                         @Html.AntiForgeryToken()
-
-  
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-            <div class="headerWelcome">שלום @User.Identity.Name</div>
-            @*@Html.ActionLink("Profile", "Manage", "Account", new { area = "" }, htmlAttributes: new { @class = "username", title = "Manage" })*@
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
 
 
-          </li>
-        <li><a href="javascript:document.getElementById('logoutForm').submit()">התנתק</a></li>
-    </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <div class="headerWelcome">משתמש: <b>@User.Identity.Name</b></div>
+                    @*@Html.ActionLink("Profile", "Manage", "Account", new { area = "" }, htmlAttributes: new { @class = "username", title = "Manage" })*@
 
+
+                </li>
+                @*<li><a href="javascript:document.getElementById('logoutForm').submit()">התנתק</a></li>*@
+
+
+            </ul>
+            <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
+            <button type="button" onclick="javascript:document.getElementById('logoutForm').submit();return false;" class="btn mr-1 btn-default navbar-btn navbar-right">התנתק</button>
+            <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
         }
     </text>
 }
@@ -21,11 +27,14 @@ else
 {
 
     @*<ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("התחבר", "LogOn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
-        <li>@Html.ActionLink("משתמש חדש", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*
+            <li>@Html.ActionLink("התחבר", "LogOn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+            <li>@Html.ActionLink("משתמש חדש", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*
 
 
-    </ul>*@
-   
-         
+        </ul>*@
+
+    <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
+    <button type="button" onclick="location.href='@Url.Action("LogOn", "Account")';return false;" class="btn mr-1 btn-default navbar-btn navbar-right">התחבר</button>
+    <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
+
 }

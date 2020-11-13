@@ -22,7 +22,7 @@ namespace Hypnosis.Web.Data
         public int ID { get; set; }
         public int Type_ID { get; set; }
         public string SubType_Name { get; set; }
-        public int EssenseOrder { get; set; }
+        public Nullable<int> EssenseOrder { get; set; }
     
         public virtual EventType EventType { get; set; }
         public virtual ICollection<Event> Events { get; set; }

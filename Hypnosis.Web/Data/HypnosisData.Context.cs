@@ -36,5 +36,7 @@ namespace Hypnosis.Web.Data
         public DbSet<Institute> Institutes { get; set; }
         public DbSet<Agent> Agents { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<PersonsProject> PersonsProjects { get; set; }
+        public DbSet<Project> Projects { get; set; }
     }
 }

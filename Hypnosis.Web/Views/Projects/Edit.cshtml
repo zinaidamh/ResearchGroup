@@ -1,0 +1,42 @@
+﻿@model Hypnosis.Web.Models.ProjectEditModel
+
+    @{
+        ViewBag.Title = "פרטי מכון ";
+    }
+
+    <h2>@ViewBag.Title</h2>
+
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+
+
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.details.ID)
+        @Html.HiddenFor(model => model.filter.Type_ID)
+        @Html.HiddenFor(model => model.filter.SubType_ID)
+        @Html.HiddenFor(model => model.filter.InMailingListOnly)
+
+
+
+
+
+        <div class="panel panel-default ">
+            <div class="panel-body">
+
+                @Html.EditorFor(model => model.details, "ProjectDetails")
+                <div class="form-inline">
+
+                    <div class="form-group">
+
+                        <input type="submit" value="שמור" class="btn btn-default" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    }
+@Html.Partial("~/Views/Shared/EventsForCard.cshtml", Model.eventsFilter)

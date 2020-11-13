@@ -27,10 +27,13 @@ namespace Hypnosis.Web.Data
         public Nullable<System.DateTime> ExpirationDate { get; set; }
         public string FileName { get; set; }
         public string SiteHref { get; set; }
+        public Nullable<int> EssenseOrder { get; set; }
+        public Nullable<int> Project_ID { get; set; }
     
         public virtual Agent Agent { get; set; }
         public virtual Institute Institute { get; set; }
         public virtual Person Person { get; set; }
         public virtual EventSubType EventSubType { get; set; }
+        public virtual Project Project { get; set; }
     }
 }
