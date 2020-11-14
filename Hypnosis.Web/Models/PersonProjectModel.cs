@@ -1,20 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
-
 namespace Hypnosis.Web.Models
 {
-    public class PersonProjectModel : Controller
-    {
-        //
-        // GET: /PersonProjectModel/
 
-        public ActionResult Index()
-        {
-            return View();
-        }
+    public class PersonProjectModel
+    {
+
+        [ScaffoldColumn(false)]
+
+        public int ID { get; set; }
+
+        public int Person_ID { get; set; }
+
+        public int Project_ID { get; set; }
+
+        public int PersonOrder { get; set; }
+
+     
+    }
+
+    public class PersonProjectViewModel
+    {
+
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+        public int Person_ID { get; set; }
+
+        public int Project_ID { get; set; }
+
+        public int PersonOrder { get; set; }
+
+        public string ProjectName { get; set; }
+
+        public string PersonProjectName { get; set; }
 
     }
+
 }
