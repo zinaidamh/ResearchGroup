@@ -36,7 +36,7 @@ namespace Hypnosis.Web.Models
 
         public string ProjectName { get; set; }
 
-        public string PersonProjectName { get; set; }
+        public string PersonName { get; set; }
 
     }
 

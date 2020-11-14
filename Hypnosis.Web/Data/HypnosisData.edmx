@@ -109,6 +109,7 @@
             <PropertyRef Name="Project_ID" />
             <PropertyRef Name="Person_ID" />
           </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Project_ID" Type="int" Nullable="false" />
           <Property Name="Person_ID" Type="int" Nullable="false" />
           <Property Name="PersonOrder" Type="int" />
@@ -666,6 +667,7 @@
           <Property Name="PersonOrder" Type="Int32" />
           <NavigationProperty Name="Person" Relationship="HypnosisData.FK__PersonsPr__Perso__251C81ED" FromRole="PersonsProject" ToRole="Person" />
           <NavigationProperty Name="Project" Relationship="HypnosisData.FK__PersonsPr__Proje__24285DB4" FromRole="PersonsProject" ToRole="Project" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -883,6 +885,7 @@
           <EntitySetMapping Name="PersonsProjects">
             <EntityTypeMapping TypeName="HypnosisData.PersonsProject">
               <MappingFragment StoreEntitySet="PersonsProjects">
+                <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PersonOrder" ColumnName="PersonOrder" />
                 <ScalarProperty Name="Person_ID" ColumnName="Person_ID" />
                 <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />

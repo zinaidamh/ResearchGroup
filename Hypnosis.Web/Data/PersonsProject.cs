@@ -17,6 +17,7 @@ namespace Hypnosis.Web.Data
         public int Project_ID { get; set; }
         public int Person_ID { get; set; }
         public Nullable<int> PersonOrder { get; set; }
+        public int ID { get; set; }
     
         public virtual Person Person { get; set; }
         public virtual Project Project { get; set; }

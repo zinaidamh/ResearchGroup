@@ -35,6 +35,23 @@ namespace Hypnosis.Web.Controllers
         }
 
 
+        public JsonResult PersonInitJson(int? value)
+        {
+            dbOperation = new DbPerson();
+
+            var data = ((DbPerson)dbOperation).PersonInit(value);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetPersonsJson(string q, int? project_id, int page, int page_limit, int? value)
+        {
+            dbOperation = new DbPerson();
+            var data = ((DbPerson)dbOperation).getPersons(q,  project_id, page, page_limit);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         public JsonResult GetEventTypesJson_ByCategory(string q, int? category_id, int page, int page_limit)
         {
             dbOperation = new DbEventTypes();

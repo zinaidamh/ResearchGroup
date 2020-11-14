@@ -488,5 +488,61 @@ namespace Hypnosis.Web.Data.DbOperations
          
         }
 
+
+        public IEnumerable<s2item> PersonInit(int? value)
+        {
+            var q = from a in dbContext.Persons
+                    where value == null || a.ID == value.Value
+                    select new
+                    {
+                        id = a.ID,
+                        text = a.FirstName + " "+ a.LastName
+                    };
+            return q.ToList().Select(f => new s2item
+            {
+                id = f.id,
+                text = f.text.ToString()
+            });
+        }
+
+
+        public s2result getPersons(string q, int? project_id, int page, int page_limit)
+        {
+            var dbq = from a in dbContext.Persons
+                      select new
+                      {
+                          id = a.ID,
+                          text = a.FirstName+" "+a.LastName,
+                          pp=a.PersonsProjects
+
+                      };
+            if (!string.IsNullOrEmpty(q))
+            {
+                dbq = dbq.Where(f => f.text.Contains(q));
+            }
+            if (project_id!=null)
+            {
+                dbq = dbq.Where(f => f.pp.Any(x => x.Project_ID == project_id)==false);
+            }
+            //if (typeId != null)
+            //{
+            //    dbq = dbq.Where(f => f.typeID == typeId);
+            //}
+            //if (category != 0)
+            //{
+            //    dbq = dbq.Where(f => f.category == category); //person or institute events only
+            //}
+            var aa = dbq.OrderBy(f => f.text).ToList().Select(f => new s2item { id = f.id, text = f.text });
+
+            return new s2result
+            {
+                results = aa,
+                more = aa.Count() > page_limit
+            };
+        }
+
+
+
+
     }
 }

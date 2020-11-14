@@ -307,6 +307,7 @@
     <Compile Include="Controllers\InstituteController.cs" />
     <Compile Include="Controllers\JsonResultsController.cs" />
     <Compile Include="Controllers\PersonsController.cs" />
+    <Compile Include="Controllers\PersonsProjectsController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Data\Agent.cs">
       <DependentUpon>HypnosisData.tt</DependentUpon>
@@ -316,6 +317,7 @@
     <Compile Include="Data\DbOperations\DbEventTypes.cs" />
     <Compile Include="Data\DbOperations\DbInstitute.cs" />
     <Compile Include="Data\DbOperations\DbPerson.cs" />
+    <Compile Include="Data\DbOperations\DbPersonsProjects.cs" />
     <Compile Include="Data\DbOperations\DbProject.cs" />
     <Compile Include="Data\DbOperations\OperationBase.cs" />
     <Compile Include="Data\Enums.cs" />
@@ -1416,6 +1418,7 @@
     <Content Include="Views\Projects\Edit.cshtml" />
     <Content Include="Views\Projects\Index.cshtml" />
     <Content Include="Views\Projects\EditorTemplates\ProjectDetails.cshtml" />
+    <Content Include="Views\Shared\PersonsProjectsForCard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Files\" />

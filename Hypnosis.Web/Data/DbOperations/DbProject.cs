@@ -38,6 +38,25 @@ namespace Hypnosis.Web.Data.DbOperations
 
         public ProjectEditModel GetProjectEditModel(Project Project)
         {
+            List<HolidayLocation> holidayLocation = new List<HolidayLocation>();
+            HolidayLocation hol1 = new HolidayLocation();
+            HolidayLocation hol2 = new HolidayLocation();
+            HolidayLocation hol3 = new HolidayLocation();
+
+            hol1.ID = 1; hol1.Location = "aaa"; hol1.Preference = 1;
+            hol2.ID = 2; hol2.Location = "bbb"; hol2.Preference = 2;
+            hol1.ID = 3; hol3.Location = "ccc"; hol3.Preference = 3;
+
+            holidayLocation.Add(hol1);
+            holidayLocation.Add(hol2);
+            holidayLocation.Add(hol3);
+
+
+            //HolidayLocation hol1 = new HolidayLocation ;
+            //holidayLocation.Add(hol);
+
+
+
             ProjectDetailsModel details = new ProjectDetailsModel
             {
 
@@ -57,6 +76,8 @@ namespace Hypnosis.Web.Data.DbOperations
                 //Address_Comments = Project.Address_Comments,
                 Project_Description = Project.Comments,
 
+                HolidayLocation = holidayLocation
+                
 
 
             };

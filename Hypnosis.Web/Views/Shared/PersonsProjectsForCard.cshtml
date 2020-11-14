@@ -1,0 +1,1264 @@
+﻿@model Hypnosis.Web.Models.ProjectFilterViewModel_ForCard
+@{
+    ViewBag.Title = "Persons for Project";
+
+}
+Project_id
+@Html.EditorFor(model => model.ID)
+<table id="pp" class="table table-striped table-bordered dataTable no-footer" style="overflow:auto"></table>
+<script>
+  var oTable = $('#pp');
+            oTable.dataTable({
+                stateSave: true,
+                "aaSorting": [[1, 'asc']],
+                "sAjaxSource": "@Url.Action("DataByCard", "PersonsProjects")",
+
+                "fnServerParams": function (aoData) {
+                aoData.push({ "name": "Project_ID", "value": @Model.ID });
+                
+                console.log(aoData);
+                },
+                "fnDrawCallback": function (oSettings) {
+                if (oSettings.aoData.length == 0) {
+                oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
+                }
+                else {
+                oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
+                }
+
+
+                },
+
+                "aoColumns": [
+
+
+
+
+                {
+                "mData": "Project_ID",
+                "sTitle": "מחקר",
+               
+
+                },
+                {
+                "mData": "Person_ID",
+                "sTitle": "חוקר",
+               
+
+                },
+                
+                ],
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    console.log("ao");
+                    console.log(aoData);
+                    $.ajax({
+                        "dataType": 'json',
+                        "type": "POST",
+                        "url": sSource,
+                        "data": aoData,
+                        "success": fnCallback
+                    });
+                },
+            });
+
+        oTable.closest('.dataTables_wrapper').find('.dataTables_table_wrapper');
+        selectType.change(function () {
+            oTable.fnDraw();
+        });
+        selectSubType.change(function () {
+            oTable.fnDraw();
+        });
+</script>
+@*<div class="panel panel-default ">
+    <div class="panel-heading">
+    </div>
+    <div class="panel-body">
+        <div id="Filter1" class="form-inline form-inline-margins">
+            <div class="form-group">
+                @Html.LabelFor(f => f.EssenceOnly, htmlAttributes: new { @class = "control-label label-title" })
+                @Html.CheckBoxFor(f => f.EssenceOnly)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.Type_ID)
+                @Html.EditorFor(f => f.Type_ID)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.SubType_ID)
+                @Html.EditorFor(f => f.SubType_ID)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.fromDate)
+                @Html.EditorFor(f => f.fromDate)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.toDate)
+                @Html.EditorFor(f => f.toDate)
+            </div>
+        </div>
+        <div id="Filter2" class="form-inline">
+
+            <div class="form-group">
+                @Html.LabelFor(f => f.OpenOnly, htmlAttributes: new { @class = "control-label label-title" })
+                @Html.CheckBoxFor(f => f.OpenOnly)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.ExpiredOnly, htmlAttributes: new { @class = "control-label label-title" })
+                @Html.CheckBoxFor(f => f.ExpiredOnly)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(f => f.SiteOnly, htmlAttributes: new { @class = "control-label label-title" })
+                @Html.CheckBoxFor(f => f.SiteOnly)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(f => f.FileOnly, htmlAttributes: new { @class = "control-label label-title" })
+                @Html.CheckBoxFor(f => f.FileOnly)
+            </div>
+        </div>
+        <br />
+        <table id="events" class="table table-striped table-bordered dataTable no-footer" style="overflow:auto"></table>
+        <div class="panel-body">
+            @*<button type="button" class="btn btn-primary" id="createNew">הוספת אנשים</button>
+            @*<button type="button" class="btn btn-primary" id="exportBtn">יצוא ארועים</button>
+        </div>
+
+        <div style="overflow:auto">
+            <table id="newEvent" class="table table-striped table-bordered dataTable no-footer">
+                <tbody>
+                    <tr>
+
+                <thead>
+                    <tr role="row">
+                        <th>תאריך אירוע תחילה</th>
+                        <th>תת סוג ארוע </th>
+                        <th> סוג ארוע </th>
+                        <th>תאור ארוע </th>
+                        <th>גורם/ אמצאי הפנייה</th>
+                        <th>תאריך תוקף/סיום</th>
+                        <th>תאריך הקפצת התראה</th>
+                        <th>התראה טופלה</th>
+                        <th class="tdInstitute">מכון</th>
+                        <th>קובץ</th>
+                        <th>קישור</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input size="8" id="firstDate" class="datepicker newFirstDate required" type="text" />
+                        </td>
+                        <td>
+                            <input id="dt_subtype" class="required" />
+                        </td>
+                        <td>
+                            <input id="dt_type" disabled="disabled" class="required" />
+                        </td>
+                        <td>
+                            <input id="dt_description" size="50" class="required" />
+                        </td>
+                        <td>
+                            <input id="dt_agent" />
+                        </td>
+
+                        <td>
+                            <input size="8" id="expDate" class="datepicker required" type="text" />
+                        </td>
+                        <td>
+                            <input size="8" id="alertDate" class="datepicker required" type="text" />
+                        </td>
+                        <td>
+                            <input id="alertDone" type="checkbox" />
+                        </td>
+
+                        <td class="tdInstitute">
+                            <input id="dt_institute" />
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-primary file-upload">
+                                        Browse&hellip; <input id="dat" class="unused" type="file" name="file" />
+                                    </span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <input id="dt_href" size="50" />
+                        </td>
+
+                        <td class="line_title">
+                            <a href="#bottom" title="שמור" id="save"><i class="fa fa-check"></i></a>
+                        </td>
+                        <td class="line_title">
+                            <a href="#bottom" title="בטל" id="cancel"><i class="fa fa-undo"></i></a>
+                        </td>
+
+            </table>
+        </div>
+    </div>
+</div>
+<a href="#bottom" title="addNew" id="addNew" class=""></a>
+<script>
+
+
+        $(function () {
+
+            var card = $('#@Html.FieldIdFor(f => f.Card_ID)')
+            var category = $('#@Html.FieldIdFor(f => f.Category_ID)')
+
+            if (category.val() == 1) { //institutes
+                $('.tdInstitute').hide()
+            }
+            var selectType = $('#@Html.FieldIdFor(f => f.Type_ID)').select2({
+                width: 200,
+                placeholder: "הכל",
+                allowClear: true,
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
+                },
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetEventTypesJson_ByCategory")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            category_id: category.val(),
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
+                    }
+                }
+            });
+
+
+            var selectSubType = $('#@Html.FieldIdFor(f => f.SubType_ID)').select2({
+                width: 200,
+                placeholder: "הכל",
+                allowClear: true,
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/EventSubTypesInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
+                },
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetEventSubTypesJson_ByCategory")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            category_id: category.val(),
+                            typeId: selectType.select2('val'),
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
+                    }
+                }
+            });
+
+
+            var chkEssenseOnly = $('#@Html.FieldIdFor(f => f.EssenceOnly)');
+            var chkExpiredOnly = $('#@Html.FieldIdFor(f => f.ExpiredOnly)');
+            var chkOpenOnly = $('#@Html.FieldIdFor(f => f.OpenOnly)');
+            var chkFileOnly = $('#@Html.FieldIdFor(f => f.FileOnly)');
+            var chkSiteOnly = $('#@Html.FieldIdFor(f => f.SiteOnly)');
+
+            var fromDate = $('#@Html.FieldIdFor(f => f.fromDate)');
+            var toDate = $('#@Html.FieldIdFor(f => f.toDate)');
+
+
+
+
+            var oTable = $('#events');
+            oTable.dataTable({
+                stateSave: true,
+                "aaSorting": [[1, 'asc']],
+                "sAjaxSource": "@Url.Action("DataByCard","Events")",
+
+                "fnServerParams": function (aoData) {
+                    aoData.push({ "name": "Card_ID", "value": card.val() });
+                    aoData.push({ "name": "Category_ID", "value": category.val() });
+                    aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
+                    aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+                    aoData.push({ "name": "fromDate", "value": fromDate.val() });
+                    aoData.push({ "name": "toDate", "value": toDate.val() });
+
+                    aoData.push({ "name": "EssenseOnly", "value": chkEssenseOnly.is(':checked') });
+                    aoData.push({ "name": "ExpiredOnly", "value": chkExpiredOnly.is(':checked') });
+                    aoData.push({ "name": "OpenOnly", "value": chkOpenOnly.is(':checked') });
+                    aoData.push({ "name": "FileOnly", "value": chkFileOnly.is(':checked') });
+                    aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
+
+
+
+
+                    console.log(aoData);
+                },
+                "fnDrawCallback": function (oSettings) {
+                    if (oSettings.aoData.length == 0) {
+                        oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
+                    }
+                    else {
+                        oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
+                    }
+
+
+                },
+
+                "aoColumns": [
+
+
+
+
+                   {
+                       "mData": "FirstDate",
+                       "sTitle": "תאריך אירוע תחילה",
+                       "mRender": function (a) { return mRenderDate(a); },
+                       "mRenderEdit": function (a, b, c) {
+                           var firstDate = new Date(c.FirstDate)
+                           if (c.firstDate != null) {
+                               return '<input size="8" id="firstDate" class="datepicker required" type="text"  value="' + firstDate.toString("dd/MM/yyyy") + '" />';
+                           }
+                           else
+                           {
+                               return '<input size="8" id="firstDate" class="datepicker required" type="text"  value="" />';
+
+                           }
+                       }
+                   },
+
+
+                     {
+                         "mData": "SubType_Name",
+                         "sTitle": "תת סוג ארוע ",
+                         "mRenderEdit": function (a, b, c) {
+                             return '<input id="dt_subtype" class="required"  value="' + c.SubType_ID + '">';
+                         }
+
+                     },
+                      {
+                          "mData": "Type_Name",
+                          "sTitle": " סוג ארוע ",
+                          "mRenderEdit": function (a, b, c) {
+                              return '<input disabled="disabled" id="dt_type" class="required"  value="' + c.Type_ID + '">';;
+                          }
+                      },
+
+
+
+
+                          {
+                              "mData": "Description",
+                              "sTitle": "תאור ארוע ",
+                              "mRenderEdit": function (a, b, c) {
+                                  return '<input id="dt_description" size="50" class="required"  value="' + c.Description + '">';;
+                              }
+                          },
+
+                            {
+                                "mData": "Agent_Name",
+                                "sTitle": "גורם/ אמצאי הפנייה",
+                                "mRenderEdit": function (a, b, c) {
+                                    return '<input id="dt_agent"   value="' + c.Agent_ID + '">';;
+                                }
+                            },
+
+                            {
+                                "mData": "ExpirationDate",
+                                "sTitle": "תאריך תוקף/סיום",
+                                "mRender": function (a) { return mRenderDate(a); },
+                                "mRenderEdit": function (a, b, c) {
+                                    var expDate = new Date(c.ExpirationDate)
+
+                                    if (c.ExpirationDate != null) {
+                                        return '<input size="8" id="expDate" class="datepicker required" type="text"  value="' + expDate.toString("dd/MM/yyyy") + '" />';
+                                    }
+                                    else
+                                    {
+                                        return '<input size="8" id="expDate" class="datepicker required" type="text"  value="" />';
+
+                                    }
+                                }
+                            },
+
+                            {
+                                "mData": "AlertDate",
+                                "sTitle": "תאריך הקפצת התראה",
+                                "mRender": function (a) { return mRenderDate(a); },
+                                "mRenderEdit": function (a, b, c) {
+                                    var alertDate = new Date(c.AlertDate)
+                                    if (c.AlertDate != null) {
+                                        return '<input size="8" id="alertDate" class="datepicker required" type="text"  value="' + alertDate.toString("dd/MM/yyyy") + '" />';
+                                    }
+                                    else
+                                    {
+                                        return '<input size="8" id="alertDate" class="datepicker required" type="text"  value="" />';
+
+                                    }
+                                }
+                            },
+
+                             {
+                                 "mData": "alertDoneString",
+                                 "sTitle": "התראה טופלה",
+                                 "mRenderEdit": function (a, b, c) {
+                                     var checked = ""
+                                     if (c.AlertDone == true) checked = "checked";
+                                     return '<input id="alertDone" type="checkbox" ' + checked + ' />';
+                                 }
+
+                             },
+
+                                {
+                                    "mData": "Institute_Name",
+                                    "sTitle": "מכון",
+                                    "mRenderEdit": function (a, b, c) {
+                                        '<input id="dt_institute"   value="' + c.Institute_ID + '">';
+
+
+
+                                    },
+                                    "bVisible": function (a, b, c) { //for person only
+                                        if (c.Category_ID == 2)
+                                            return true;
+                                        else
+                                            return false;
+                                    }
+
+                                },
+
+                              {
+                                  "mData": "FileName",
+                                  "sTitle": "קובץ",
+                                  "mRender": function (a, b, c) {
+                                      if (c.FileName != null) {
+                                          return '<a href="@Url.Action("Get", "Files")?fileName=' + c.FileName + '">' + a + '</a>';
+
+                                          // return '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
+                                      }
+                                      else {
+                                          return "";
+                                      }
+                                  },
+                                  "mRenderEdit": function (a, b, c) {
+                                      var html = "";
+                                      if (c.FileName != null) {
+                                          html += '<a target="blank" href="' + c.FileName + '">' + c.FileName + '</a>';
+                                          html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat" class="unused" type="file" name="file" target="' + c.ID + '"/><span></span> <input  id="datFileName" id="' + c.ID + '"  type="text" class="form-control" style="display:none;" readonly="readonly"></div>'
+
+                                      }
+                                      else {
+                                          html += '<div class="input-group"><span class="input-group-btn"><span class="btn btn-primary file-upload"> Browse&hellip; <input id="dat"  type="file" name="file"/></span></span> <input id="datFileName"  style="display:none;" id="' + c.ID + '"  type="text" class="form-control" readonly="readonly"></div>'
+                                      }
+                                      return html;
+                                  }
+
+                              },
+
+
+                               {
+                                   "mData": "SiteHref",
+                                   "sTitle": "קישור",
+                                   "mRender": function (a, b, c) {
+                                       if (c.SiteHref != null) {
+                                           {
+                                               var href = c.SiteHref;
+                                               var text = href;
+                                               if (href.indexOf("http") == -1) {
+                                                   href = "http://" + href;
+                                               }
+                                               return '<a target="blank"  href="' + href + '">' + text + '</a>';
+
+                                           }
+                                       }
+                                       else {
+                                           return "";
+                                       }
+
+                                   },
+                                   "mRenderEdit": function (a, b, c) {
+                                       return '<input id="dt_href" size="50"   value="' + c.SiteHref + '">';;
+                                   }
+                               },
+
+                               {
+                                   "mData": "CreatedAt",
+                                   "sTitle": "תאריך הזנה",
+                                   "mRender": function (a) { return mRenderDate(a); }
+                               },
+                              {
+
+                                  "sWidth": "10%",
+                                  "mData": null, "sTitle": "",
+                                  "bSortable": false,
+                                  "mRender": function (a, b, c) {
+                                      var html = '<a href="#up" class="btn delete"  onclick=deleteRow(' + c.ID + ') title="מחק"><i class="fa fa-times"></i></a>';
+                                      html += "<a class='edit  fa fa-pencil-square-o' title='ערוך'></a>";
+                                      return html;
+                                  },
+                                  "mRenderEdit": function (a, b, c) {
+                                      var html = "<a class='update fa fa-check ' title='שמור'></a>"
+                                      html += " <a class='cancel fa fa-undo ' title='בטל'></a>";
+                                      return html;
+                                  }
+                              },
+
+
+
+                ],
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    console.log("ao");
+                    console.log(aoData);
+                    $.ajax({
+                        "dataType": 'json',
+                        "type": "POST",
+                        "url": sSource,
+                        "data": aoData,
+                        "success": fnCallback
+                    });
+                },
+            });
+
+        oTable.closest('.dataTables_wrapper').find('.dataTables_table_wrapper');
+        selectType.change(function () {
+            oTable.fnDraw();
+        });
+        selectSubType.change(function () {
+            oTable.fnDraw();
+        });
+
+        chkEssenseOnly.change(function () {
+            oTable.fnDraw();
+        });
+        chkExpiredOnly.change(function () {
+            oTable.fnDraw();
+        })
+        chkFileOnly.change(function () {
+            oTable.fnDraw();
+        })
+        chkSiteOnly.change(function () {
+            oTable.fnDraw();
+        })
+        chkOpenOnly.change(function () {
+            oTable.fnDraw();
+        })
+        fromDate.change(function () {
+            oTable.fnDraw();
+        })
+        toDate.change(function () {
+            oTable.fnDraw();
+        })
+
+
+        function dt_subtype_select() {
+            $('#dt_subtype').select2({
+                width: 200,
+                placeholder: "הכל",
+                allowClear: true,
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/EventSubTypesInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
+                },
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetEventSubTypesJson_ByCategory")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            category_id: category.val(),
+                            typeId: null,
+                            q: term, // search term
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
+                    }
+                }
+            });
+        }
+
+
+        function dt_subtype_onchange() {
+            $("#dt_subtype").on("change", function () {
+                //alert('change');
+                $.ajax({
+                    url: '@Url.Content("~/JsonResults/GetEventTypeBySubType")',
+                    type: "GET",
+                    data: { subType: $("#dt_subtype").select2('val') },
+                    dataType: "json"
+                }).done(function (data) {
+                    console.log('result');
+                    if (data && data.length == 1) {
+                        console.log(data[0]);
+                        //alert(data[0].text);
+                        $('#dt_type').select2("val", data[0].id);
+                    }
+                });
+            });
+        }
+
+
+
+        function dt_type_select() {
+            $('#dt_type').select2({
+                width: 200,
+                placeholder: "לא בוצעה בחירה",
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
+                },
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetEventTypesJson_ByCategory")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            category_id: category.val(),
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
+                    }
+                }
+            });
+        }
+
+
+        function dt_agent_select() {
+            $('#dt_agent').select2({
+                width: 200,
+                placeholder: "לא בוצעה בחירה",
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/AgentsInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
+                },
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetAgentsJson")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
+                    }
+                }
+            });
+        }
+
+
+        function dt_institute_select() {
+            $('#dt_institute').select2({
+                width: 200,
+                placeholder: "לא בוצעה בחירה",
+                initSelection: function (element, callback) {
+                    $.ajax({
+                        url: '@Url.Content("~/JsonResults/InstitutesInitJson")',
+                        type: "GET",
+                        data: { value: $(element).val() },
+                        dataType: "json"
+                    }).done(function (data) {
+                        if (data && data.length == 1) {
+                            callback(data[0]);
+                        }
+                    });
+                },
+                ajax: {
+                    url: '@Url.Content("~/JsonResults/GetInstitutesJson")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            page: page,
+                            page_limit: 10,
+                            val: this.val()
+                        };
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
+                        };
+                    }
+                }
+            });
+        }
+
+        function dates_set_calendar() {
+            $('.datepicker').datepicker({
+                language: 'he',
+                format: 'dd/mm/yyyy',
+                autoclose: true
+            });
+            $(".newFirstDate").datepicker('setDate', new Date());
+        }
+
+
+
+        dt_type_select();
+        dt_subtype_select();
+        dt_subtype_onchange();
+        dt_agent_select();
+        dt_institute_select();
+        dates_set_calendar();
+
+        var fileData;
+        $(function () {
+            $("input[type='file']").live("change", function (event) {
+
+                {
+                    // alert('change');
+                    $(this).removeClass('unused')
+
+
+                }
+            })
+        });
+
+
+        $('#events tbody').on('click', 'tr', function () {
+
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                oTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+
+        $('#newEvent tbody').on('click', 'tr', function () {
+
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+
+            }
+            else {
+                oTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+
+
+            }
+        });
+
+        $('.dataTables_filter').addClass('pull-right');
+        $('.dataTables_paginate').addClass('pull-right');
+
+
+        function toggleButtons(allow)
+        {
+           // alert('tooggle');
+            if (!allow) {
+               $('.edit').hide();
+               $('.delete').hide();
+
+                $("#save").hide();
+               // $('.update').show();
+
+            }
+            else
+            {
+
+                $('.edit').show();
+                $('.delete').show();
+                $("#save").show();
+
+
+            }
+
+        }
+
+        oTable.on('click', '.edit', function () {
+
+
+
+
+            var $tr = $(this).closest('tr');
+
+
+
+            var data = oTable.fnGetData($tr.get(0));
+            console.log(data);
+            var settings = oTable.fnSettings();
+            var columns = settings.aoColumns;
+            var vColumns=columns.filter(function(col)
+            {
+                return (col.bVisible == true);
+            });
+
+            console.log(vColumns);
+            var $tds = $tr.find('td:visible');
+            console.log($tds);
+            //alert('tds');
+            $tds.each(function (i, td) {
+                var col = vColumns[i];
+
+
+                    if (col.mRenderEdit) {
+
+                        var $td = $(td);
+                        $td.html(col.mRenderEdit(null, null, data));
+                    }
+
+
+
+            });
+         //   alert('edit ready')
+            dt_type_select();
+            dt_subtype_select();
+            dt_subtype_onchange();
+            dt_agent_select();
+            dt_institute_select();
+            dates_set_calendar();
+       //     alert('edit done');
+            toggleButtons(false)
+
+        });
+
+        function cancelRow() {
+
+         //   alert('redraw');
+
+            oTable.fnDraw(false);
+            toggleButtons(true);
+
+
+        }
+
+            oTable.on('click', '.cancel', function () {
+                cancelRow();
+            });
+
+
+
+
+        oTable.on('click', '.update', function () {
+            var settings = oTable.fnSettings();
+            var $tr = $(this).closest('tr');
+            var data = oTable.fnGetData($tr.get(0));
+            console.log('data');
+            console.log(data);
+            var newdata = $.extend({}, data);
+            var columns = settings.aoColumns;
+
+            var dataParams = [];
+            // dataParams.push({ "name": "Id", "value": data.ID });
+            //   dataParams.push({ "name": "isUpdate", "value": true });
+            var fileData = new FormData();
+            fileData.append("Id", data.ID);
+            fileData.append("isUpdate", true);
+            fileData.append("Card_ID", card.val());
+            fileData.append("Category_ID", category.val());
+
+            console.log(dataParams);
+        //    alert('ready');
+            $tr.find('td').each(function (i, td) {
+                var col = columns[i];
+                // alert(col.mData);
+                if (col.mData) {
+                    switch (col.mData) {
+                        case 'SubType_Name': newdata[col.mData] = $("#dt_subtype").val();
+                            fileData.append("SubType_ID", $("#dt_subtype").val());
+                            break;
+                        case 'Type_Name': newdata[col.mData] = $("#dt_type").val();
+                            fileData.append("Type_ID", $("#dt_type").val());
+                            break;
+                        case 'Agent_Name': newdata[col.mData] = $("#dt_agent").val();
+                            fileData.append("Agent_ID", $("#dt_agent").val());
+                            break;
+                        case 'Institute_Name': newdata[col.mData] = $("#dt_institute").select2('val')
+                            fileData.append("Institute_ID", $("#dt_institute").select2('val'));
+                            break;
+                        case 'FileName': newdata[col.mData] = $("#datFileName").val();
+                            var files = document.getElementById("dat").files;
+                            if (files.length > 0) {
+
+
+                                for (var x = 0; x < files.length; x++) {
+                                    fileData.append("file" + x, files[x]);
+
+                                }
+                            }
+                            break;
+                        case 'AlertDate':
+                            {
+                                var selectedDate = $("#alertDate").val();
+                                //alert(selectedDate);
+                                fileData.append("AlertDate", selectedDate);
+                                break;
+                            }
+                        case 'SiteHref':
+                            {
+                                var href = $("#dt_href").val();
+                                //alert(selectedDate);
+                                fileData.append("SiteHref", href);
+                                break;
+                            }
+                        case 'AlertDone':
+                            {
+                                var checked = $("#alertDone").is(':checked')
+                                //alert(selectedDate);
+                                fileData.append("AlertDone", checked);
+                                break;
+                            }
+                        case 'FirstDate':
+                            {
+                                var selectedDate = $("#firstDate").val();
+                                fileData.append("FirstDate", selectedDate);
+                                break;
+                            }
+                        case 'ExpirationDate':
+                            {
+                                var selectedDate = $("#expDate").val();
+                                fileData.append("ExpirationDate", selectedDate);
+                                break;
+                            }
+                        case 'Description':
+                            {
+
+                                fileData.append("Description",  $("#dt_description").val());
+                                break;
+                            }
+
+                    }
+                }
+            });
+
+            console.log('Params');
+            //  console.log(dataParams);
+
+            console.log(fileData);
+            //  fileData.append("Institute_Id", $("#dt_institute").select2('val'));
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                type: "POST",
+                dataType: "json",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                // url: '@Url.Action("ChangeEventsData")',
+                url: '@Url.Content("~/Events/ChangeData")',
+                data: fileData
+            }).done(function (data) {
+                oTable.fnUpdate(newdata, $tr.get(0));
+                if (!data.result && data.error != "" && data.error!=null) {
+                    alert(data.error);
+                }
+                else if (!data.result) {
+                    alert("הייתה בעיה בשמירת הנתונים");
+                }
+                else {
+                   // alert('redraw1');
+                    toggleButtons(true);
+                    $('#newEvent').show();
+                    oTable.fnDraw(false);
+
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                alert("הייתה בעיה בשמירת הנתונים");
+            });
+        });
+
+
+
+        $('#eventSubTypes tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+
+
+            }
+            else {
+                oTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+
+            }
+        });
+
+
+        $("#cancel").on('click', function () {
+
+
+            clearNewRow();
+
+
+        });
+        function validate() {
+
+            if ($("#dt_subtype").val() == "") {
+                alert('תת סוג ארוע חובה');
+                return false;
+            }
+
+            if ($("#firstDate").val()== "") {
+                alert('תאריך הארוע חובה');
+            }
+            return true;
+        };
+
+        $("#save").on('click', function () {
+            //alert('begin');
+            if (!validate()) {
+                //    alert("חובה למלא את כל השדות");
+                return;
+            }
+            var fileData = new FormData();
+            fileData.append("Id", 0);
+            fileData.append("isUpdate", false);
+            fileData.append("Card_ID", card.val());
+            fileData.append("Category_ID", category.val());
+            // console.log(dataParams);
+        //    alert('ready');
+            fileData.append("SubType_ID", $("#dt_subtype").val());
+            fileData.append("Type_ID", $("#dt_type").val());
+            fileData.append("Agent_ID", $("#dt_agent").val());
+            if (category.val() == 2) //person
+            {
+                fileData.append("Institute_ID", $("#dt_institute").select2('val'));
+            }
+            else
+            {
+                fileData.append("Institute_ID", card.val());
+            }
+            var files = document.getElementById("dat").files;
+            if (files.length > 0) {
+
+
+                for (var x = 0; x < files.length; x++) {
+                    fileData.append("file" + x, files[x]);
+
+                }
+            }
+
+            fileData.append("AlertDate", $("#alertDate").val());
+            fileData.append("SiteHref", $("#dt_href").val());
+            fileData.append("FirstDate", $("#firstDate").val());
+            fileData.append("ExpirationDate", $("#expDate").val());
+
+            fileData.append("AlertDone", $("#alertDone").is(':checked'));
+            fileData.append("Description", $("#dt_description").val());
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                type: "POST",
+                dataType: "json",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                // url: '@Url.Action("ChangeEventsData")',
+                url: '@Url.Content("~/Events/ChangeData")',
+                data: fileData
+            }).done(function (data) {
+
+                if (!data.result && data.error != "" && data.error!=null) {
+                    alert(data.error);
+                }
+                else if (!data.result) {
+                    alert("הייתה בעיה בשמירת הנתונים");
+                }
+                else {
+                    clearNewRow();
+                //    alert('readraw');
+                    var oTable = $('#events').dataTable();
+                    oTable.fnDraw(false);
+                    toggleButtons(true);
+
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                alert("הייתה בעיה בשמירת הנתונים");
+            });
+
+
+        });
+
+
+        function clearNewRow() {
+
+            $(".newFirstDate").datepicker('setDate', new Date());
+            $("#expDate").val('');
+            $("#alertDate").val('');
+
+            $("#dt_type").select2('val', '');
+            $("#dt_subtype").select2('val', '');
+            $("#dt_agent").select2('val', '');
+            $("#dt_institute").select2('val', '');
+
+            $("#dt_description").val('');
+            $("#dt_href").val('');
+            $("#dat").val('');
+
+            $('#alertDone').attr('checked', false);
+
+            toggleButtons(true);
+
+
+
+        }
+
+
+
+        $('#exportBtn').click(function () {
+            var location = '@Url.Action("Export", "Events")?';
+            var aoData = [];
+            aoData.push({ "name": "Card_ID", "value": card.val() });
+            aoData.push({ "name": "Category_ID", "value": category.val() });
+            aoData.push({ "name": "Type_ID", "value": selectType.select2('val') });
+            aoData.push({ "name": "SubType_ID", "value": selectSubType.select2('val') });
+            aoData.push({ "name": "fromDate", "value": fromDate.val() });
+            aoData.push({ "name": "toDate", "value": toDate.val() });
+
+            aoData.push({ "name": "EssenseOnly", "value": chkEssenseOnly.is(':checked') });
+            aoData.push({ "name": "ExpiredOnly", "value": chkExpiredOnly.is(':checked') });
+            aoData.push({ "name": "OpenOnly", "value": chkOpenOnly.is(':checked') });
+            aoData.push({ "name": "FileOnly", "value": chkFileOnly.is(':checked') });
+            aoData.push({ "name": "SiteOnly", "value": chkSiteOnly.is(':checked') });
+
+            console.log(aoData);
+          //  alert('export');
+            location += $.param(aoData);
+            window.location = location;
+        });
+
+
+
+        $(document).ready(function () {
+            $dialog = $('<div>האם אתה בטוח שברצונך למחוק את הרשימה?<div>').dialog({
+                autoOpen: false,
+                buttons: [
+                    {
+                        text: "לא",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "כן",
+                        click: function () {
+                            $(this).dialog("close");
+                            $deletingDialog.dialog("open");
+                            $.ajax({
+                                url: '@Url.Action("Delete")',
+                                type: "POST",
+                                data: { Id: $(this).data('id') },
+                                dataType: "json"
+                            }).done(function (data) {
+                                $deletingDialog.dialog("close");
+                                oTable.fnDraw();
+                                alert(data);
+                            });
+                        }
+                    }
+                ]
+            });
+            $deletingDialog = $('<div>אנא המתן בזמן שהמחיקה מתבצעת...<div>').dialog({
+                autoOpen: false
+            });
+        });
+    });
+
+    function selectAll() {
+        if ($("#mainSelector").prop('checked')) {
+            $(".Selector").prop('checked', true);
+        }
+        else {
+            $(".Selector").prop('checked', false);
+        }
+    }
+
+    function deleteRow(id) {
+        if (confirm("האם אתה בטוח שברצונך למחוק רשומה זו?")) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                type: "GET",
+                dataType: "json",
+                url: '@Url.Content("~/Events/Delete")',
+                //url: '@Url.Content("~/JsonResults/EventTypesInitJson")',
+                data: { "Id": id }
+            }).success(function (data) {
+                if (!data.result) {
+                    alert("הייתה בעיה במחיקה");
+                }
+                else {
+                    // alert('deleted');
+                    var oTable = $('#events').dataTable();
+                    console.log('redraw');
+                    oTable.fnDraw(false);
+                }
+            }).error(function () { })
+                        .complete(function () { });
+        }
+    }
+
+    function confirmDelete(id) {
+        $dialog.data('id', id).dialog("open");
+    }
+</script>*@
+

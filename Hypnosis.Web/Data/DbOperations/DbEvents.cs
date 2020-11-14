@@ -458,9 +458,9 @@ namespace Hypnosis.Web.Data.DbOperations
                     msg = ex.Message;
                 }
                 throw new Exception("הייתה בעיה בשמירת הנתונים: " + msg);
-                return false;
+               // return false;
             }
-            Logger.Log.Debug(operation + " End ");
+            //Logger.Log.Debug(operation + " End ");
        }
 
 

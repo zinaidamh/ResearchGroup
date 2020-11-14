@@ -51,7 +51,19 @@ namespace Hypnosis.Web.Models
     }
 
 
+    public class HolidayLocation
+    {
 
+       
+        public int ID { get; set; }
+
+       
+        public string Location { get; set; }
+
+        
+        public int Preference { get; set; }
+
+    }
     
     public class ProjectDetailsModel
     {
@@ -73,8 +85,17 @@ namespace Hypnosis.Web.Models
 
         public string ImageOriginalName { get; set; }
 
-
+        public List<HolidayLocation> HolidayLocation;
     }
+
+
+    public class ProjectFilterViewModel_ForCard
+    {
+        public int ID { get; set; }
+    }
+
+
+
 
     public class ProjectCreateModel
     {
@@ -90,6 +111,8 @@ namespace Hypnosis.Web.Models
         public ProjectDetailsModel details { get; set; }
         public EventsFilterViewModel_ForCard eventsFilter { get; set; }
         public ProjectEventsListRowViewModel eventsList { get; set; }
+        public ProjectFilterViewModel_ForCard projectFilter { get; set; }
+
     }
 
 

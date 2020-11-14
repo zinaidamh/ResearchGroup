@@ -100,7 +100,11 @@ namespace Hypnosis.Web.Controllers
                 Category_ID = 1,
                 Card_ID = Id
             };
-
+            model.projectFilter = new ProjectFilterViewModel_ForCard()
+            {
+                ID = card.ID
+            };
+            
             return View(model);
         }
 
