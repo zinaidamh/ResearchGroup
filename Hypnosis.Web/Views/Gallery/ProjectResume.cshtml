@@ -17,6 +17,11 @@
             overflow: hidden !important;
             border: 0 !important;
         }
+        .person{
+            color:blue !important;
+            font-weight:500;
+
+        }
     </style>
 </head>
 
@@ -80,39 +85,45 @@
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="data-box">
-                        <div class="row exp-row">
-                            <h2>חוקרים</h2>
-                            <p>
-                                @foreach (var person in Model.personsList)
-                                {
-                                    <a href="PersonResumeWithProjects?id=@person.ID">@person.DisplayName</a>
-                                    <br />
-
-
-                                }
-
-                            </p>
-                            <div class="btn-ro row no-margin">
-                                @*<ul class="btn-link">
+                    @*<div class="data-box">
+            <h2>About Me</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a urna posuere, aliquet elit in, fermentum ligula. Sed est augue, molestie sed tortor sed, posuere commodo lectus. Aliquam blandit eros a nibh tristique, id accumsan lacus rutrum. Mauris ornare neque vitae mollis luctus. Proin malesuada quam ut dui sagittis, sit amet accumsan nibh bibendum. Sed maximus sed turpis a rhoncus. Vestibulum quis velit leo. Nunc laoreet tincidunt congue. Quisque efficitur, erat congue volutpat malesuada, erat felis finibus ex</p>
+            <div class="btn-ro row no-margin">
+                <ul class="btn-link">
                     <li>
                         <a href=""><i class="fas fa-paper-plane"></i> Hire Me</a>
                     </li>
                     <li>
                         <a href=""><i class="fas fa-cloud-download-alt"></i> Download Resume</a>
                     </li>
-                </ul>*@         </div> 
-                            </div>
-                        </div>
-                    </div>
-                @*<h1>חוקרים</h1>
+                </ul>
+            </div>
+        </div>*@
+                    <h1>חוקרים</h1>
                     <div class="row exp-row">
-                        <h6>Business Development</h6>
+                        @*<h6>Business Development</h6>
         <span>Microsoft</span>
-        <i>Apiral 2011 - Present</i>
-                       
-                            <p><textarea>@Model.Address_Comments</textarea></p>
-                        </div>*@
+        <i>Apiral 2011 - Present</i>*@
+                        <div style="display:flex; background-color:white; text-align:right; justify-content:center">
+                            @{
+                                int n = Model.personsList.Count();
+                                int i = 1;
+                             }
+                            
+
+                            @foreach (var person in Model.personsList)
+                            {
+                                <a class="person" href="PersonResumeWithProjects?id=@person.ID">@person.DisplayName</a>
+                                if (i++ < n)
+                                {
+                                <span>&nbsp;,</span>
+                                }
+
+                            }
+                        </div>
+
+                            @*<p><textarea>@Model.Address_Comments</textarea></p>*@
+                        </div>
                     <div class="data-box">
                         <h1>תאור</h1>
                         <div class="row exp-row">
@@ -147,8 +158,8 @@
             </div>*@
                     </div>
 
-                    <div class="data-box education-detail">
-                        <h2>תחומי מחקר</h2>
+                    @*<div class="data-box education-detail">
+                        <h2>תחומי מחקר</h2>*@
                         @*<div class="service no-margin row">
                 <div class="col-sm-3 no-padding resume-dat serv-logo">
                     <h6>2013-2015</h6>
@@ -192,7 +203,7 @@
                     </div>
 
                     <div class="data-box service-box">
-                        <h2>Services</h2>
+                        <h2>פרסומים</h2>
                         <div class="service no-margin row">
                             <div class="col-sm-2 no-padding serv-logo">
                                 <i class="fab fa-delicious"></i>
