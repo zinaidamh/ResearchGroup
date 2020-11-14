@@ -371,8 +371,11 @@
                     dataType: "json",
             url: '@Url.Action("SaveOrder", "PersonsProjects")',
            
-                 data: { "Id": data },
-                 projectId: $("#details_ID").val()
+            data: {
+                "Id": data,
+                "projectId": $("#details_ID").val()
+            },
+                 
                 }).success(function (data) {
                     if (!data.result) {
                         alert("הייתה בעיה במחיקה");
@@ -381,7 +384,7 @@
                         // alert('deleted');
                         var oTable = $('#pp').dataTable();
                         console.log('redraw');
-                        oTable.clear();
+                        oTable.fnClearTable(this);
                         oTable.fnDraw(true);
                     }
                 }).error(function () { })

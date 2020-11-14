@@ -1419,6 +1419,8 @@
     <Content Include="Views\Projects\Index.cshtml" />
     <Content Include="Views\Projects\EditorTemplates\ProjectDetails.cshtml" />
     <Content Include="Views\Shared\PersonsProjectsForCard.cshtml" />
+    <Content Include="Views\Gallery\PersonResumeWithProjects.cshtml" />
+    <Content Include="Views\Gallery\ProjectResume.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Files\" />

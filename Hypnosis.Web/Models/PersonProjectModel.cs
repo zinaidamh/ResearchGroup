@@ -40,4 +40,26 @@ namespace Hypnosis.Web.Models
 
     }
 
+    public class PersonProjectResumeModel
+    {
+
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+        public int Person_ID { get; set; }
+
+        public int Project_ID { get; set; }
+
+        public int PersonOrder { get; set; }
+
+        public string ProjectName { get; set; }
+
+        public string PersonName { get; set; }
+
+        public string ProjectDescription { get; set; }
+
+        public string ProjectImage { get; set; }
+    }
+
+
 }

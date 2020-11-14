@@ -33,6 +33,28 @@ namespace Hypnosis.Web.Data.DbOperations
             return source;
         }
 
+        public IQueryable<PersonProjectResumeModel> GetResumeRows()
+        {
+            IQueryable<PersonProjectResumeModel> source = null;
+
+            DateTime today = DateTime.Today;
+            source = (from e in dbContext.PersonsProjects
+                      select new PersonProjectResumeModel()
+                      {
+                          ID = e.ID,
+                          PersonOrder = e.PersonOrder == null ? 0 : (int)e.PersonOrder,
+                          Project_ID = e.Project_ID,
+                          Person_ID = e.Person_ID,
+                          ProjectDescription=e.Project.Comments,
+                          ProjectImage=e.Project.ImageName,
+                          ProjectName=e.Project.Name
+                      }
+                );
+
+            return source;
+        }
+
+
         public IQueryable<PersonProjectViewModel> GetViewRows()
         {
             IQueryable<PersonProjectViewModel> source = null;
@@ -53,9 +75,9 @@ namespace Hypnosis.Web.Data.DbOperations
             return source;
         }
 
-        public string SaveOrder(int[] ids)
+        public string SaveOrder(int[] ids, int projectId)
         {
-            var list = dbContext.PersonsProjects.Where(p => p.Project_ID == 1);
+            var list = dbContext.PersonsProjects.Where(p => p.Project_ID == projectId);
             int num = 1;
             foreach (int id in ids)
             {
@@ -155,6 +177,9 @@ namespace Hypnosis.Web.Data.DbOperations
 
         }
 
+
+
+
         public IQueryable<PersonProjectViewModel> GetDataByPersonID(int? Person_ID)
         {
 
@@ -172,6 +197,21 @@ namespace Hypnosis.Web.Data.DbOperations
             return data;
 
         }
+
+
+        public IQueryable<PersonProjectResumeModel> GetResumeByPersonID(int? Person_ID)
+        {
+
+            var data = this.GetResumeRows();
+
+            if (Person_ID.HasValue)
+            {
+                data = data.Where(f => f.Person_ID == Person_ID);
+            }
+            return data;
+
+        }
+
 
         public bool Delete(int Id)
         {

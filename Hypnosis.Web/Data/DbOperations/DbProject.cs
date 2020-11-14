@@ -26,6 +26,57 @@ namespace Hypnosis.Web.Data.DbOperations
         }
 
 
+      
+
+
+        public ProjectDetailsModelWithPersons GetProjectDetailsWithPersonsModel(Project project)
+        {
+            //        List<ObjectType> objectList = similarTypeList.Select(o =>
+            //new ObjectType
+            //{
+            //    PropertyOne = o.PropertyOne,
+            //    PropertyTwo = o.PropertyTwo,
+            //    PropertyThree = o.PropertyThree
+            //}).ToList();
+
+            var list = dbContext.PersonsProjects.Where(p => p.Project_ID == project.ID).OrderBy(p => p.PersonOrder).Select(p =>
+                new PersonDetailsModel
+                {
+                    ID=p.Person.ID,
+                    DisplayName=p.Person.FirstName+" "+p.Person.LastName
+
+                });
+                
+                
+               
+
+            ProjectDetailsModelWithPersons details = new ProjectDetailsModelWithPersons()
+            {
+                ID = project.ID,
+
+
+                Name = project.Name,
+
+                Project_Description = project.Comments,
+                
+                personsList=list
+
+            };
+
+
+
+            return details;
+        }
+
+
+        public ProjectDetailsModelWithPersons GetProjectResumeById(int ID)
+        {
+
+            var Project = dbContext.Projects.SingleOrDefault(p => p.ID == ID);
+            var model = GetProjectDetailsWithPersonsModel(Project);
+            return model;
+        }
+
 
         public Project GetProjectById(int ID)
         {
@@ -38,19 +89,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
         public ProjectEditModel GetProjectEditModel(Project Project)
         {
-            List<HolidayLocation> holidayLocation = new List<HolidayLocation>();
-            HolidayLocation hol1 = new HolidayLocation();
-            HolidayLocation hol2 = new HolidayLocation();
-            HolidayLocation hol3 = new HolidayLocation();
-
-            hol1.ID = 1; hol1.Location = "aaa"; hol1.Preference = 1;
-            hol2.ID = 2; hol2.Location = "bbb"; hol2.Preference = 2;
-            hol1.ID = 3; hol3.Location = "ccc"; hol3.Preference = 3;
-
-            holidayLocation.Add(hol1);
-            holidayLocation.Add(hol2);
-            holidayLocation.Add(hol3);
-
+            
 
             //HolidayLocation hol1 = new HolidayLocation ;
             //holidayLocation.Add(hol);
@@ -64,19 +103,9 @@ namespace Hypnosis.Web.Data.DbOperations
 
 
                 Name = Project.Name,
-                //InMailingList = Project.InMailingList,
-
-
-                //MainPhone = Project.MainPhone,
-                //Phones = Project.Phones,
-                //Email = Project.Email,
-                //City = Project.City,
-                //ZipCode = Project.ZipCode,
-                //Address = Project.Address,
-                //Address_Comments = Project.Address_Comments,
+               
                 Project_Description = Project.Comments,
-
-                HolidayLocation = holidayLocation
+                
                 
 
 

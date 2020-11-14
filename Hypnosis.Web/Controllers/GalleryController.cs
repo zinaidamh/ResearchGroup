@@ -37,5 +37,34 @@ namespace Hypnosis.Web.Controllers
             return View(model);
 
         }
+
+        public ActionResult ProjectResume(int Id)
+        {
+            DbProject ProjectOperations;
+            OperationBase dbOperation = new DbProject();
+            ProjectOperations = (DbProject)dbOperation;
+            var model = ProjectOperations.GetProjectResumeById(Id);
+            return View(model);
+
+        }
+
+        public ActionResult PersonResumeWithProjects(int Id)
+        {
+            DbPerson PersonOperations;
+            DbPersonsProjects ppOperations;
+            OperationBase dbOperation = new DbPerson();
+            
+            PersonOperations = (DbPerson)dbOperation;
+            var model = PersonOperations.GetPersonDetailsById(Id);
+            OperationBase dbOperation1 = new DbPersonsProjects();
+            ppOperations = (DbPersonsProjects)dbOperation1;
+            var ppModel = ppOperations.GetResumeByPersonID(Id);
+            PersonResumeWithProjectsModel newModel = new PersonResumeWithProjectsModel();
+            newModel.personModel = model;
+            newModel.personProjects = ppModel;
+            return View(newModel);
+
+        }
+
     }
 }

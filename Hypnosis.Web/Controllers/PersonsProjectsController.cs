@@ -32,7 +32,7 @@ namespace Hypnosis.Web.Controllers
         public JsonResult SaveOrder(string Id, int projectId)
         {
             int[] intArray = Id.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
-            ppOperations.SaveOrder(intArray);
+            ppOperations.SaveOrder(intArray, projectId);
             var data = new JsonObject { result = true };
             return Json(data, JsonRequestBehavior.AllowGet);
         }

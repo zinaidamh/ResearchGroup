@@ -244,6 +244,128 @@ namespace Hypnosis.Web.Models
 
     }
 
+    public class PersonResumeWithProjectsModel
+    {
+        public PersonDetailsModel personModel { get; set; }
+        public IQueryable<PersonProjectResumeModel> personProjects { get; set; }
+
+    }
+
+    public class PersonResumeModel
+    {
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+
+        [Display(Name = "ת.ז")]
+        public string TZ { get; set; }
+
+
+        [Display(Name = "שם משפחה")]
+        [Required(ErrorMessage = "שם משפחה חובה")]
+        public string LastName { get; set; }
+
+        [Display(Name = "שם פרטי")]
+        [Required(ErrorMessage = "שם פרטי חובה")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "תפקיד")]
+        [Required(ErrorMessage = "תפקיד חובה")]
+        public string DisplayName { get; set; }
+
+        [Display(Name = "טלפון נייד ")]
+        public string Mobile { get; set; }
+
+        [Display(Name = "טלפונים נוספים")]
+        public string Phones { get; set; }
+
+
+        [Display(Name = "דוא\"ל")]
+        [RegularExpression(@"^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$", ErrorMessage = "דוא\"ל לא נכון")]
+
+        public string Email { get; set; }
+
+        [Display(Name = "ברשימת תפוצה ? ")]
+
+        public string InMailingListString { get; set; }
+
+        [Display(Name = "מס רשיון")]
+
+        public string Psyhology_LicenseNumber { get; set; }
+
+
+        [Display(Name = "מס רשיון")]
+
+        public string Medicine_LicenseNumber { get; set; }
+
+        [Display(Name = "מס רשיון")]
+
+        public string Stomatology_LicenseNumber { get; set; }
+
+
+        [Display(Name = "מומחיות")]
+        public string Psyhology_Specialization { get; set; }
+
+        [Display(Name = "מומחיות")]
+
+        public string Medicine_Specialization { get; set; }
+
+        [Display(Name = "מומחיות")]
+
+        public string Stomatology_Specialization { get; set; }
+
+        [Display(Name = "תחומי מחקר")]
+        public string Person_Comments { get; set; }
+
+        [Display(Name = "תאריך לידה")]
+        public DateTime? BirthDate { get; set; }
+
+        [Display(Name = "רחוב ומספר")]
+        public string Address { get; set; }
+
+        [Display(Name = "ישוב")]
+        public string City { get; set; }
+
+        [Display(Name = "מיקןד")]
+        public string ZipCode { get; set; }
+
+        [Display(Name = "השכלה")]
+        public string Address_Comments { get; set; }
+
+        [Display(Name = "סוג ארוע")]
+
+        public int? Type_ID { get; set; }
+        [Display(Name = "תת סוג ארוע")]
+
+        public int? SubType_ID { get; set; }
+
+        [Display(Name = "רק ברשימת תפוצה")]
+
+        public bool InMailingList { get; set; }
+
+        [Display(Name = "סוג ארוע")]
+        public string Type_Name { get; set; }
+
+
+        [Display(Name = "בכיר")]
+
+        public bool Person_Senior { get; set; }
+
+
+        [Display(Name = "תפקיד")]
+        public string Degree { get; set; }
+
+        [Display(Name = "מספר תיק במשרד הבריאות ")]
+
+        public string Ministry_CaseNumber { get; set; }
+
+        [Display(Name = "תמונה")]
+        public string ImageName { get; set; }
+
+        public string ImageOriginalName { get; set; }
+
+    }
+
 
 
     public class PersonDetailsModel

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hypnosis.Web.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -85,9 +86,33 @@ namespace Hypnosis.Web.Models
 
         public string ImageOriginalName { get; set; }
 
-        public List<HolidayLocation> HolidayLocation;
+        
     }
 
+
+    public class ProjectDetailsModelWithPersons
+    {
+        [ScaffoldColumn(false)]
+        public int ID { get; set; }
+
+        [Display(Name = "שם המחקר")]
+        public string Name { get; set; }
+
+        [Display(Name = "תאור")]
+        public string Project_Description { get; set; }
+
+        [Display(Name = "מספר")]
+        public string PersonOrder { get; set; }
+
+
+        [Display(Name = "תמונה")]
+        public string ImageName { get; set; }
+
+        public string ImageOriginalName { get; set; }
+
+        public IQueryable<PersonDetailsModel> personsList { get; set; }
+
+    }
 
     public class ProjectFilterViewModel_ForCard
     {
