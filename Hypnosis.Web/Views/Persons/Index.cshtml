@@ -183,31 +183,31 @@
                       "mRender": function (a) { return mRenderDate(a); }
                     },
 
-                    {
-                        "mData": "SubType_Name",
-                        "sTitle": "תת סוג ארוע אחרון"
-                    },
-                    {
-                        "mData": "Description",
-                        "sTitle": "תאור ארוע אחרון"
-                    },
+  //                  {
+  //                      "mData": "SubType_Name",
+  //                      "sTitle": "תת סוג ארוע אחרון"
+  //                  },
+  //                  {
+  //                      "mData": "Description",
+  //                      "sTitle": "תאור ארוע אחרון"
+  //                  },
 
-  //last event short
-                     {
-                         "mData": "FirstDate_Essense",
-                         "sTitle": "תאריך ארוע אחרון בתמצית",
-                         "mRender": function (a) { return mRenderDate(a); }
-                     },
+  ////last event short
+  //                   {
+  //                       "mData": "FirstDate_Essense",
+  //                       "sTitle": "תאריך ארוע אחרון בתמצית",
+  //                       "mRender": function (a) { return mRenderDate(a); }
+  //                   },
 
-                    {
-                        "mData": "SubType_Name_Essense",
-                        "sTitle": "תת סוג ארוע אחרון בתמצית"
-                    },
-                    {
-                        "mData": "Description_Essense",
-                        "sTitle": "תאור ארוע אחרון בתמצית"
-                    },
-  //contacts
+  //                  {
+  //                      "mData": "SubType_Name_Essense",
+  //                      "sTitle": "תת סוג ארוע אחרון בתמצית"
+  //                  },
+  //                  {
+  //                      "mData": "Description_Essense",
+  //                      "sTitle": "תאור ארוע אחרון בתמצית"
+  //                  },
+  ////contacts
 
                     {
                         "mData": "Mobile",
@@ -222,90 +222,90 @@
                         "mData": "Email",
                         "sTitle": 'דוא"ל'
                     },
-                    {
-                        "mData": "City",
-                        "sTitle": "ישוב"
-                    },
+    //                {
+    //                    "mData": "City",
+    //                    "sTitle": "ישוב"
+    //                },
                    
-                    {
-                        "mData": "InMailingListString",
-                        "sTitle": "ברשימת תפוצה ?"
-                    },
-    //license
+    //                {
+    //                    "mData": "InMailingListString",
+    //                    "sTitle": "ברשימת תפוצה ?"
+    //                },
+    ////license
 
-                    {
-                        "mData": "Psyhology_LicenseNumber",
-                        "sTitle": "מס רשיון פסיכולוגיה"
-                    },
+    //                {
+    //                    "mData": "Psyhology_LicenseNumber",
+    //                    "sTitle": "מס רשיון פסיכולוגיה"
+    //                },
                     
-                    {
-                         "mData": "Medicine_LicenseNumber",
-                         "sTitle": "מס רשיון רפואה"
-                     },
+    //                {
+    //                     "mData": "Medicine_LicenseNumber",
+    //                     "sTitle": "מס רשיון רפואה"
+    //                 },
 
-                    {
-                          "mData": "Stomatology_LicenseNumber",
-                          "sTitle": "מספר רשיון רפואת שיניים"
-                     },
-    //address, birthdate, comments 
+    //                {
+    //                      "mData": "Stomatology_LicenseNumber",
+    //                      "sTitle": "מספר רשיון רפואת שיניים"
+    //                 },
+    ////address, birthdate, comments 
                     
-                {
-                    "mData": "Person_Comments",
-                    "sTitle": "הערות אדם",
-                    'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
+    //            {
+    //                "mData": "Person_Comments",
+    //                "sTitle": "הערות אדם",
+    //                'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
                        
-                        if (oData.Person_Comments != "null")
-                        nTd.title = oData.Person_Comments;
-                    },
-                    "mRender": function (a, b, c) {
-                        if (a) {
-                            var text = a.substring(0, 100);
-                            return $('<textarea />').html(text).text();
-                        }
+    //                    if (oData.Person_Comments != "null")
+    //                    nTd.title = oData.Person_Comments;
+    //                },
+    //                "mRender": function (a, b, c) {
+    //                    if (a) {
+    //                        var text = a.substring(0, 100);
+    //                        return $('<textarea />').html(text).text();
+    //                    }
 
-                        return "";
-                    }
+    //                    return "";
+    //                }
                     
                         
                    
-                },
+               // },
                     
-               {
-                      "mData": "BirthDate",
-                      "sTitle": "תאריך לידה",
-                      "mRender": function (a) { return mRenderDate(a); }
-                },
+               //{
+               //       "mData": "BirthDate",
+               //       "sTitle": "תאריך לידה",
+               //       "mRender": function (a) { return mRenderDate(a); }
+               // },
 
-                {
-                      "mData": "Address",
-                      "sTitle": "רחוב ומספר",
-                },
-                 {
-                     "mData": "City",
-                     "sTitle": "ישוב",
-                 },
+               // {
+               //       "mData": "Address",
+               //       "sTitle": "רחוב ומספר",
+               // },
+               //  {
+               //      "mData": "City",
+               //      "sTitle": "ישוב",
+               //  },
 
-                  {
-                      "mData": "ZipCode",
-                      "sTitle": "מיקןד",
-                  },
+               //   {
+               //       "mData": "ZipCode",
+               //       "sTitle": "מיקןד",
+               //   },
 
-                   {
-                       "mData": "Address_Comments",
-                       "sTitle": "הערות כתובת",
-                       "mRender": function (a, b, c) {
-                           if (a) {
-                               var text = a.substring(0, 100);
-                               return $('<textarea />').html(text).text();
-                           }
-                           return "";
-                       },
-                       'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
+               //    {
+               //        "mData": "Address_Comments",
+               //        "sTitle": "הערות כתובת",
+               //        "mRender": function (a, b, c) {
+               //            if (a) {
+               //                var text = a.substring(0, 100);
+               //                return $('<textarea />').html(text).text();
+               //            }
+               //            return "";
+               //        },
+               //        'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
 
-                           if (oData.Address_Comments!="null")
-                           nTd.title = oData.Address_Comments;
-                       }
-                   },
+               //            if (oData.Address_Comments!="null")
+               //            nTd.title = oData.Address_Comments;
+               //        }
+               //    },
                     
                 ],
                 "fnServerData": function (sSource, aoData, fnCallback) {
