@@ -175,10 +175,10 @@
                     <div class="data-box service-box">
                         <h2>תחומי מחקר</h2>
                         <div class="service no-margin row">
-                            <div class="col-sm-2 no-padding serv-logo">
+                            <div class="col-sm-4 no-padding serv-logo">
                                 <i class="fab fa-chrome"></i>
                             </div>
-                            <div class="col-sm-10 rgbf serv-det">
+                            <div class="col-sm-8 rgbf serv-det">
                                 <h5>Graphic Design</h5>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                             </div>
@@ -186,10 +186,21 @@
                         @foreach (var project in Model.personProjects)
                         {
                             <div class="service no-margin row">
-                                <div class="col-sm-2 no-padding serv-logo">
-                                    <i class="fab fa-delicious"></i>
+                                <div class="col-sm-4 no-padding serv-logo">
+                                    @{string imageName1 = project.ProjectImage == null ? "empty" : project.ProjectImage;
+
+                                        string modelImage1 = "http://placehold.it/250x300.png";
+                                        //@modelImage;
+                                        if (imageName != "empty")
+                                        {
+                                            string relPath = "/Files/GetImage?fileName=";
+                                            modelImage1 = relPath + imageName1;
+                                        }
+                                    }
+                                    <img class="img-responsive imgBox" style="width:200px;height:200px" alt="" src=@modelImage1 />
+                                    @*<i class="fab fa-delicious"></i>*@2
                                 </div>
-                                <div class="col-sm-10 rgbf serv-det">
+                                <div class="col-sm-8 rgbf serv-det">
                                     <h3><a href="ProjectResume?id=@project.Project_ID">@project.ProjectName</a></h3>
                                     <br/>
                                     <p><textarea>@project.ProjectDescription</textarea></p>

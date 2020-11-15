@@ -58,6 +58,7 @@ namespace Hypnosis.Web.Data.DbOperations
                 Name = project.Name,
 
                 Project_Description = project.Comments,
+                ImageName=project.ImageName,
                 
                 personsList=list
 

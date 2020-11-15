@@ -34,7 +34,7 @@
                         @*<img src="~/Content/resumeAssets/images/profile.jpg" alt="">*@
                         @{string imageName = Model.ImageName == null ? "empty" : Model.ImageName;
 
-                            string modelImage = "http://placehold.it/250x300.png";
+                            string modelImage = "http://placehold.it/300x300.png";
                             //@modelImage;
                             if (imageName != "empty")
                             {
@@ -42,7 +42,7 @@
                                 modelImage = relPath + imageName;
                             }
                         }
-                        <img class="img-responsive imgBox" style="width:250px;height:300px" alt="" src=@modelImage />
+                        <img class="img-responsive imgBox" style="width:300px;height:300px" alt="" src=@modelImage />
                         <h6>@Model.Name</h6>
                        
                         @*<p>@Model.</p>*@
