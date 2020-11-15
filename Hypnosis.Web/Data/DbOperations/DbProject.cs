@@ -105,6 +105,10 @@ namespace Hypnosis.Web.Data.DbOperations
                 Name = Project.Name,
                
                 Project_Description = Project.Comments,
+
+                ImageName=Project.ImageName,
+
+                ImageOriginalName = Project.ImageOriginalName
                 
                 
 
@@ -253,7 +257,7 @@ namespace Hypnosis.Web.Data.DbOperations
 
         }
 
-        public void CreateUpdate(ProjectDetailsModel model, bool isUpdate)
+        public void CreateUpdate(ProjectDetailsModel model, HttpPostedFileBase fileUploaded, string path, bool isUpdate)
         {
             string operation = tbl + " Create Update ";
             Logger.Log.Debug(operation + " Begin ");
@@ -304,9 +308,27 @@ namespace Hypnosis.Web.Data.DbOperations
                 {
                     dbContext.Projects.Add(Project);
                 }
-                dbContext.SaveChanges();
+               
+                   
+                    if (fileUploaded != null && path != "" && fileUploaded.FileName != "")
+                    {
+                        Guid uniqfilename = Guid.NewGuid();
+                        string oldFileName = fileUploaded.FileName;
+                        string extension = System.IO.Path.GetExtension(oldFileName);
+                        string newFileName = uniqfilename.ToString() + extension;
+                        string fullFileName = System.IO.Path.Combine(path, newFileName);
+                        fileUploaded.SaveAs(fullFileName);
+                        //string newFileName = Hypnosis.Web.MyHelpers.FilesHelper.RelativePath+uniqfilename;
+                        Project.ImageOriginalName = oldFileName;
+                        Project.ImageName = newFileName;
+                    }
 
-            }
+                    dbContext.SaveChanges();
+                }
+
+                //dbContext.SaveChanges();
+
+            
             catch (DbEntityValidationException e)
             {
                 string msgs = "";

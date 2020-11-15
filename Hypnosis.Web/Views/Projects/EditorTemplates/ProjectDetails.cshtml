@@ -20,7 +20,7 @@
         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label label-title" })
         @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control form-control-long" } })
         @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-       
+
         @Html.HiddenFor(model => model.ID)
     </div>
 
@@ -94,12 +94,85 @@
 
     </div>*@
 
+@Html.EditorFor(model => model.ImageName, new { htmlAttributes = new { @class = "form-control" } })
+@Html.EditorFor(model => model.ImageOriginalName, new { htmlAttributes = new { @class = "form-control" } })
+<div class="form-inline form-inline-margins" style="min-height:100px">
+    <form id="Form" name="Form" method="post">
+        @Html.LabelFor(model => model.ImageName, htmlAttributes: new { @class = "control-label label-normal" })
+        @*@{
+                @Html.LabelFor(model => model.ImageName, htmlAttributes: new { @class = "control-label label-normal" })
+                bool imageExists = false;
+                var imageName = $('details_ImageName').val();
+                if (Model != null)
+                {
+                    if (Model.ImageName != null)
+                    {
+                        string imageName = Model.ImageName == null ? "empty" : Model.ImageName;
+                        string relPath = "/Files/GetImage?fileName=";
+                        string modelImage = relPath + imageName;
+                        @modelImage;
+
+                        <img id="photo" src=@modelImage style="display:block" />
+                        imageExists = true;
+                    }
+                }
+                if (!imageExists)
+                {
+                    <img id="photo" src="#" style="display:none" />
+                }
+
+            }*@
+
+        <input type="file" id="url" name="url" /><br />
+        <img id="photo" src="#" style="display:block; width:200px;height:200px" />
+
+
+        <script>
+
+            var imageName = $('#details_ImageName').val();
+            console.log(imageName);
+            if (imageName == "") {
+                $('#photo').attr('display', 'block');
+            }
+            else {
+                $('#photo').attr('src', "/Files/GetImage?fileName=" + imageName);
+                $('#photo').attr('display', 'block');
+            }
+            function readURL(input) {
+
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#photo').attr('src', e.target.result);
+                        $('#photo').attr('display', 'block');
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#url").change(function () {
+                // alert('change');
+                // readURL(this);
+                //console.log(event.target.files[0]);
+                var image = document.getElementById('photo');
+                image.src = URL.createObjectURL(event.target.files[0]);
+                $('#photo').attr('display', 'block');
+            });
+
+        </script>
+    </form>
+</div>
+
 <div class="form-inline form-inline-margins">
     <div>
         @Html.LabelFor(model => model.Project_Description, htmlAttributes: new { @class = "control-label label-bold" })
-        @Html.TextAreaFor(model => model.Project_Description, new { @class = "text-area-big", @rows = 50 })
+        @Html.TextAreaFor(model => model.Project_Description, new { @class = "text-area-big", @rows = 25 })
     </div>
 </div>
+
+
 
 <script lang="javascript">
 
@@ -171,321 +244,3 @@
 @*<br />
     <input type="submit" value="Update Preference" />*@
 
-<table id="pp" class="table table-striped table-bordered dataTable no-footer" style="overflow:auto"></table>
-<script>
-            var oTable = $('#pp');
-           
-            oTable.dataTable({
-                stateSave: true,
-                "bSortable": false,
-                "sAjaxSource": "@Url.Action("DataByProjectCard", "PersonsProjects")",
-
-                "fnServerParams": function (aoData) {
-                    aoData.push({ "name": "Project_ID", "value": $("#details_ID").val() });
-                console.log("data=");
-                console.log(aoData);
-                },
-                "fnDrawCallback": function (oSettings) {
-                if (oSettings.aoData.length == 0) {
-                oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').hide();
-                }
-                else {
-                oTable.closest('.dataTables_wrapper').find('.dataTables_footer, .dataTables_table_wrapper').show();
-                }
-
-
-                },
-
-               
-
-                "aoColumns": [
-
-
-                    {
-                        "mData": "ID",
-                        "sTitle": "ID",
-                        "bVisible": false,
-                        "visible": false,
-                        "sWidth": "0",
-                        "mRender": function (a, b, c) {
-                            return '<input type="hidden" id="dt_id" class="id_required"  value="' + c.ID + '">';
-                        }
-                    },
-
-                   
-
-                {
-                "mData": "ProjectName",
-                "sTitle": "מחקר",
-
-
-                },
-                {
-                "mData": "PersonName",
-                "sTitle": "חוקר",
-
-
-                    },
-
-                    {
-                        "mData": "PersonOrder",
-                        "sTitle": "מספר",
-
-
-                    },
-
-                 {
-
-                     "sWidth": "10%",
-                     "mData": null, "sTitle": "",
-                     "bSortable": false,
-                     "mRender": function (a, b, c) {
-                         var html = '<a href="#up" class="btn" onclick=deleteRow(' + c.ID + ') title="מחק"><i class="fa fa-times"></i></a>';
-                        // html += "<a class='edit fa fa-pencil-square-o' title='ערוך'></a>";
-                         return html;
-                     },
-                     //"mRenderEdit": function (a, b, c) {
-                     //    var html = "<a class='update fa fa-check' title='שמור'></a>"
-                     //    html += " <a class='cancel fa fa-undo' title='בטל'></a>";
-                     //    return html;
-                     //}
-                 },
-
-                ],
-                                      
-
-                "fnServerData": function (sSource, aoData, fnCallback) {
-                    console.log("ao");
-                    console.log(aoData);
-                    $.ajax({
-                        "dataType": 'json',
-                        "type": "POST",
-                        "url": sSource,
-                        "data": aoData,
-                        "success": fnCallback
-                    });
-                },
-            });
-            oTable.sortable({
-                //items: 'tr:not(tr:first-child)',
-                items: 'tr:not(th)',
-                cursor: 'pointer',
-                axis: 'y',
-                dropOnEmpty: false,
-                start: function (e, ui) {
-                    ui.item.addClass("selected");
-                },
-                stop: function (e, ui) {
-                    ui.item.removeClass("selected");
-                },
-                receive: function (e, ui) {
-                    $(this).find("tbody").append(ui.item);
-                }
-            });
-    
-    oTable.closest('.dataTables_wrapper').find('.dataTables_table_wrapper');
-    //console.log("rows=");
-    //console.log(oTable.rows());
-   // $('#pp td:nth-child(0).hide());
-  //  $('#pp td:nth-child(1)').hide();
-  //  $('#pp th:nth-child(1)').hide();
-   
-        function deleteRow(id) {
-            if (confirm("האם אתה בטוח שברצונך למחוק רשומה זו?")) {
-                $.ajax({
-                    contentType: "application/json; charset=utf-8",
-                    type: "GET",
-                    dataType: "json",
-                    url: '@Url.Action("Delete", "PersonsProjects")',
-                    data: { "Id": id }
-                }).success(function (data) {
-                    if (!data.result) {
-                        alert("הייתה בעיה במחיקה");
-                    }
-                    else {
-                        // alert('deleted');
-                        var oTable = $('#pp').dataTable();
-                        console.log('redraw');
-                        oTable.fnDraw(false);
-                    }
-                }).error(function () { })
-                            .complete(function () { });
-            }
-        }
-
-</script>
-
-<a name="bottom"></a>
-<div class="panel-body">
-    <p><b>הוספת סוג אירוע</b></p>
-    <table id="eventSubTypesAdd" class="table table-striped table-bordered dataTable no-footer" style="overflow:auto; width:70%">
-        <tbody>
-            <tr>
-                <td class="line_title" style="width:20%">
-                    <label for="eventSubTypeName">שם החוקר</label>
-                </td>
-                <td class="line">
-                    <input id="dt_person" type="text" />
-                </td>
-                @*<td class="line">
-                        <input id="dt_name" type="text" />
-                    </td>
-                    <td class="line_title" style="width:25%">
-                        <label for="eventType">שם סוג אירוע</label>
-                    </td>
-                    <td class="line">
-                        <input id="dt_type" type="text" />
-                    </td>
-                    <td class="line_title" style="width:25%">
-                        <label for="order">סדר הצגה בתמצית </label>
-                    </td>
-                    <td class="line">
-                        <input id="dt_order" type="text" />
-                    </td>*@
-                <td class="line_title">
-                    <a href="#bottom" title="שמור" id="save"><i class="fa fa-check"></i></a>
-                </td>
-                <td class="line_title">
-                    <a href="#bottom" title="בטל" id="cancel"><i class="fa fa-undo"></i></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<input type="button" value="Update Order" onclick="saveMe()" />
-
-<script>
-    function saveMe() {
-        var data="";
-
-            $('.id_required').each(function (i) {
-                data+=$(this).val()+",";
-            });
-
-        console.log("data=");
-        console.log(data);
-
-        $.ajax({
-                    contentType: "application/json; charset=utf-8",
-                    type: "GET",
-                    dataType: "json",
-            url: '@Url.Action("SaveOrder", "PersonsProjects")',
-           
-            data: {
-                "Id": data,
-                "projectId": $("#details_ID").val()
-            },
-                 
-                }).success(function (data) {
-                    if (!data.result) {
-                        alert("הייתה בעיה במחיקה");
-                    }
-                    else {
-                        // alert('deleted');
-                        var oTable = $('#pp').dataTable();
-                        console.log('redraw');
-                        oTable.fnClearTable(this);
-                        oTable.fnDraw(true);
-                    }
-                }).error(function () { })
-                            .complete(function () { });
-
-
-
-    }
-
-    $(function () {
-        var typeSelect = $('#dt_person').select2({
-            width: 200,
-            placeholder: "הכל",
-            allowClear: true,
-            initSelection: function (element, callback) {
-                $.ajax({
-                    url: '@Url.Content("~/JsonResults/PersonInitJson")',
-                    type: "GET",
-                    data: { value: $(element).val() },
-                    dataType: "json"
-                }).done(function (data) {
-                    if (data && data.length == 1) {
-                        console.log("OK")
-                        callback(data[0]);
-                    }
-                });
-            },
-            ajax: {
-                url: '@Url.Content("~/JsonResults/GetPersonsJson")',
-                dataType: "json",
-                data: function (term, page) {
-                    return {
-                        q: term, // search term,
-                        project_id: $("#details_ID").val(),
-                        page: page,
-                        page_limit: 10,
-                        val: this.val()
-                    };
-                },
-                results: function (data, page) {
-                    return {
-                        results: $.map(data.results, function (a) { return { id: a.id, text: a.text } })
-                    };
-                }
-            }
-        });
-    });
-
-
-            $("#save").on('click', function () {
-            //alert('begin');
-            if (!validate()) {
-                alert("חובה למלא את כל השדות");
-                return;
-            }
-
-            var dataParams = [];
-                dataParams.push({ "name": "Project_ID", "value": $("#details_ID").val() });
-                dataParams.push({ "name": "Person_ID", "value": $('#dt_person').select2('val') });
-                dataParams.push({ "name": "PersonOrder", "value": 0 });
-                dataParams.push({ "name": "isUpdate", "value": false });
-
-            $.ajax({
-                contentType: "application/json; charset=utf-8",
-                type: "GET",
-                dataType: "json",
-                url: '@Url.Action("ChangeData","PersonsProjects")',
-                data: dataParams
-            }).success(function (data) {
-                //alert(data.error);
-                    console.log(data);
-                    if (!data.result && data.error != "") {
-                        alert(data.error);
-                    }
-                    else if (!data.result) {
-                        alert("הייתה בעיה בשמירת הנתונים");
-                    }
-                    else {
-                        clearNewRow();
-                        oTable.fnDraw(false);
-                    }
-                }).error(function () { })
-                            .complete(function () { });
-            });
-            $("#cancel").on('click', function () {
-                clearNewRow();
-            });
-
-
-    function clearNewRow() {
-
-        $("#dt_person").select2('val', '');
-
-    }
-
-    function validate() {
-
-        if ($('#dt_person').select2('val') == "") {
-            return false;
-        }
-        return true;
-    };
-
-</script>

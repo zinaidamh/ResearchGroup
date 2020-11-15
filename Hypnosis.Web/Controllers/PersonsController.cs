@@ -106,7 +106,7 @@ namespace Hypnosis.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Edit(HttpPostedFileBase File, PersonEditModel model)
+        public ActionResult Edit(PersonEditModel model)
         {
             try
             {

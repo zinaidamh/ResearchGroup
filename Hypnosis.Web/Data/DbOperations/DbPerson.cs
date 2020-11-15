@@ -380,8 +380,8 @@ namespace Hypnosis.Web.Data.DbOperations
             person.Stomatology_LicenseNumber = model.Stomatology_LicenseNumber;
             person.Stomatology_Specialization = model.Stomatology_Specialization;
             person.ZipCode = model.ZipCode;
-            person.ImageOriginalName = model.ImageOriginalName;
-            person.ImageName = model.ImageName;
+           // person.ImageOriginalName = model.ImageOriginalName;
+          //  person.ImageName = model.ImageName;
 
 
 
@@ -391,7 +391,7 @@ namespace Hypnosis.Web.Data.DbOperations
                 {
                     dbContext.Persons.Add(person);
                 }
-                if (fileUploaded != null && path != "")
+                if (fileUploaded != null && path != "" && fileUploaded.FileName!="")
                 {
                     Guid uniqfilename = Guid.NewGuid();
                     string oldFileName = fileUploaded.FileName;
@@ -400,7 +400,7 @@ namespace Hypnosis.Web.Data.DbOperations
                     string fullFileName = System.IO.Path.Combine(path, newFileName);
                     fileUploaded.SaveAs(fullFileName);
                     //string newFileName = Hypnosis.Web.MyHelpers.FilesHelper.RelativePath+uniqfilename;
-                    person.ImageOriginalName = newFileName;
+                    person.ImageOriginalName = oldFileName;
                     person.ImageName = newFileName;
                 }
                
